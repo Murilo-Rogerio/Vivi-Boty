@@ -6,7 +6,7 @@ Link para a vitrine: Acesse a Vivi Boty aqui!
 💖 Uma nota especial para a minha Mãe: O que é a Vivi Boty?
 Mãe, a Vivi Boty é o seu novo espaço na internet para o seu negócio de perfumes! Eu criei esse site para ser a sua vitrine virtual. Agora, os seus clientes podem ver todos os seus perfumes, conferir os preços, aproveitar as promoções e, com apenas um clique, eles já são direcionados para falar com você e fechar a compra. Fiz com muito carinho para te ajudar a vender mais, alcançar novos clientes e facilitar o seu atendimento no dia a dia!
 
-📌 Sobre o Projeto (Repertório & Portfólio)
+📌 Sobre o Projeto
 A Vivi Boty é uma plataforma web de catálogo digital e e-commerce simplificado desenvolvida especificamente para pequenos empreendedores (neste caso, focado no nicho de perfumaria). O projeto nasceu da necessidade real de digitalizar um negócio físico, tornando o processo de escolha do produto visual, informativo e integrado.
 
 Para o meu portfólio, este projeto demonstra competência em:
