@@ -59,6 +59,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);
 @keyframes fadeOR{to{transform:translateX(100%);opacity:0}}
 .cpill{white-space:nowrap;padding:8px 18px;border-radius:9999px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:#fff;color:var(--muted)}
 .cpill:hover,.cpill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cpill:hover:not(.on){background:var(--accent);color:#fff;border-color:var(--accent);transform:scale(1.05);}
 .hero-bg{background:linear-gradient(160deg,#FDF8F5 0%,#FAF0EB 40%,#F0DDD3 100%)}
 .dc{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
 ::-webkit-scrollbar{width:5px;height:5px}
