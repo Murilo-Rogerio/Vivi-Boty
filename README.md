@@ -1,3 +1,4 @@
+##🌸 Vivi Boty
 Vitrine digital de perfumes, cosméticos e presentes com atendimento direto pelo WhatsApp.
 
 Link: vivicarvalhoboty.com.br
@@ -77,16 +78,18 @@ const VIVI_LOGO = 'URL_DA_IMAGEM';
 const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
 const SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
 A anon key é pública por design — a segurança vem das políticas RLS configuradas no Supabase, não de esconder a chave.
-
+````
 🚀 Deploy
+```js
 O site está hospedado no Netlify com deploy automático via GitHub:
 
 Edita o index.html
 Envia para o GitHub
 O Netlify detecta a mudança e republica automaticamente
 Para alterar produtos, preços e imagens: entra no site → #/admin → edita pelo painel. Não precisa mexer no código nem no GitHub.
-
+````
 🔒 Segurança
+```js
 Camada
 Proteção
 Produtos (tabela products)	RLS ativo — público só vê produtos ativos. Só admin cria, edita ou exclui
@@ -96,14 +99,15 @@ Controle de admin	Tabela admin_users verificada a cada acesso ao painel
 Upload de imagens	Validação de tipo (image/*) e tamanho (máx 5MB) no frontend
 XSS	Dados dos produtos escapados com textContent antes de ir para o HTML
 Injeção de SQL	Impossível — Supabase Client usa queries parametrizadas
-
+````
 🧪 Como Rodar Localmente
+```js
 bash
 
 git clone https://github.com/Murilo-Rogerio/Vivi-Boty.git
 cd Vivi-Boty
 Abra o index.html no navegador ou use o Live Server do VS Code.
-
+````
 Nota: Para funcionar localmente, as credenciais do Supabase precisam estar preenchidas no código. Sem isso, o site mostra uma mensagem amigável pedindo configuração em vez de tela branca.
 
 📄 Licença
