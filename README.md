@@ -12,13 +12,13 @@ A Vivi Boty é uma plataforma de catálogo digital desenvolvida para pequenos em
 Sem pagamento online, sem complexidade. O cliente escolhe, adiciona à sacola e manda um orçamento pronto pelo WhatsApp. A Vivi confirma a disponibilidade e fecha a venda.
 
 Para o meu portfólio, este projeto demonstra competência em:
+ -UI/UX focado em conversão: Layout limpo que destaca fotos, preços e selos de promoção para prender a atenção do cliente
+ -Funil de vendas click-to-chat: Integração com WhatsApp para reduzir a fricção entre o interesse e a compra
+ -Autenticação e controle de acesso: Painel administrativo protegido com Supabase Auth + RLS
+ -Gerenciamento de conteúdo por usuário final: A Vivi cadastra produtos, troca fotos e preços sem precisar tocar no código
+- Mobile-first: Interface pensada para quem chega pelo link do Instagram ou WhatsApp no celular
 
--UI/UX focado em conversão: Layout limpo que destaca fotos, preços e selos de promoção para prender a atenção do cliente
-Funil de vendas click-to-chat: Integração com WhatsApp para reduzir a fricção entre o interesse e a compra
-Autenticação e controle de acesso: Painel administrativo protegido com Supabase Auth + RLS
-Gerenciamento de conteúdo por usuário final: A Vivi cadastra produtos, troca fotos e preços sem precisar tocar no código
-Mobile-first: Interface pensada para quem chega pelo link do Instagram ou WhatsApp no celular
-🛠️ Tecnologias
+## 🛠️ Tecnologias
 Tecnologia	Uso
 HTML5	Estrutura semântica da SPA (Single Page Application)
 CSS3	Estilização com variáveis, animações e layout responsivo
@@ -31,7 +31,8 @@ Supabase RLS	Row Level Security para controle de acesso no banco
 Font Awesome (CDN)	Ícones
 Google Fonts	Playfair Display + Lato
 Netlify	Hospedagem estática com deploy automático via GitHub
-✨ Funcionalidades
+
+## ✨ Funcionalidades
 Para o cliente
 
 🛍️ Catálogo de produtos com foto, nome, marca, preço e descrição
