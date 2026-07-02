@@ -61,9 +61,9 @@ Para a administradora (painel #/admin)
 5. A Vivi responde, confirma a disponibilidade e fecha a venda
 
 🗂️ Estrutura do Projeto
-vivi-boty/
-├── index.html # Arquivo único com todo o frontend
-└── README.md # Este arquivo
+- vivi-boty/
+- ├── index.html # Arquivo único com todo o frontend
+- └── README.md # Este arquivo
 
 
 Tudo em um único `index.html` é uma escolha deliberada: elimina a necessidade de build, simplifica o deploy e permite que a administradora entenda que o site é um arquivo só — sem dependências complexas.
