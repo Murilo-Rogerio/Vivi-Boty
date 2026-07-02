@@ -83,49 +83,53 @@ vivi-boty/
 └── README.md      # Documentação do projeto
 ```
 
-Tudo em um único `index.html` é uma escolha deliberada: elimina a necessidade de build, simplifica o deploy e permite que a administradora entenda que o site é um arquivo só — sem dependências complexas.
+Tudo em um único arquivo `index.html` é uma escolha deliberada: elimina a necessidade de etapas complexas de build, simplifica drasticamente o deploy e permite que a administradora compreenda facilmente que o site é composto por um único arquivo — sem dependências externas ou configurações robustas.
 
 ---
 
 ### ⚙️ Configuração
 
-As credenciais do Supabase ficam no topo do `<script>` no `index.html`:
+As credenciais do Supabase e a logo principal ficam localizadas logo no topo da tag `<script>` dentro do `index.html`:
 
 ```js
 const VIVI_LOGO = 'URL_DA_IMAGEM';
-const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
+const SUPABASE_URL = '[https://SEU-PROJETO.supabase.co](https://SEU-PROJETO.supabase.co)';
 const SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
 ````
-A anon key é pública por design — a segurança vem das políticas RLS configuradas no Supabase, não de esconder a chave.
+- 💡 Nota sobre segurança: A chave pública (anon key) é exposta por design no frontend. Toda a segurança e integridade do sistema são garantidas pelas políticas de RLS (Row Level Security) configuradas diretamente no banco de dados do Supabase, e não pela ocultação dessa chave
 
 ## 🚀 Deploy
-O site está hospedado no Netlify com deploy automático via GitHub:
-
-- Edita o index.html
-- Envia para o GitHub
-- O Netlify detecta a mudança e republica automaticamente
-- Para alterar produtos, preços e imagens: entra no site → #/admin → edita pelo painel. Não precisa mexer no código nem no GitHub.
+**O site está hospedado na Vercel com domínio próprio e configurado com deploy automático integrado ao GitHub:**
+* Edita o index.html
+* Envia para o GitHub
+* O Netlify detecta a mudança e republica automaticamente
+* Para alterar produtos, preços e imagens: entra no site → #/admin → edita pelo painel. Não precisa mexer no código nem no GitHub.
 
 ## 🔒 Segurança
-| Camada | Proteção |
-|---|---|
-| Produtos (tabela `products`) | RLS ativo — público só vê produtos ativos. Só admin cria, edita ou exclui |
-| Imagens (bucket `products`) | RLS ativo — público só vê. Só admin faz upload, atualiza ou deleta |
-| Autenticação | Supabase Auth — só `signInWithPassword`, sem `signUp` no frontend |
-| Controle de admin | Tabela `admin_users` verificada a cada acesso ao painel |
-| Upload de imagens | Validação de tipo (`image/*`) e tamanho (máx 5MB) no frontend |
-| XSS | Dados dos produtos escapados com `textContent` antes de ir para o HTML |
-| Injeção de SQL | Impossível — Supabase Client usa queries parametrizadas |
+| Camada | Mecanismo de Proteção |
+| :--- | :--- |
+| **Produtos** (tabela `products`) | RLS ativo. O público geral possui apenas permissão de leitura para itens ativos. Operações de escrita (criar, editar, excluir) exigem autenticação admin. |
+| **Imagens** (bucket `products`) | RLS ativo. Leitura pública liberada; uploads, substituições e exclusões restritos à conta admin. |
+| **Autenticação** | Supabase Auth estruturado apenas com o método `signInWithPassword`. A criação de novas contas (`signUp`) está desabilitada no frontend. |
+| **Controle de Admin** | Validação severa na tabela `admin_users` a cada nova requisição ou acesso ao painel. |
+| **Upload de Arquivos** | Validação rigorosa de formato (`image/*`) e limitação de tamanho (máximo de 5MB) tratadas diretamente no cliente. |
+| **Proteção contra XSS** | Dados dinâmicos de produtos são renderizados utilizando propriedades seguras como `textContent` para evitar injeção de scripts maliciosos. |
+| **Injeção de SQL** | Camada blindada nativamente, já que o cliente do Supabase utiliza queries parametrizadas por padrão. |
 
 ## 🧪 Como Rodar Localmente
+* Para testar ou desenvolver novas funcionalidades na sua máquina, siga os passos abaixo:
+1. Clone o repositório:
 ```js
-git clone https://github.com/Murilo-Rogerio/Vivi-Boty.git
+git clone [https://github.com/Murilo-Rogerio/Vivi-Boty.git](https://github.com/Murilo-Rogerio/Vivi-Boty.git)
+```
+2. Acesse a pasta do projeto:
+```js
 cd Vivi-Boty
 ```
-- Abra o index.html no navegador ou use o Live Server do VS Code.
-- Nota: Para funcionar localmente, as credenciais do Supabase precisam estar preenchidas no código. Sem isso, o site mostra uma mensagem amigável pedindo configuração em vez de tela branca.
+3. Abra o arquivo index.html diretamente no seu navegador de preferência ou utilize a extensão Live Server no VS Code para um feedback em tempo real.
+* ⚠️ Atenção: Para que a aplicação funcione localmente e os dados sejam carregados, certifique-se de que as credenciais do Supabase estejam preenchidas no código. Caso contrário, o site exibirá uma tela amigável instruindo sobre a configuração, evitando quebras inesperadas ou telas em branco.
 
 ## 📄 Licença
-- MIT
+* Este projeto está sob a licença MIT.
 
-## 💡 Desenvolvido com tecnologia, carinho e foco no sucesso do negócio da minha mãe. Se tiver sugestões, abra uma Issue ou entre em contato.
+## Este projeto foi desenvolvido unindo tecnologia, carinho e foco total no sucesso do negócio da minha mãe. Se tiver alguma sugestão de melhoria, sinta-se à vontade para abrir uma Issue ou entrar em contato direto!
