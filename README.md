@@ -1,7 +1,7 @@
 # 🌸 Vivi Boty 🧪✨
 Status do Projeto: 🚀 Concluído / Em constante evolução
 
-Link para a vitrine: [Acesse a Vivi Boty aqui!](https://vivi-boty.netlify.app/)
+Link para a vitrine: [Acesse a Vivi Boty aqui!](https://vivicarvalhoboty.com.br/)
 
 💖 Uma nota especial para a minha Mãe: O que é a Vivi Boty?
 Mãe, a Vivi Boty é o seu novo espaço na internet para o seu negócio de perfumes! Eu criei esse site para ser a sua vitrine virtual. Agora, os seus clientes podem ver todos os seus perfumes, conferir os preços, aproveitar as promoções e, com apenas um clique, eles já são direcionados para falar com você e fechar a compra. Fiz com muito carinho para te ajudar a vender mais, alcançar novos clientes e facilitar o seu atendimento no dia a dia!
