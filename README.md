@@ -1,5 +1,5 @@
 <div align="center">
-## 🌸 Vivi Boty
+## 🌸 Vivi Boty ;
 Vitrine digital de perfumes, cosméticos e presentes com atendimento direto pelo WhatsApp.
 </div>
 
