@@ -1,7 +1,7 @@
 ## 🌸 Vivi Boty
-Vitrine digital de perfumes, cosméticos e presentes com atendimento direto pelo WhatsApp.
+Uma vitrine digital de perfumes, cosméticos e presentes com atendimento direto pelo WhatsApp.
 
-Link: [Vivi Boty](https://vivicarvalhoboty.com.br/)
+Link:[Vivi Boty](https://vivicarvalhoboty.com.br/)
 
 ## 💖 O que é a Vivi Boty?
 Mãe, a Vivi Boty é o seu novo espaço na internet para o seu negócio. Eu criei esse site para ser a sua vitrine virtual — agora os seus clientes podem ver seus produtos, conferir preços, aproveitar promoções e, com um clique, já são direcionados para falar com você pelo WhatsApp e fechar a compra. Fiz com muito carinho pra te ajudar a vender mais, alcançar novos clientes e facilitar o seu dia a dia.
@@ -13,7 +13,7 @@ Sem pagamento online, sem complexidade. O cliente escolhe, adiciona à sacola e 
 
 Para o meu portfólio, este projeto demonstra competência em:
 
-UI/UX focado em conversão: Layout limpo que destaca fotos, preços e selos de promoção para prender a atenção do cliente
+-UI/UX focado em conversão: Layout limpo que destaca fotos, preços e selos de promoção para prender a atenção do cliente
 Funil de vendas click-to-chat: Integração com WhatsApp para reduzir a fricção entre o interesse e a compra
 Autenticação e controle de acesso: Painel administrativo protegido com Supabase Auth + RLS
 Gerenciamento de conteúdo por usuário final: A Vivi cadastra produtos, troca fotos e preços sem precisar tocar no código
