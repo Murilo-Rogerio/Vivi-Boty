@@ -1,10 +1,6 @@
-<div align="center">
-## 🌸 Vivi Boty
-</div>
-<div align="center">
-  Vitrine digital de perfumes, cosméticos e presentes com atendimento direto pelo WhatsApp.
-</div>
 
+## 🌸 Vivi Boty
+Vitrine digital de perfumes, cosméticos e presentes com atendimento direto pelo WhatsApp.
 
 [Acesse a Vivi Boty aqui!](https://vivicarvalhoboty.com.br/)
 
