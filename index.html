@@ -469,10 +469,13 @@ const A = {
     };
     const fi=document.getElementById('fif');
     if(fi.files.length>0){
-      const file=fi.files[0];
-      if(!file.type.startsWith('image/')){err.textContent='Selecione apenas arquivos de imagem.';err.classList.remove('hidden');return;}
-      if(file.size>5*1024*1024){err.textContent='A imagem deve ter no m\u00e1ximo 5MB. Este arquivo tem '+(file.size/1024/1024).toFixed(1)+'MB.';err.classList.remove('hidden');return;}
-      try{const ext=file.name.split('.').pop();const path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;const{error:ue}=await this.sb.storage.from('products').upload(path,file);if(ue)throw ue;const{data:ud}=this.sb.storage.from('products').getPublicUrl(path);data.imagem=ud.publicUrl;}
+      let file=fi.files[0];
+if(!file.type.startsWith('image/')){err.textContent='Selecione apenas arquivos de imagem.';err.classList.remove('hidden');return;}
+if(file.size>5*1024*1024){err.textContent='A imagem deve ter no máximo 5MB. Este arquivo tem '+(file.size/1024/1024).toFixed(1)+'MB.';err.classList.remove('hidden');return;}
+try{
+let uploadFile=file;
+try{uploadFile=await this.compressImg(file,1200,0.8);}catch(e){uploadFile=file;}
+const ext=uploadFile.name||file.name.split('.').pop();const path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;const{error:ue}=await this.sb.storage.from('products').upload(path,uploadFile);if(ue)throw ue;
       catch(e){err.textContent='Erro ao enviar imagem: '+(e.message||'');err.classList.remove('hidden');return;}
     }
     try{
