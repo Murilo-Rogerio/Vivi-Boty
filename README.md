@@ -102,7 +102,7 @@ const SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
 **O site está hospedado na Vercel com domínio próprio e configurado com deploy automático integrado ao GitHub:**
 * Edita o index.html
 * Envia para o GitHub
-* O Netlify detecta a mudança e republica automaticamente
+* O Vercel detecta a mudança e republica automaticamente
 * Para alterar produtos, preços e imagens: entra no site → #/admin → edita pelo painel. Não precisa mexer no código nem no GitHub.
 
 ## 🔒 Segurança
