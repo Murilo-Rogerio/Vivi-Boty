@@ -488,7 +488,27 @@ const ext=uploadFile.name||file.name.split('.').pop();const path=Date.now()+'_'+
   async togAtivo(id,ativo) { try{const{error}=await this.sb.from('products').update({ativo,data_atualizacao:new Date().toISOString()}).eq('id',id);if(error)throw error;const p=this.pmap[id];if(p)p.ativo=ativo;this.toast(ativo?'Produto ativado':'Produto desativado','success');this.rAProds();}catch(e){this.toast('Erro: '+e.message,'error');} },
   delProd(id) { if(document.querySelector('.dm')){document.querySelector('.dm').remove();return;}const d=document.createElement('div');d.className='dm fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4';d.innerHTML='<div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl page-enter"><h3 class="font-display font-bold text-lg text-warm-800 mb-2">Excluir produto?</h3><p class="text-sm text-warm-800/50 mb-6">Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.</p><div class="flex gap-3"><button onclick="this.closest(\'.dm\').remove()" class="btn-o flex-1 text-sm py-2">Cancelar</button><button onclick="A.cfDel(\''+id+'\')" class="flex-1 bg-red-500 text-white rounded-lg font-bold text-sm py-2 hover:bg-red-600 transition-colors cursor-pointer border-none">Excluir</button></div></div>';document.body.appendChild(d); },
   async cfDel(id) { document.querySelector('.dm')?.remove();try{const{error}=await this.sb.from('products').delete().eq('id',id);if(error)throw error;this.prods=this.prods.filter(x=>x.id!==id);delete this.pmap[id];this.toast('Produto exclu\u00eddo','success');this.rAProds();}catch(e){this.toast('Erro: '+e.message,'error');} },
-  async doLogout() { if(this.sb)await this.sb.auth.signOut();this.user=null;this.isAdmin=false;this.toast('Voc\u00ea saiu do painel','info');location.hash='#/admin'; },
+    async doLogout() { if(this.sb)await this.sb.auth.signOut();this.user=null;this.isAdmin=false;this.toast('Voc\u00ea saiu do painel','info');location.hash='#/admin'; },
+
+  async compressImg(file, maxW, quality) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(blob => {
+          URL.revokeObjectURL(img.src);
+          if (blob) resolve(blob);
+          else reject(new Error('Erro ao comprimir'));
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = () => { URL.revokeObjectURL(img.src); reject(new Error('Erro ao carregar imagem')); };
+      img.src = URL.createObjectURL(file);
+    });
+  },
 
   fmt(v){return 'R$ '+Number(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');},
   esc(s){if(!s)return '';const d=document.createElement('div');d.textContent=s;return d.innerHTML;},
