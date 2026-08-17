@@ -110,6 +110,10 @@ const A = {
   },
 
   async init() {
+if (location.pathname.startsWith('/produto/')) {
+  location.hash = '#' + location.pathname;
+  history.replaceState(null, '', '/');
+}
     this.loadCart();
     this.chkPlaceholder();
     if (!this.isPlaceholder && window.supabase) {
