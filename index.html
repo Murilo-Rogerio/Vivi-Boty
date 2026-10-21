@@ -3,117 +3,556 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes</title>
+<title>Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes Exclusivos</title>
 <link rel="icon" type="image/png" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.png">
-<meta name="description" content="Perfumes, cosméticos e presentes escolhidos com carinho para você. Atendimento direto pelo WhatsApp com produtos O Boticário, Natura, Eudora e mais.">
+<meta name="description" content="Sua boutique digital de perfumes, cosméticos e presentes de luxo. Produtos originais O Boticário, Natura, Eudora com atendimento humanizado direto pelo WhatsApp.">
 <meta property="og:title" content="Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes">
-<meta property="og:description" content="Perfumes, cosméticos e presentes escolhidos com carinho para você.">
+<meta property="og:description" content="Fragrâncias marcantes, cuidados especiais e kits de presentes com pronta entrega e atendimento pelo WhatsApp.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/preview-whatsapp.jpeg">
-<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<link rel="stylesheet" href="/styles.css?v=2">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#FDF8F5;--fg:#3D2C2E;--muted:#9A8585;--accent:#C9A96E;--card:#FFFFFF;--border:#F0DDD3;--rose:#D4A0A0}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--fg);overflow-x:hidden;min-height:100vh}
-h1,h2,h3,h4{font-family:'Playfair Display',serif}
-.page-enter{animation:fadeIn .4s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
-@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.4)}70%{box-shadow:0 0 0 14px rgba(201,169,110,0)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.float-a{animation:float 6s ease-in-out infinite}
-.float-b{animation:float 8s ease-in-out 2s infinite}
-.wa-pulse{animation:pulse-gold 2s infinite}
-.skeleton{background:linear-gradient(90deg,#f0e0e0 25%,#f9f0e8 50%,#f0e0e0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
-.tog{position:relative;width:46px;height:25px;cursor:pointer;display:inline-block}
-.tog input{opacity:0;width:0;height:0;position:absolute}
-.tog-s{position:absolute;inset:0;background:#d1d5db;border-radius:25px;transition:.3s}
-.tog-s::before{content:'';position:absolute;width:19px;height:19px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.tog input:checked+.tog-s{background:var(--accent)}
-.tog input:checked+.tog-s::before{transform:translateX(21px)}
-.cart-sb{transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-.cart-sb.open{transform:translateX(0)}
-.cart-ov{opacity:0;pointer-events:none;transition:opacity .35s}
-.cart-ov.open{opacity:1;pointer-events:auto}
-.p-card:hover .p-img{transform:scale(1.05)}
-.p-img{transition:transform .5s ease}
-.bdg{font-size:.6rem;padding:2px 7px;border-radius:9999px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
-.btn-p{background:var(--accent);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:700;cursor:pointer;transition:all .2s;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.btn-p:hover{background:#B8944F;transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,169,110,.3)}
-.btn-p:active{transform:translateY(0)}
-.btn-o{background:transparent;color:var(--accent);border:2px solid var(--accent);padding:10px 26px;border-radius:8px;font-weight:700;cursor:pointer;transition:all .2s;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
-.btn-o:hover{background:var(--accent);color:#fff}
-.btn-wa{background:#25D366;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:700;cursor:pointer;transition:all .2s;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
-.btn-wa:hover{background:#1da851;transform:translateY(-1px)}
-input[type="text"],input[type="number"],input[type="email"],input[type="password"],textarea,select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Lato',sans-serif;font-size:.95rem;background:#fff;transition:border-color .2s;color:var(--fg)}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,169,110,.15)}
-.toast-i{animation:slideR .3s ease-out,fadeOR .3s ease-in 2.7s forwards}
-@keyframes slideR{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-@keyframes fadeOR{to{transform:translateX(100%);opacity:0}}
-.cpill{white-space:nowrap;padding:8px 18px;border-radius:9999px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:#fff;color:var(--muted)}
-.cpill:hover,.cpill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.hero-bg{background:linear-gradient(160deg,#FDF8F5 0%,#FAF0EB 40%,#F0DDD3 100%)}
-.dc{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-@media(max-width:640px){.cart-sb{width:100%!important}}
-.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-body.touch-active .cpill:hover:not(.on){background:#fff;color:var(--muted);border-color:var(--border);transform:none;}
+:root {
+  --bg-main: #FCF9F7;
+  --bg-card: #FFFFFF;
+  --fg-main: #241A1B;
+  --fg-muted: #826F70;
+  --fg-subtle: #AA999A;
+  --border-light: #F0E3DC;
+  --border-hover: #DBC3B7;
+  --accent-gold: #C69A55;
+  --accent-gold-dark: #A97E3B;
+  --accent-gold-light: #FBF4E8;
+  --rose-soft: #F9EBE6;
+  --rose-accent: #E8A7A1;
+  --emerald-main: #1D8A58;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --shadow-sm: 0 2px 8px -2px rgba(61, 44, 46, 0.05);
+  --shadow-md: 0 10px 25px -4px rgba(61, 44, 46, 0.08), 0 4px 10px -2px rgba(61, 44, 46, 0.03);
+  --shadow-lg: 0 20px 40px -8px rgba(61, 44, 46, 0.12), 0 8px 16px -4px rgba(61, 44, 46, 0.04);
+  --shadow-gold: 0 8px 24px -4px rgba(198, 154, 85, 0.28);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--fg-main);
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+/* Glassmorphism & Micro-effects */
+.glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(240, 227, 220, 0.7);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Luxury animations */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(198, 154, 85, 0.45); }
+  70% { box-shadow: 0 0 0 16px rgba(198, 154, 85, 0); }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.page-anim { animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.float-subtle { animation: floatGentle 5s ease-in-out infinite; }
+.wa-glow { animation: pulseGold 2.5s infinite; }
+
+.skeleton-lux {
+  background: linear-gradient(90deg, #F3EAE4 25%, #FAF4F0 50%, #F3EAE4 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+  border-radius: 12px;
+}
+
+/* Product Card Styling */
+.product-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-lg);
+}
+.product-card .img-box img {
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.product-card:hover .img-box img {
+  transform: scale(1.08);
+}
+
+/* Badges */
+.badge-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.badge-promo { background: #E53E3E; color: #FFF; box-shadow: 0 2px 8px rgba(229,62,62,0.3); }
+.badge-ready { background: #1D8A58; color: #FFF; box-shadow: 0 2px 8px rgba(29,138,88,0.25); }
+.badge-star { background: var(--accent-gold); color: #FFF; box-shadow: 0 2px 8px rgba(198,154,85,0.3); }
+.badge-fem { background: #FCE7F3; color: #9D174D; border: 1px solid #FBCFE8; }
+.badge-masc { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
+.badge-uni { background: #F3E8FF; color: #6B21A8; border: 1px solid #E9D5FF; }
+
+/* Interactive Filter Chips */
+.filter-chip {
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 1px solid var(--border-light);
+  background: #FFFFFF;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+.filter-chip:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-dark);
+  background: var(--accent-gold-light);
+  transform: translateY(-1px);
+}
+.filter-chip.active {
+  background: var(--fg-main);
+  color: #FFFFFF;
+  border-color: var(--fg-main);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Custom Buttons */
+.btn-gold {
+  background: linear-gradient(135deg, #D4A864 0%, #B68A44 100%);
+  color: #FFFFFF;
+  border: none;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow-gold);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.btn-gold:hover {
+  filter: brightness(1.07);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(198, 154, 85, 0.4);
+}
+.btn-gold:active { transform: translateY(0); }
+
+.btn-whatsapp {
+  background: #25D366;
+  color: #FFFFFF;
+  border: none;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  box-shadow: 0 6px 18px -2px rgba(37, 211, 102, 0.35);
+  font-size: 0.95rem;
+}
+.btn-whatsapp:hover {
+  background: #20BA5A;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -2px rgba(37, 211, 102, 0.45);
+}
+
+.btn-secondary {
+  background: #FFFFFF;
+  color: var(--fg-main);
+  border: 1.5px solid var(--border-light);
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-dark);
+  background: var(--accent-gold-light);
+}
+
+/* Drawers & Overlays */
+.drawer-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(36, 26, 27, 0.45);
+  backdrop-filter: blur(4px);
+}
+.drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+.drawer-panel {
+  transform: translateX(100%);
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.drawer-panel.open { transform: translateX(0); }
+
+/* Custom Inputs */
+.lux-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-size: 0.95rem;
+  color: var(--fg-main);
+  outline: none;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+.lux-input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 4px rgba(198, 154, 85, 0.15);
+}
+
+/* Toast Notification */
+.lux-toast {
+  animation: slideToastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeToastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 2.7s forwards;
+}
+@keyframes slideToastIn { from { transform: translateY(-20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+@keyframes fadeToastOut { to { transform: translateY(-10px); opacity: 0; } }
+
+/* Toggle Switch */
+.tog { position: relative; width: 44px; height: 24px; cursor: pointer; display: inline-block; }
+.tog input { opacity: 0; width: 0; height: 0; position: absolute; }
+.tog-slider { position: absolute; inset: 0; background: #D6C7C0; border-radius: 24px; transition: 0.3s; }
+.tog-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #FFF; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.tog input:checked + .tog-slider { background: var(--accent-gold); }
+.tog input:checked + .tog-slider::before { transform: translateX(20px); }
+
+/* Quick Utilities */
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
+
 <body>
-<div id="app">
-  <header id="hd" class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-rose-200/50 transition-shadow duration-300"></header>
-  <main id="mc" class="pt-16 pb-20 md:pb-8 min-h-screen"></main>
-  <div id="cov" class="cart-ov fixed inset-0 bg-black/40 z-50" onclick="A.tCart(false)"></div>
-  <aside id="csb" class="cart-sb fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white z-50 shadow-2xl flex flex-col"></aside>
-  <a id="waf" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Gostaria%20de%20saber%20mais%20sobre%20os%20produtos." target="_blank" rel="noopener" class="fixed bottom-24 md:bottom-8 right-4 z-30 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white text-2xl shadow-lg wa-pulse hover:scale-110 transition-transform" aria-label="Falar no WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-  <div id="tc" class="fixed top-20 right-4 z-[60] flex flex-col gap-2"></div>
-  <nav id="mn" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-rose-200/50 md:hidden"></nav>
-  <footer id="ft" class="hidden md:block bg-warm-800 text-white/80"></footer>
+<div id="app" class="relative">
+
+  <!-- TOP ANNOUNCEMENT BANNER -->
+  <div class="bg-[#241A1B] text-[#F3EAE4] py-2 px-4 text-center text-xs tracking-wider flex items-center justify-center gap-2 font-medium">
+    <span>✨ Atendimento Personalizado no WhatsApp</span>
+    <span class="opacity-40">•</span>
+    <span>Produtos 100% Originais</span>
+    <span class="opacity-40 hidden sm:inline">•</span>
+    <span class="hidden sm:inline">Embalagem de Presente Disponível 🎁</span>
+  </div>
+
+  <!-- HEADER NAVBAR -->
+  <header id="navbar" class="sticky top-0 z-40 glass transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#/" class="flex items-center gap-3 no-underline group">
+        <div class="relative w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] shadow-md transition-transform group-hover:scale-105">
+          <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg" 
+               alt="Vivi Boty" 
+               class="w-full h-full rounded-full object-cover bg-white"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="w-full h-full rounded-full bg-[#3D2C2E] text-white font-serif font-bold text-sm hidden items-center justify-center">VB</div>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B] tracking-tight group-hover:text-[#A97E3B] transition-colors leading-none">Vivi Boty</span>
+          <span class="text-[10px] tracking-[0.2em] uppercase text-[#826F70] font-semibold mt-1">Perfumaria & Presentes</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-[#826F70]">
+        <a href="#/" class="hover:text-[#C69A55] transition-colors">Início</a>
+        <a href="#/produtos" class="hover:text-[#C69A55] transition-colors">Catálogo Completo</a>
+        <a href="#/produtos?destaque=true" class="hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#A97E3B]">
+          <i class="fa-solid fa-sparkles text-xs"></i> Mais Desejados
+        </a>
+      </nav>
+
+      <!-- Action Buttons (Favorites, Cart, Admin) -->
+      <div class="flex items-center gap-3">
+        <!-- Favorites Button -->
+        <button onclick="A.showFavModal()" class="relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] flex items-center justify-center transition-all" aria-label="Favoritos" title="Meus Favoritos">
+          <i class="fa-regular fa-heart text-base"></i>
+          <span id="fav-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-[#E8A7A1] text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+
+        <!-- Cart Bag Button -->
+        <button onclick="A.toggleCart(true)" class="relative flex items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm hover:shadow" aria-label="Sacola">
+          <i class="fa-solid fa-bag-shopping text-sm text-[#D4A864]"></i>
+          <span class="hidden sm:inline">Sacola</span>
+          <span id="cart-counter" class="bg-[#C69A55] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
+        </button>
+
+        <!-- Admin Shortcut -->
+        <a href="#/admin" class="w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel Administrativo" title="Painel Admin">
+          <i class="fa-solid fa-lock text-xs"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+  <main id="main-content" class="min-h-screen pb-24 md:pb-12"></main>
+
+  <!-- CART SIDEBAR DRAWER -->
+  <div id="cart-overlay" class="drawer-overlay fixed inset-0 z-50" onclick="A.toggleCart(false)"></div>
+  <aside id="cart-drawer" class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-50 shadow-2xl flex flex-col border-l border-[#F0E3DC]">
+    <!-- Header -->
+    <div class="p-6 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-full bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center">
+          <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+        <div>
+          <h3 class="font-serif font-bold text-lg text-[#241A1B] leading-none">Minha Sacola</h3>
+          <span id="cart-drawer-count" class="text-xs text-[#826F70]">0 itens adicionados</span>
+        </div>
+      </div>
+      <button onclick="A.toggleCart(false)" class="w-9 h-9 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center transition-colors" aria-label="Fechar">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Items List -->
+    <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+    <!-- Extra Options & Checkout Footer -->
+    <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
+      <!-- Gift Option Checkbox -->
+      <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
+        <input type="checkbox" id="gift-checkbox" class="mt-0.5 rounded text-[#C69A55] focus:ring-[#C69A55]">
+        <div class="text-xs">
+          <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]"></i> É para presente?</span>
+          <p class="text-[#826F70] mt-0.5">Avisaremos a Vivi para caprichar em uma embalagem linda de presente.</p>
+        </div>
+      </label>
+
+      <!-- Subtotal and CTA -->
+      <div>
+        <div class="flex justify-between items-baseline mb-3">
+          <span class="text-sm font-semibold text-[#826F70]">Total estimado:</span>
+          <span id="cart-total-price" class="font-serif font-bold text-2xl text-[#241A1B]">R$ 0,00</span>
+        </div>
+        <button onclick="A.checkoutWhatsApp()" class="btn-whatsapp w-full py-3.5 text-base shadow-lg">
+          <i class="fa-brands fa-whatsapp text-xl"></i>
+          <span>Finalizar Pedido no WhatsApp</span>
+        </button>
+        <button onclick="A.clearCart()" class="w-full text-center text-xs font-semibold text-[#826F70] hover:text-[#E53E3E] mt-3 py-1 transition-colors">
+          Esvaziar sacola
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- QUICK VIEW MODAL -->
+  <div id="quickview-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="quickview-card" class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 sm:p-8 relative">
+      <button onclick="A.closeQuickView()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="quickview-content"></div>
+    </div>
+  </div>
+
+  <!-- FAVORITES DRAWER/MODAL -->
+  <div id="fav-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 relative">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#F0E3DC]">
+        <h3 class="font-serif font-bold text-xl text-[#241A1B] flex items-center gap-2">
+          <i class="fa-solid fa-heart text-[#E8A7A1]"></i> Meus Favoritos
+        </h3>
+        <button onclick="A.closeFavModal()" class="w-8 h-8 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="fav-items-list" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- FLOATING WHATSAPP PILL -->
+  <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado." 
+     target="_blank" rel="noopener" 
+     class="fixed bottom-24 md:bottom-8 right-5 z-40 bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline" 
+     aria-label="Falar no WhatsApp">
+    <i class="fa-brands fa-whatsapp text-2xl"></i>
+    <span class="hidden sm:inline font-bold text-sm tracking-wide">Falar com a Vivi</span>
+  </a>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0E3DC] md:hidden px-4 py-2 flex justify-around items-center">
+    <a href="#/" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-house text-lg"></i> Início
+    </a>
+    <a href="#/produtos" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-magnifying-glass text-lg"></i> Catálogo
+    </a>
+    <button onclick="A.showFavModal()" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-regular fa-heart text-lg"></i> Desejos
+    </button>
+    <button onclick="A.toggleCart(true)" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-bag-shopping text-lg"></i> Sacola
+    </button>
+    <a href="#/admin" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-user-shield text-lg"></i> Admin
+    </a>
+  </nav>
+
+  <!-- LUXURY FOOTER -->
+  <footer class="bg-[#1C1415] text-[#D8CECA] border-t border-white/5 pt-16 pb-12">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <!-- Col 1: About -->
+      <div class="md:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] p-0.5">
+            <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg" alt="Vivi Boty" class="w-full h-full rounded-full object-cover">
+          </div>
+          <span class="font-serif font-bold text-2xl text-white">Vivi Carvalho Boty</span>
+        </div>
+        <p class="text-sm text-[#A89C98] leading-relaxed max-w-md">
+          Sua consultora de beleza e bem-estar de confiança. Seleção refinada de fragrâncias, cosméticos e kits para presente com agilidade e carinho.
+        </p>
+        <div class="flex items-center gap-4 text-lg pt-2">
+          <a href="https://wa.me/5518997871211" target="_blank" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+      </div>
+
+      <!-- Col 2: Brands -->
+      <div class="space-y-3">
+        <h4 class="font-serif font-bold text-white tracking-wide">Marcas Parceiras</h4>
+        <ul class="text-sm space-y-2 text-[#A89C98]">
+          <li><a href="#/produtos?marca=O%20Botic%C3%A1rio" class="hover:text-[#D4A864] transition-colors">O Boticário</a></li>
+          <li><a href="#/produtos?marca=Natura" class="hover:text-[#D4A864] transition-colors">Natura</a></li>
+          <li><a href="#/produtos?marca=Eudora" class="hover:text-[#D4A864] transition-colors">Eudora</a></li>
+          <li><span class="text-xs text-[#706461]">100% Originais e Lacrados</span></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Dúvidas / FAQ -->
+      <div class="space-y-3">
+        <h4 class="font-serif font-bold text-white tracking-wide">Como Funciona?</h4>
+        <div class="text-xs text-[#A89C98] space-y-2 leading-relaxed">
+          <p><strong>1. Escolha:</strong> Navegue pelos produtos e monte sua sacola.</p>
+          <p><strong>2. WhatsApp:</strong> Envie o orçamento formatado com um clique.</p>
+          <p><strong>3. Receba:</strong> A Vivi confirma a entrega e você recebe com total segurança.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#706461]">
+      <p>© 2026 Vivi Boty — Todos os direitos reservados.</p>
+      <p class="flex items-center gap-1">Feito com muito carinho para a melhor mãe e consultora 💖</p>
+    </div>
+  </footer>
+
 </div>
 
+<!-- APPLICATION JAVASCRIPT LOGIC -->
 <script>
 const VIVI_LOGO = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg';
 const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
+const WA_PHONE = '5518997871211';
+const WA_BASE = 'https://wa.me/' + WA_PHONE;
 
-
-const WA = '5518997871211';
-const WAB = 'https://wa.me/' + WA;
-const CATS = ['Perfumes','Maquiagem','Cremes','Corpo e Banho','Presentes','Outros'];
-const BRANDS = ['O Boticário','Natura','Eudora','Outros'];
-const GENEROS = ['','Feminino','Masculino','Unissex'];
-const CK = 'viviboty_cart';
+const CATS = ['Perfumes', 'Maquiagem', 'Cremes', 'Corpo e Banho', 'Presentes', 'Outros'];
+const BRANDS = ['O Boticário', 'Natura', 'Eudora', 'Outros'];
+const GENEROS = ['', 'Feminino', 'Masculino', 'Unissex'];
+const CART_KEY = 'viviboty_cart_v2';
+const FAV_KEY = 'viviboty_favs_v2';
 
 const A = {
-  sb: null, user: null, isAdmin: false, isPlaceholder: false,
-  prods: [], pmap: {}, cart: [], route: '',
-  filt: { q:'', cat:'', brand:'', promo:false, genero:'' },
-
-  chkPlaceholder() {
-    this.isPlaceholder = !SUPABASE_URL || !SUPABASE_ANON_KEY ||
-      SUPABASE_URL.includes('SEU-PROJETO') || SUPABASE_ANON_KEY.includes('SUA-ANON-KEY');
-  },
+  sb: null,
+  user: null,
+  isAdmin: false,
+  prods: [],
+  pmap: {},
+  cart: [],
+  favs: [],
+  route: '',
+  filt: { q: '', cat: '', brand: '', promo: false, ready: false, genero: '', sort: 'relevancia' },
 
   async init() {
-if (location.pathname.startsWith('/produto/')) {
-  location.hash = '#' + location.pathname;
-  history.replaceState(null, '', '/');
-}
-    this.loadCart();
-    this.chkPlaceholder();
-    if (!this.isPlaceholder && window.supabase) {
+    this.loadStorage();
+    if (window.supabase) {
       try {
         this.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const { data: sd } = await this.sb.auth.getSession();
@@ -121,56 +560,319 @@ if (location.pathname.startsWith('/produto/')) {
           this.user = sd.session.user;
           this.isAdmin = await this.chkAdmin();
         }
-        this.sb.auth.onAuthStateChange((ev, s) => {
+        this.sb.auth.onAuthStateChange((_, s) => {
           this.user = s && s.user ? s.user : null;
           if (!this.user) this.isAdmin = false;
         });
-      } catch (e) { console.warn('Erro ao conectar Supabase:', e); this.sb = null; }
+      } catch (e) {
+        console.warn('Erro ao conectar Supabase:', e);
+      }
     }
-    this.rHd(); this.rMn(); this.rFt(); this.rCS();
-    document.getElementById('mc').addEventListener('click', e => this.pClick(e));
-    window.addEventListener('hashchange', () => this.go(location.hash));
-    this.go(location.hash || '#/');
+    this.updateCartUI();
+    this.updateFavUI();
+
+    window.addEventListener('hashchange', () => this.handleRoute(location.hash));
+    this.handleRoute(location.hash || '#/');
   },
 
-  go(h) { this.route = h || '#/'; this.rPage(); window.scrollTo({top:0,behavior:'smooth'}); },
-
-  async rPage() {
-    const m = document.getElementById('mc');
-    m.innerHTML = '<div class="flex justify-center py-20"><div class="skeleton w-64 h-8"></div></div>';
-    if (this.route === '#/' || this.route === '#/home') return await this.rHome();
-    if (this.route === '#/produtos') return await this.rProds();
-    if (this.route.startsWith('#/produto/')) return await this.rDetail(this.route.split('#/produto/')[1]);
-    if (this.route === '#/admin') return this.rLogin();
-    if (this.route === '#/admin/produtos') return await this.rAProds();
-    if (this.route === '#/admin/novo') return this.rAForm();
-    if (this.route.startsWith('#/admin/editar/')) return await this.rAForm(this.route.split('#/admin/editar/')[1]);
-    return await this.rHome();
+  loadStorage() {
+    try { this.cart = JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { this.cart = []; }
+    try { this.favs = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { this.favs = []; }
   },
-
-  msgPlaceholder() {
-    return '<div class="page-enter max-w-lg mx-auto px-4 py-20 text-center"><div class="bg-white rounded-2xl border border-rose-100 p-8"><div class="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-50 flex items-center justify-center text-rose-300"><i class="fa-solid fa-gear text-2xl"></i></div><h2 class="font-display font-bold text-xl text-warm-800 mb-2">Ainda n\u00e3o configurado</h2><p class="text-sm text-warm-800/50 leading-relaxed">As credenciais do Supabase ainda precisam ser preenchidas no c\u00f3digo do site.</p></div></div>';
-  },
-
-  msgErro(titulo, desc) {
-    return '<div class="page-enter max-w-lg mx-auto px-4 py-20 text-center"><div class="bg-white rounded-2xl border border-rose-100 p-8"><div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center text-red-300"><i class="fa-solid fa-circle-exclamation text-2xl"></i></div><h2 class="font-display font-bold text-xl text-warm-800 mb-2">'+titulo+'</h2><p class="text-sm text-warm-800/50 leading-relaxed">'+desc+'</p><button onclick="location.reload()" class="btn-p mt-5 text-sm">Tentar novamente</button></div></div>';
-  },
+  saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(this.cart)); this.updateCartUI(); },
+  saveFavs() { localStorage.setItem(FAV_KEY, JSON.stringify(this.favs)); this.updateFavUI(); },
 
   async fetchProds() {
     if (!this.sb) return false;
     try {
-      const {data, error} = await this.sb.from('products').select('*').order('data_criacao',{ascending:false});
+      const { data, error } = await this.sb.from('products').select('*').order('data_criacao', { ascending: false });
       if (error) throw error;
-      this.prods = (data||[]).map(p => ({...p, preco: parseFloat(p.preco)||0, genero: p.genero||''}));
-      this.pmap = {}; this.prods.forEach(p => this.pmap[p.id] = p);
+      this.prods = (data || []).map(p => ({
+        ...p,
+        preco: parseFloat(p.preco) || 0,
+        genero: p.genero || '',
+        estoque: parseInt(p.estoque) || 0
+      }));
+      this.pmap = {};
+      this.prods.forEach(p => { this.pmap[p.id] = p; });
       return true;
-    } catch (e) { console.error('Erro ao carregar produtos:', e); this.prods = []; this.pmap = {}; return false; }
+    } catch (e) {
+      console.error('Erro ao buscar produtos:', e);
+      return false;
+    }
   },
 
-  async ensureProds() { if (this.prods.length > 0) return true; return await this.fetchProds(); },
+  async ensureProds() {
+    if (this.prods.length > 0) return true;
+    return await this.fetchProds();
+  },
 
-  filtered() {
-    return this.prods.filter(p => {
+  async chkAdmin() {
+    if (!this.user || !this.sb) return false;
+    try {
+      const { data } = await this.sb.from('admin_users').select('id').eq('email', this.user.email).single();
+      return !!data;
+    } catch { return false; }
+  },
+
+  handleRoute(h) {
+    this.route = h || '#/';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.renderPage();
+  },
+
+  async renderPage() {
+    const main = document.getElementById('main-content');
+    main.innerHTML = '<div class="max-w-6xl mx-auto px-4 py-24 flex flex-col items-center justify-center gap-4"><div class="skeleton-lux w-48 h-8"></div><div class="skeleton-lux w-80 h-4"></div></div>';
+
+    if (this.route === '#/' || this.route === '#/home') return await this.viewHome();
+    if (this.route.startsWith('#/produtos')) return await this.viewCatalog();
+    if (this.route.startsWith('#/produto/')) return await this.viewDetail(this.route.split('#/produto/')[1]);
+    if (this.route === '#/admin') return this.viewAdminLogin();
+    if (this.route === '#/admin/produtos') return await this.viewAdminProducts();
+    if (this.route === '#/admin/novo') return this.viewAdminForm();
+    if (this.route.startsWith('#/admin/editar/')) return await this.viewAdminForm(this.route.split('#/admin/editar/')[1]);
+    return await this.viewHome();
+  },
+
+  /* ====================== HOME VIEW ====================== */
+  async viewHome() {
+    await this.ensureProds();
+    const featured = this.prods.filter(p => p.ativo && p.destaque).slice(0, 4);
+    const promos = this.prods.filter(p => p.ativo && p.promocao).slice(0, 4);
+
+    const main = document.getElementById('main-content');
+    main.innerHTML = `
+      <div class="page-anim">
+        <!-- HERO SECTION -->
+        <section class="relative overflow-hidden bg-gradient-to-b from-[#FAF4F0] via-[#FCF9F7] to-[#FCF9F7] pt-12 pb-20 px-4 sm:px-6">
+          <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#F0E3DC] shadow-sm text-xs font-bold text-[#A97E3B]">
+                <i class="fa-solid fa-sparkles"></i> Perfumaria, Maquiagem & Cosméticos
+              </div>
+              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241A1B] leading-[1.12]">
+                O encanto da beleza com o carinho do atendimento <span class="italic text-[#A97E3B]">exclusivo</span>.
+              </h1>
+              <p class="text-base sm:text-lg text-[#826F70] leading-relaxed max-w-xl mx-auto lg:mx-0">
+                Explore as marcas mais amadas: <strong>O Boticário, Natura e Eudora</strong>. Escolha seus favoritos, monte sua sacola e feche seu pedido com a Vivi no WhatsApp sem burocracia.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start pt-2">
+                <a href="#/produtos" class="btn-gold">
+                  <i class="fa-solid fa-store"></i> Explorar Catálogo
+                </a>
+                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Adorei o seu site e gostaria de tirar uma dúvida sobre seus produtos.')}" target="_blank" class="btn-secondary">
+                  <i class="fa-brands fa-whatsapp text-lg text-[#25D366]"></i> Falar com a Vivi
+                </a>
+              </div>
+              
+              <!-- Trust Indicators -->
+              <div class="grid grid-cols-3 gap-4 pt-6 border-t border-[#F0E3DC]/80 max-w-lg mx-auto lg:mx-0 text-left">
+                <div>
+                  <p class="font-serif font-bold text-lg text-[#241A1B]">100%</p>
+                  <p class="text-[11px] text-[#826F70] font-medium">Originais & Lacrados</p>
+                </div>
+                <div>
+                  <p class="font-serif font-bold text-lg text-[#241A1B]">Rápido</p>
+                  <p class="text-[11px] text-[#826F70] font-medium">Pronta Entrega</p>
+                </div>
+                <div>
+                  <p class="font-serif font-bold text-lg text-[#241A1B]">Mimos 🎁</p>
+                  <p class="text-[11px] text-[#826F70] font-medium">Embalagens Especiais</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Visual Badge Collage -->
+            <div class="lg:col-span-5 flex justify-center relative">
+              <div class="relative w-72 sm:w-84 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle">
+                <img src="${VIVI_LOGO}" alt="Vivi Boty Catálogo" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                <div class="absolute bottom-6 left-6 right-6 text-white text-left">
+                  <span class="badge-tag badge-star mb-2">Consultora Oficial</span>
+                  <p class="font-serif font-bold text-xl">Vivi Carvalho</p>
+                  <p class="text-xs text-white/80">Atendimento acolhedor e dedicado</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- VALUE PROPOSITIONS -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-xl bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-truck-fast"></i></div>
+              <div><h4 class="font-bold text-sm text-[#241A1B]">Pronta Entrega</h4><p class="text-xs text-[#826F70]">Envio ágil e cuidadoso</p></div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-xl bg-[#FCE7F3] text-[#9D174D] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
+              <div><h4 class="font-bold text-sm text-[#241A1B]">Para Presentear</h4><p class="text-xs text-[#826F70]">Kits com sacolas lindas</p></div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-xl bg-[#DCFCE7] text-[#1D8A58] flex items-center justify-center text-xl shrink-0"><i class="fa-brands fa-whatsapp"></i></div>
+              <div><h4 class="font-bold text-sm text-[#241A1B]">Sem Senhas</h4><p class="text-xs text-[#826F70]">Compra direto no chat</p></div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-badge-check"></i></div>
+              <div><h4 class="font-bold text-sm text-[#241A1B]">Garantia Real</h4><p class="text-xs text-[#826F70]">Marcas homologadas</p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FEATURED SHOWCASE -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+          <div class="flex items-end justify-between mb-8">
+            <div>
+              <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Seleção da Consultora</span>
+              <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#241A1B] mt-1">Destaques Mais Desejados</h2>
+            </div>
+            <a href="#/produtos" class="text-sm font-bold text-[#A97E3B] hover:text-[#C69A55] flex items-center gap-1.5 transition-colors">
+              Ver tudo <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            ${featured.map(p => this.renderCard(p)).join('')}
+          </div>
+        </section>
+
+        <!-- SPECIAL PROMOTIONS BANNER -->
+        ${promos.length > 0 ? `
+          <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+            <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2] shadow-sm">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                  <span class="w-10 h-10 rounded-full bg-[#E53E3E] text-white flex items-center justify-center text-lg"><i class="fa-solid fa-fire"></i></span>
+                  <div>
+                    <h3 class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B]">Ofertas & Promoções Especiais</h3>
+                    <p class="text-xs sm:text-sm text-[#826F70]">Condições limitadas enquanto durarem os estoques</p>
+                  </div>
+                </div>
+                <a href="#/produtos?promo=true" class="btn-secondary text-xs sm:text-sm">Ver Todas</a>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                ${promos.map(p => this.renderCard(p)).join('')}
+              </div>
+            </div>
+          </section>
+        ` : ''}
+
+      </div>
+    `;
+  },
+
+  /* ====================== CATALOG VIEW ====================== */
+  async viewCatalog() {
+    await this.ensureProds();
+
+    // Check query params
+    const hash = this.route;
+    if (hash.includes('?')) {
+      const qParams = new URLSearchParams(hash.split('?')[1]);
+      if (qParams.has('marca')) this.filt.brand = decodeURIComponent(qParams.get('marca'));
+      if (qParams.has('categoria')) this.filt.cat = decodeURIComponent(qParams.get('categoria'));
+      if (qParams.has('promo')) this.filt.promo = true;
+      if (qParams.has('destaque')) this.filt.ready = false;
+    }
+
+    const filtered = this.getFilteredProds();
+
+    const main = document.getElementById('main-content');
+    main.innerHTML = `
+      <div class="page-anim max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <!-- Header Title & Fast Search -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-3xl font-serif font-bold text-[#241A1B]">Catálogo de Produtos</h1>
+            <p class="text-xs sm:text-sm text-[#826F70] mt-0.5">${filtered.length} produtos disponíveis para você</p>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="relative w-full md:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#AA999A]"></i>
+            <input type="text" id="catalog-search" placeholder="Buscar por perfume, hidratante..." 
+                   value="${this.escape(this.filt.q)}"
+                   class="lux-input pl-11 pr-4 py-2.5 text-sm">
+            ${this.filt.q ? `
+              <button onclick="A.clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA999A] hover:text-[#241A1B] text-xs">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Filter Chips Row 1: Categories -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
+          <button onclick="A.setCategory('')" class="filter-chip ${!this.filt.cat && !this.filt.promo ? 'active' : ''}">
+            Todos
+          </button>
+          <button onclick="A.togglePromoFilter()" class="filter-chip ${this.filt.promo ? 'active' : ''} text-[#E53E3E]">
+            <i class="fa-solid fa-tag"></i> Promoções
+          </button>
+          ${CATS.map(c => `
+            <button onclick="A.setCategory('${c}')" class="filter-chip ${this.filt.cat === c ? 'active' : ''}">
+              ${c}
+            </button>
+          `).join('')}
+        </div>
+
+        <!-- Filter Chips Row 2: Brands & Gênero -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-[#F0E3DC]">
+          <div class="flex items-center gap-2 overflow-x-auto scrollbar-none">
+            <span class="text-xs font-bold text-[#AA999A] uppercase tracking-wider mr-1">Marcas:</span>
+            <button onclick="A.setBrand('')" class="filter-chip text-xs ${!this.filt.brand ? 'active' : ''}">Todas</button>
+            ${BRANDS.map(b => `
+              <button onclick="A.setBrand('${b}')" class="filter-chip text-xs ${this.filt.brand === b ? 'active' : ''}">${b}</button>
+            `).join('')}
+          </div>
+
+          <!-- Sort Select -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium text-[#826F70]">Ordenar por:</span>
+            <select id="sort-selector" onchange="A.setSort(this.value)" class="lux-input py-1.5 px-3 text-xs w-auto bg-white">
+              <option value="relevancia" ${this.filt.sort === 'relevancia' ? 'selected' : ''}>Mais Relevantes</option>
+              <option value="menor_preco" ${this.filt.sort === 'menor_preco' ? 'selected' : ''}>Menor Preço</option>
+              <option value="maior_preco" ${this.filt.sort === 'maior_preco' ? 'selected' : ''}>Maior Preço</option>
+              <option value="nome_asc" ${this.filt.sort === 'nome_asc' ? 'selected' : ''}>Nome (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Products Grid / Empty State -->
+        ${filtered.length === 0 ? `
+          <div class="text-center py-24 bg-white rounded-3xl border border-[#F0E3DC] p-8 max-w-lg mx-auto">
+            <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+            <h3 class="font-serif font-bold text-xl text-[#241A1B] mb-2">Nenhum produto encontrado</h3>
+            <p class="text-xs sm:text-sm text-[#826F70] mb-6">Tente remover alguns filtros ou buscar por outro termo.</p>
+            <button onclick="A.resetFilters()" class="btn-secondary text-xs">Limpar todos os filtros</button>
+          </div>
+        ` : `
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            ${filtered.map(p => this.renderCard(p)).join('')}
+          </div>
+        `}
+
+      </div>
+    `;
+
+    // Search input listener
+    let deb;
+    document.getElementById('catalog-search')?.addEventListener('input', e => {
+      clearTimeout(deb);
+      deb = setTimeout(() => {
+        this.filt.q = e.target.value;
+        this.viewCatalog();
+      }, 300);
+    });
+  },
+
+  getFilteredProds() {
+    let list = this.prods.filter(p => {
       if (!p.ativo) return false;
       if (this.filt.q && !p.nome.toLowerCase().includes(this.filt.q.toLowerCase())) return false;
       if (this.filt.cat && p.categoria !== this.filt.cat) return false;
@@ -179,313 +881,784 @@ if (location.pathname.startsWith('/produto/')) {
       if (this.filt.genero && p.genero !== this.filt.genero) return false;
       return true;
     });
+
+    if (this.filt.sort === 'menor_preco') list.sort((a, b) => a.preco - b.preco);
+    else if (this.filt.sort === 'maior_preco') list.sort((a, b) => b.preco - a.preco);
+    else if (this.filt.sort === 'nome_asc') list.sort((a, b) => a.nome.localeCompare(b.nome));
+
+    return list;
   },
 
-  async chkAdmin() {
-    if (!this.user || !this.sb) return false;
-    try { const {data} = await this.sb.from('admin_users').select('id').eq('email', this.user.email).single(); return !!data; }
-    catch { return false; }
+  setCategory(c) { this.filt.cat = c; this.filt.promo = false; this.viewCatalog(); },
+  setBrand(b) { this.filt.brand = b; this.viewCatalog(); },
+  togglePromoFilter() { this.filt.promo = !this.filt.promo; this.filt.cat = ''; this.viewCatalog(); },
+  setSort(s) { this.filt.sort = s; this.viewCatalog(); },
+  clearSearch() { this.filt.q = ''; this.viewCatalog(); },
+  resetFilters() { this.filt = { q: '', cat: '', brand: '', promo: false, ready: false, genero: '', sort: 'relevancia' }; this.viewCatalog(); },
+
+  /* ====================== PRODUCT CARD COMPONENT ====================== */
+  renderCard(p) {
+    const isFav = this.favs.includes(p.id);
+    const badges = [];
+    if (p.promocao) badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire"></i> Promo</span>');
+    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check"></i> Pronta Entrega</span>');
+    if (p.destaque) badges.push('<span class="badge-tag badge-star">Destaque</span>');
+    if (p.genero === 'Feminino') badges.push('<span class="badge-tag badge-fem">Fem</span>');
+    if (p.genero === 'Masculino') badges.push('<span class="badge-tag badge-masc">Masc</span>');
+
+    return `
+      <div class="product-card group" data-id="${p.id}">
+        <!-- Image Box -->
+        <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${p.id}')">
+          ${p.imagem 
+            ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover" loading="lazy">` 
+            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`
+          }
+          
+          <!-- Badges Overlay -->
+          <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">
+            ${badges.join('')}
+          </div>
+
+          <!-- Favorite Button Overlay -->
+          <button onclick="event.stopPropagation(); A.toggleFav('${p.id}')" 
+                  class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-colors">
+            <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs"></i>
+          </button>
+
+          <!-- Quick Preview Pill Overlay (Hover desktop) -->
+          <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onclick="event.stopPropagation(); A.openQuickView('${p.id}')" 
+                    class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white transition-all flex items-center gap-1.5">
+              <i class="fa-solid fa-eye text-[11px]"></i> Espiar
+            </button>
+          </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A]">${this.escape(p.marca || 'Boutique')}</span>
+            <h3 onclick="A.goToDetail('${p.id}')" class="font-semibold text-xs sm:text-sm text-[#241A1B] line-clamp-2 mt-0.5 cursor-pointer hover:text-[#A97E3B] transition-colors leading-snug">
+              ${this.escape(p.nome)}
+            </h3>
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-[#F0E3DC] flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[10px] text-[#AA999A] block leading-none">Preço</span>
+              <span class="font-serif font-bold text-sm sm:text-base text-[#241A1B]">${this.formatMoney(p.preco)}</span>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button onclick="event.stopPropagation(); A.addToCart('${p.id}')" 
+                      class="w-8 h-8 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center transition-colors" 
+                      title="Adicionar à sacola">
+                <i class="fa-solid fa-plus text-xs"></i>
+              </button>
+              <button onclick="event.stopPropagation(); A.orderWhatsAppDirect('${p.id}')" 
+                      class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors" 
+                      title="Pedir no WhatsApp">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   },
 
-  pClick(e) {
-    const wb = e.target.closest('[data-wa]');
-    if (wb) { e.stopPropagation(); const p = this.pmap[wb.dataset.wa]; if(p) this.pWA(p); return; }
-    const cb = e.target.closest('[data-add]');
-    if (cb) { e.stopPropagation(); const p = this.pmap[cb.dataset.add]; if(p) this.addCart(p); return; }
-    const cd = e.target.closest('[data-pid]');
-    if (cd && !wb && !cb) location.hash = '#/produto/' + cd.dataset.pid;
+  goToDetail(id) {
+    location.hash = '#/produto/' + id;
   },
 
-  logo(cls) {
-    return '<img src="'+VIVI_LOGO+'" alt="Vivi Boty" class="'+cls+' rounded-full object-cover" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="'+cls+' rounded-full bg-gradient-to-br from-rose-300 to-gold-400 items-center justify-center text-white font-display font-bold text-sm" style="display:none">VB</div>';
-  },
+  /* ====================== DETAIL VIEW ====================== */
+  async viewDetail(id) {
+    await this.ensureProds();
+    const p = this.pmap[id];
+    const main = document.getElementById('main-content');
 
-  rHd() {
-    document.getElementById('hd').innerHTML = '<div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between"><a href="#/" class="flex items-center gap-2.5 no-underline">'+this.logo('w-9 h-9')+'<span class="font-display font-bold text-lg text-warm-800 hidden sm:block">Vivi Boty</span></a><nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-warm-800/70"><a href="#/" class="hover:text-gold-500 transition-colors">In\u00edcio</a><a href="#/produtos" class="hover:text-gold-500 transition-colors">Produtos</a><button onclick="A.tCart(true)" class="relative hover:text-gold-500 transition-colors" aria-label="Sacola"><i class="fa-solid fa-bag-shopping text-lg"></i><span id="bh" class="absolute -top-2 -right-2.5 min-w-[20px] h-5 bg-gold-400 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 hidden">0</span></button><a href="#/admin" class="hover:text-gold-500 transition-colors" aria-label="Admin"><i class="fa-solid fa-user-shield"></i></a></nav><div class="flex md:hidden items-center gap-4"><button onclick="A.tCart(true)" class="relative text-warm-800" aria-label="Sacola"><i class="fa-solid fa-bag-shopping text-lg"></i><span id="bm" class="absolute -top-2 -right-2.5 min-w-[20px] h-5 bg-gold-400 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 hidden">0</span></button></div></div>';
-  },
-
-  rMn() {
-    document.getElementById('mn').innerHTML = '<div class="flex justify-around items-center h-16 text-warm-800/60"><a href="#/" class="flex flex-col items-center gap-0.5 text-[10px] font-semibold hover:text-gold-500 transition-colors"><i class="fa-solid fa-home text-lg"></i>In\u00edcio</a><a href="#/produtos" class="flex flex-col items-center gap-0.5 text-[10px] font-semibold hover:text-gold-500 transition-colors"><i class="fa-solid fa-store text-lg"></i>Produtos</a><button onclick="A.tCart(true)" class="flex flex-col items-center gap-0.5 text-[10px] font-semibold hover:text-gold-500 transition-colors"><i class="fa-solid fa-bag-shopping text-lg"></i>Sacola</button><a href="#/admin" class="flex flex-col items-center gap-0.5 text-[10px] font-semibold hover:text-gold-500 transition-colors"><i class="fa-solid fa-user-shield text-lg"></i>Admin</a></div>';
-  },
-
-  rFt() {
-    document.getElementById('ft').innerHTML = '<div class="max-w-7xl mx-auto px-6 py-12"><div class="grid grid-cols-1 md:grid-cols-3 gap-10"><div><div class="flex items-center gap-2.5 mb-4">'+this.logo('w-10 h-10')+'<span class="font-display font-bold text-xl text-white">Vivi Boty</span></div><p class="text-white/50 text-sm leading-relaxed">Perfumes, cosm\u00e9ticos e presentes selecionados com atendimento direto pelo WhatsApp.</p></div><div><h4 class="font-display font-bold text-white mb-4">Navega\u00e7\u00e3o</h4><ul class="space-y-2 text-sm"><li><a href="#/" class="text-white/50 hover:text-gold-400 transition-colors">In\u00edcio</a></li><li><a href="#/produtos" class="text-white/50 hover:text-gold-400 transition-colors">Produtos</a></li></ul></div><div><h4 class="font-display font-bold text-white mb-4">Contato</h4><ul class="space-y-2 text-sm"><li><a href="'+WAB+'?text=Ol%C3%A1%2C%20Vivi!" target="_blank" class="text-white/50 hover:text-gold-400 transition-colors"><i class="fa-brands fa-whatsapp mr-2"></i>WhatsApp</a></li><li><a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" class="text-white/50 hover:text-gold-400 transition-colors"><i class="fa-brands fa-facebook mr-2"></i>Facebook</a></li></ul></div></div><div class="border-t border-white/10 mt-10 pt-6 text-center text-xs text-white/30">Vivi Boty \u2014 Consultora Independente</div></div>';
-  },
-
-  /* ======== CARRINHO ======== */
-  rCS() { this.updBdg(); this.renderSB(); },
-
-  renderSB() {
-    const s = document.getElementById('csb');
-    const tot = this.cart.reduce((a,i)=>a+i.preco*i.q,0);
-    const cnt = this.cart.reduce((a,i)=>a+i.q,0);
-    let items = '';
-    if (this.cart.length === 0) {
-      items = '<div class="flex flex-col items-center justify-center h-full text-center text-warm-800/30"><i class="fa-solid fa-bag-shopping text-5xl mb-4"></i><p class="font-semibold">Sua sacola est\u00e1 vazia</p><p class="text-sm mt-1">Adicione produtos para fazer seu or\u00e7amento</p></div>';
-    } else {
-      this.cart.forEach((it,i) => {
-        items += '<div class="flex gap-3 py-3 '+(i>0?'border-t border-rose-100':'')+'"><div class="w-16 h-16 rounded-lg overflow-hidden bg-rose-50 flex-shrink-0">'+(it.img?'<img src="'+it.img+'" alt="'+this.esc(it.nome)+'" class="w-full h-full object-cover" loading="lazy">':'<div class="w-full h-full flex items-center justify-center text-rose-200"><i class="fa-solid fa-image"></i></div>')+'</div><div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate">'+this.esc(it.nome)+'</p><p class="text-gold-500 font-bold text-sm">'+this.fmt(it.preco)+'</p><div class="flex items-center gap-2 mt-1"><button onclick="A.updQ(\''+it.id+'\','+(it.q-1)+')" class="w-7 h-7 rounded-full border border-rose-200 text-xs flex items-center justify-center hover:bg-rose-50 transition-colors '+(it.q<=1?'opacity-30 cursor-default':'')+'" '+(it.q<=1?'disabled':'')+'>-</button><span class="text-sm font-semibold w-6 text-center">'+it.q+'</span><button onclick="A.updQ(\''+it.id+'\','+(it.q+1)+')" class="w-7 h-7 rounded-full border border-rose-200 text-xs flex items-center justify-center hover:bg-rose-50 transition-colors">+</button><button onclick="A.rmCart(\''+it.id+'\')" class="ml-auto text-warm-800/30 hover:text-red-400 text-sm transition-colors"><i class="fa-solid fa-trash-can"></i></button></div></div></div>';
-      });
+    if (!p) {
+      main.innerHTML = `
+        <div class="page-anim text-center py-24">
+          <p class="text-[#826F70]">Produto não encontrado ou indisponível.</p>
+          <a href="#/produtos" class="btn-gold mt-4 inline-flex">Voltar ao Catálogo</a>
+        </div>
+      `;
+      return;
     }
-    let footer = '';
-    if (this.cart.length > 0) footer = '<div class="border-t border-rose-100 px-5 py-4 space-y-3"><div class="flex justify-between font-bold text-lg"><span>Total estimado</span><span class="text-gold-500">'+this.fmt(tot)+'</span></div><button onclick="A.sendCart()" class="btn-wa w-full"><i class="fa-brands fa-whatsapp text-lg"></i> Enviar or\u00e7amento pelo WhatsApp</button><button onclick="A.clrCart()" class="w-full text-center text-sm text-warm-800/40 hover:text-warm-800/70 transition-colors py-1">Limpar sacola</button></div>';
-    s.innerHTML = '<div class="flex items-center justify-between px-5 py-4 border-b border-rose-100"><h3 class="font-display font-bold text-lg">Sua Sacola ('+cnt+')</h3><button onclick="A.tCart(false)" class="text-warm-800/50 hover:text-warm-800 text-xl" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button></div><div class="flex-1 overflow-y-auto px-5 py-4">'+items+'</div>'+footer;
-    this.updBdg();
+
+    const isFav = this.favs.includes(p.id);
+    const related = this.prods.filter(x => x.ativo && x.id !== p.id && (x.categoria === p.categoria || x.marca === p.marca)).slice(0, 4);
+
+    main.innerHTML = `
+      <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        
+        <!-- Breadcrumb navigation -->
+        <div class="flex items-center gap-2 text-xs text-[#826F70] mb-6">
+          <a href="#/" class="hover:text-[#241A1B]">Início</a>
+          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]"></i>
+          <a href="#/produtos" class="hover:text-[#241A1B]">Catálogo</a>
+          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]"></i>
+          <span class="text-[#241A1B] font-semibold truncate">${this.escape(p.nome)}</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 sm:p-10 border border-[#F0E3DC] shadow-sm mb-16">
+          
+          <!-- Product Image Showcase -->
+          <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
+            ${p.imagem 
+              ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover">` 
+              : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`
+            }
+            <button onclick="A.toggleFav('${p.id}')" 
+                    class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md text-[#241A1B] flex items-center justify-center transition-transform hover:scale-110">
+              <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base"></i>
+            </button>
+          </div>
+
+          <!-- Product Buy Info -->
+          <div class="md:col-span-7 flex flex-col justify-center space-y-5">
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#A97E3B] bg-[#FBF4E8] px-2.5 py-1 rounded-md">${this.escape(p.marca || 'Boutique')}</span>
+                ${p.promocao ? '<span class="badge-tag badge-promo">Em Oferta</span>' : ''}
+                ${p.pronta_entrega ? '<span class="badge-tag badge-ready">Pronta Entrega</span>' : ''}
+                ${p.genero ? `<span class="badge-tag badge-fem">${p.genero}</span>` : ''}
+              </div>
+              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#241A1B] leading-tight">${this.escape(p.nome)}</h1>
+              <p class="font-serif font-bold text-3xl text-[#241A1B] text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+            </div>
+
+            <div class="border-t border-b border-[#F0E3DC] py-4 text-sm text-[#826F70] leading-relaxed">
+              <p>${this.escape(p.descricao || 'Produto original selecionado com carinho pela Vivi Boty. Entre em contato para saber sobre notas olfativas, combinações ou kits de presente.')}</p>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="space-y-3 pt-2">
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="A.addToCart('${p.id}')" class="btn-gold flex-1 py-3.5">
+                  <i class="fa-solid fa-bag-shopping"></i> Adicionar à Sacola
+                </button>
+                <button onclick="A.orderWhatsAppDirect('${p.id}')" class="btn-whatsapp flex-1 py-3.5">
+                  <i class="fa-brands fa-whatsapp text-xl"></i> Comprar no WhatsApp
+                </button>
+              </div>
+              <button onclick="A.shareProduct('${p.id}')" class="w-full text-xs font-semibold text-[#826F70] hover:text-[#241A1B] py-2 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-share-nodes"></i> Compartilhar este produto com amigos
+              </button>
+            </div>
+
+            <!-- Perks box -->
+            <div class="grid grid-cols-2 gap-3 pt-4 text-xs text-[#826F70]">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-check-circle text-[#1D8A58]"></i> Produto 100% Original
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-gift text-[#C69A55]"></i> Opção para Presente
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Related products -->
+        ${related.length > 0 ? `
+          <div class="mt-12">
+            <h3 class="font-serif font-bold text-2xl text-[#241A1B] mb-6">Você Também Pode Gostar</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              ${related.map(r => this.renderCard(r)).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+      </div>
+    `;
   },
 
-  tCart(o) { document.getElementById('csb').classList.toggle('open',o); document.getElementById('cov').classList.toggle('open',o); document.body.style.overflow=o?'hidden':''; },
-  updBdg() { const c=this.cart.reduce((a,i)=>a+i.q,0); ['bh','bm'].forEach(id=>{const e=document.getElementById(id);if(e){e.textContent=c;e.classList.toggle('hidden',c===0);}}); },
-  addCart(p) { const ex=this.cart.find(i=>i.id===p.id); if(ex)ex.q++;else this.cart.push({id:p.id,nome:p.nome,preco:p.preco,img:p.imagem,q:1}); this.saveCart();this.renderSB();this.toast('Produto adicionado \u00e0 sacola','success'); },
-  rmCart(id) { this.cart=this.cart.filter(i=>i.id!==id);this.saveCart();this.renderSB(); },
-  updQ(id,q) { if(q<1)return;const it=this.cart.find(i=>i.id===id);if(it){it.q=q;this.saveCart();this.renderSB();} },
-  clrCart() { this.cart=[];this.saveCart();this.renderSB(); },
-  loadCart() { try{this.cart=JSON.parse(localStorage.getItem(CK))||[];}catch{this.cart=[];} },
-  saveCart() { localStorage.setItem(CK,JSON.stringify(this.cart)); },
-
-  sendCart() {
-    const lines=this.cart.map(i=>i.q+'x '+i.nome+' - '+this.fmt(i.preco));
-    const tot=this.cart.reduce((a,i)=>a+i.preco*i.q,0);
-    window.open(WAB+'?text='+encodeURIComponent('Ol\u00e1, Vivi! Gostaria de fazer um pedido/or\u00e7amento com estes produtos:\n\n'+lines.join('\n')+'\n\nTotal estimado: '+this.fmt(tot)+'\n\nPode me confirmar a disponibilidade?'),'_blank');
+  /* ====================== CART LOGIC ====================== */
+  toggleCart(open) {
+    document.getElementById('cart-drawer').classList.toggle('open', open);
+    document.getElementById('cart-overlay').classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) this.renderCartDrawer();
   },
 
-  pWA(p) {
-    window.open(WAB+'?text='+encodeURIComponent('Ol\u00e1, Vivi! Tenho interesse neste produto: '+p.nome+' - '+this.fmt(p.preco)+'. Pode me passar mais informa\u00e7\u00f5es?'),'_blank');
+  addToCart(id) {
+    const p = this.pmap[id];
+    if (!p) return;
+    const existing = this.cart.find(item => item.id === id);
+    if (existing) {
+      existing.q++;
+    } else {
+      this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.imagem, q: 1 });
+    }
+    this.saveCart();
+    this.showToast('Produto adicionado à sua sacola!', 'success');
   },
 
-  /* ======== HOME ======== */
-  async rHome() {
-    if (this.isPlaceholder) { document.getElementById('mc').innerHTML = this.msgPlaceholder(); return; }
-    const ok = await this.ensureProds();
-    if (!ok) { document.getElementById('mc').innerHTML = this.msgErro('N\u00e3o foi poss\u00edvel carregar os produtos','Verifique sua conex\u00e3o e tente novamente.'); return; }
-    const feat = this.prods.filter(p=>p.ativo&&p.destaque).slice(0,4);
-    let featHTML = feat.length === 0
-      ? '<div class="text-center py-16 text-warm-800/30"><i class="fa-solid fa-wand-magic-sparkles text-4xl mb-4"></i><p class="font-semibold">Em breve novidades por aqui!</p><p class="text-sm mt-1">Fale com a Vivi no WhatsApp para saber o que j\u00e1 est\u00e1 dispon\u00edvel.</p></div>'
-      : '<div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">'+feat.map(p=>this.pCard(p)).join('')+'</div>';
-
-    document.getElementById('mc').innerHTML = '<div class="page-enter">'
-      +'<section class="hero-bg relative overflow-hidden min-h-[92vh] flex items-center justify-center"><div class="dc w-72 h-72 bg-rose-300/20 top-10 -left-20 float-a"></div><div class="dc w-96 h-96 bg-gold-300/15 bottom-0 -right-20 float-b"></div><div class="dc w-48 h-48 bg-rose-400/10 top-1/3 right-1/4 float-a"></div><div class="relative z-10 text-center px-4 max-w-2xl mx-auto"><div class="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden shadow-xl shadow-rose-300/20 ring-4 ring-white/60">'+this.logo('w-full h-full')+'</div><h1 class="font-display font-bold text-5xl sm:text-6xl md:text-7xl text-warm-800 mb-4 leading-tight">Vivi Boty</h1><p class="text-lg sm:text-xl text-warm-800/60 font-light leading-relaxed mb-8 max-w-lg mx-auto">Perfumes, cosm\u00e9ticos e presentes escolhidos com carinho para voc\u00ea.</p><div class="flex flex-col sm:flex-row gap-3 justify-center"><a href="#/produtos" class="btn-p">Ver produtos</a><a href="'+WAB+'?text=Ol%C3%A1%2C%20Vivi!%20Gostaria%20de%20saber%20mais%20sobre%20os%20produtos." target="_blank" class="btn-wa"><i class="fa-brands fa-whatsapp text-lg"></i> Falar com a Vivi</a></div></div><div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-warm-800/20"><i class="fa-solid fa-chevron-down text-2xl"></i></div></section>'
-      +'<section class="py-16 px-4 max-w-6xl mx-auto"><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div class="bg-white rounded-2xl p-5 text-center border border-rose-100 hover:shadow-lg hover:shadow-rose-200/30 transition-all duration-300 hover:-translate-y-1"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-rose-50 flex items-center justify-center text-gold-500 text-xl"><i class="fa-solid fa-truck-fast"></i></div><h3 class="font-display font-bold text-sm text-warm-800 mb-1">Pronta Entrega</h3><p class="text-xs text-warm-800/50 leading-relaxed">Envio imediato dos dispon\u00edveis</p></div><div class="bg-white rounded-2xl p-5 text-center border border-rose-100 hover:shadow-lg hover:shadow-rose-200/30 transition-all duration-300 hover:-translate-y-1"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-rose-50 flex items-center justify-center text-gold-500 text-xl"><i class="fa-solid fa-comments"></i></div><h3 class="font-display font-bold text-sm text-warm-800 mb-1">WhatsApp</h3><p class="text-xs text-warm-800/50 leading-relaxed">Atendimento direto e personalizado</p></div><div class="bg-white rounded-2xl p-5 text-center border border-rose-100 hover:shadow-lg hover:shadow-rose-200/30 transition-all duration-300 hover:-translate-y-1"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-rose-50 flex items-center justify-center text-gold-500 text-xl"><i class="fa-solid fa-gift"></i></div><h3 class="font-display font-bold text-sm text-warm-800 mb-1">Presentes</h3><p class="text-xs text-warm-800/50 leading-relaxed">Op\u00e7\u00f5es perfeitas para presentear</p></div><div class="bg-white rounded-2xl p-5 text-center border border-rose-100 hover:shadow-lg hover:shadow-rose-200/30 transition-all duration-300 hover:-translate-y-1"><div class="w-12 h-12 mx-auto mb-3 rounded-full bg-rose-50 flex items-center justify-center text-gold-500 text-xl"><i class="fa-solid fa-tags"></i></div><h3 class="font-display font-bold text-sm text-warm-800 mb-1">Promo\u00e7\u00f5es</h3><p class="text-xs text-warm-800/50 leading-relaxed">Condi\u00e7\u00f5es especiais para voc\u00ea</p></div></div></section>'
-      +'<section class="py-12 px-4 bg-rose-50/50"><div class="max-w-3xl mx-auto text-center"><p class="text-warm-800/60 leading-relaxed text-lg">Aqui voc\u00ea encontra produtos de beleza, perfumes e presentes selecionados com atendimento direto pelo WhatsApp. Marcas como <strong class="text-warm-800">O Botic\u00e1rio</strong>, <strong class="text-warm-800">Natura</strong>, <strong class="text-warm-800">Eudora</strong> e muitas outras.</p></div></section>'
-      +'<section class="py-16 px-4 max-w-6xl mx-auto"><div class="flex items-center justify-between mb-8"><h2 class="font-display font-bold text-2xl sm:text-3xl text-warm-800">Destaques</h2><a href="#/produtos" class="text-gold-500 font-semibold text-sm hover:text-gold-600 transition-colors">Ver todos <i class="fa-solid fa-arrow-right ml-1"></i></a></div>'+featHTML+'</section>'
-      +'<section class="py-16 px-4 bg-gradient-to-r from-rose-300/20 via-gold-300/10 to-rose-300/20"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-2xl sm:text-3xl text-warm-800 mb-4">Quer encontrar algo espec\u00edfico?</h2><p class="text-warm-800/60 mb-6">Me chame no WhatsApp e eu te ajudo a encontrar o produto ideal!</p><a href="'+WAB+'?text=Ol%C3%A1%2C%20Vivi!%20Estou%20procurando%20um%20produto%20espec%C3%ADfico." target="_blank" class="btn-wa"><i class="fa-brands fa-whatsapp text-lg"></i> Falar com a Vivi</a></div></section>'
-    +'</div>';
+  updateCartQty(id, qty) {
+    if (qty <= 0) {
+      this.cart = this.cart.filter(i => i.id !== id);
+    } else {
+      const it = this.cart.find(i => i.id === id);
+      if (it) it.q = qty;
+    }
+    this.saveCart();
+    this.renderCartDrawer();
   },
 
-  /* ======== PRODUTOS ======== */
-  async rProds() {
-    if (this.isPlaceholder) { document.getElementById('mc').innerHTML = this.msgPlaceholder(); return; }
-    const ok = await this.ensureProds();
-    if (!ok) { document.getElementById('mc').innerHTML = this.msgErro('N\u00e3o foi poss\u00edvel carregar os produtos','Verifique sua conex\u00e3o e tente novamente.'); return; }
-    const fl = this.filtered();
-    let catBtns = '<button class="cpill '+((!this.filt.cat&&!this.filt.promo)?'on':'')+'" data-fc="">Todos</button>';
-    CATS.forEach(c => { catBtns += '<button class="cpill '+(this.filt.cat===c?'on':'')+'" data-fc="'+c+'">'+c+'</button>'; });
-    catBtns += '<button class="cpill '+(this.filt.promo?'on':'')+'" data-fc="__p" '+(this.filt.promo?'style="background:#e74c3c;border-color:#e74c3c;color:#fff"':'')+'>Promo\u00e7\u00f5es</button>';
-    let brandBtns = '<button class="cpill text-xs '+((!this.filt.brand)?'on':'')+'" data-fb="">Todas as marcas</button>';
-    BRANDS.forEach(b => { brandBtns += '<button class="cpill text-xs '+(this.filt.brand===b?'on':'')+'" data-fb="'+b+'">'+b+'</button>'; });
-    let genBtns = '<button class="cpill text-xs '+((!this.filt.genero)?'on':'')+'" data-fg="">Todos</button>';
-    ['Feminino','Masculino','Unissex'].forEach(g => { genBtns += '<button class="cpill text-xs '+(this.filt.genero===g?'on':'')+'" data-fg="'+g+'">'+g+'</button>'; });
-    let grid = fl.length === 0
-      ? '<div class="text-center py-20 text-warm-800/30"><i class="fa-solid fa-box-open text-5xl mb-4"></i><p class="font-semibold text-lg">Nenhum produto encontrado</p><p class="text-sm mt-1">Tente ajustar os filtros ou buscar por outro nome.</p></div>'
-      : '<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">'+fl.map(p=>this.pCard(p)).join('')+'</div>';
-
-    document.getElementById('mc').innerHTML = '<div class="page-enter max-w-7xl mx-auto px-4 py-6">'
-      +'<div class="relative mb-5"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-warm-800/30"></i><input type="text" id="si" placeholder="Buscar por nome do produto..." value="'+this.esc(this.filt.q)+'" class="pl-11 pr-4 py-3 rounded-xl bg-white border-rose-200 shadow-sm"></div>'
-      +'<div class="flex gap-2 overflow-x-auto pb-3 mb-2" style="-ms-overflow-style:none;scrollbar-width:none;">'+catBtns+'</div>'
-      +'<div class="flex gap-2 overflow-x-auto pb-3 mb-2" style="-ms-overflow-style:none;scrollbar-width:none;">'+brandBtns+'</div>'
-      +'<div class="flex gap-2 overflow-x-auto pb-4 mb-5" style="-ms-overflow-style:none;scrollbar-width:none;">'+genBtns+'</div>'
-      +'<p class="text-sm text-warm-800/40 mb-4">'+fl.length+' produto'+(fl.length!==1?'s':'')+' encontrado'+(fl.length!==1?'s':'')+'</p>'
-      +grid+'</div>';
-
-    let db;
-    document.getElementById('si')?.addEventListener('input',e=>{clearTimeout(db);db=setTimeout(()=>{this.filt.q=e.target.value;this.rProds();},300);});
-    document.querySelectorAll('[data-fc]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.fc;if(v==='__p'){this.filt.promo=!this.filt.promo;this.filt.cat='';}else{this.filt.cat=v;this.filt.promo=false;}this.rProds();}));
-    document.querySelectorAll('[data-fb]').forEach(b=>b.addEventListener('click',()=>{this.filt.brand=b.dataset.fb;this.rProds();}));
-    document.querySelectorAll('[data-fg]').forEach(b=>b.addEventListener('click',()=>{this.filt.genero=b.dataset.fg;this.rProds();}));
+  clearCart() {
+    this.cart = [];
+    this.saveCart();
+    this.renderCartDrawer();
   },
 
-  /* ======== CARD ======== */
-  pCard(p) {
-    const bd=[];
-    if(p.promocao) bd.push('<span class="bdg bg-red-500 text-white">Promo</span>');
-    if(p.pronta_entrega) bd.push('<span class="bdg bg-emerald-500 text-white">Pronta Entrega</span>');
-    if(p.destaque) bd.push('<span class="bdg bg-gold-400 text-white">Destaque</span>');
-    if(p.genero) bd.push('<span class="bdg '+(p.genero==='Masculino'?'bg-sky-100 text-sky-700':'bg-pink-100 text-pink-700')+'">'+p.genero+'</span>');
-    return '<div class="p-card bg-white rounded-2xl overflow-hidden border border-rose-100 hover:shadow-xl hover:shadow-rose-200/20 transition-all duration-300 hover:-translate-y-1 cursor-pointer group" data-pid="'+p.id+'">'
-      +'<div class="relative aspect-square overflow-hidden bg-rose-50">'
-        +(p.imagem?'<img src="'+p.imagem+'" alt="'+this.esc(p.nome)+'" class="p-img w-full h-full object-cover" loading="lazy">':'<div class="w-full h-full flex items-center justify-center text-rose-200"><i class="fa-solid fa-image text-4xl"></i></div>')
-        +(bd.length?'<div class="absolute top-2 left-2 flex flex-wrap gap-1">'+bd.join('')+'</div>':'')
-        +'<div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1"><button data-add="'+p.id+'" class="w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center text-gold-500 hover:bg-gold-500 hover:text-white transition-colors" aria-label="Adicionar \u00e0 sacola"><i class="fa-solid fa-plus text-sm"></i></button></div>'
-      +'</div>'
-      +'<div class="p-3 sm:p-4">'
-        +'<p class="text-[10px] sm:text-xs text-warm-800/40 font-semibold uppercase tracking-wider mb-1">'+this.esc(p.marca||'')+'</p>'
-        +'<h3 class="font-semibold text-sm sm:text-base text-warm-800 leading-tight mb-2 line-clamp-2">'+this.esc(p.nome)+'</h3>'
-        +'<div class="flex items-center justify-between">'
-          +'<span class="text-gold-500 font-bold text-base sm:text-lg">'+this.fmt(p.preco)+'</span>'
-          +'<button data-wa="'+p.id+'" class="w-8 h-8 rounded-full bg-[#25D366]/10 text-[#25D366] flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-colors" aria-label="Pedir no WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></button>'
-        +'</div>'
-      +'</div></div>';
+  updateCartUI() {
+    const totalQty = this.cart.reduce((sum, item) => sum + item.q, 0);
+    const counter = document.getElementById('cart-counter');
+    if (counter) counter.textContent = totalQty;
+    const drawerCount = document.getElementById('cart-drawer-count');
+    if (drawerCount) drawerCount.textContent = `${totalQty} ite${totalQty === 1 ? 'm' : 'ns'} selecionado${totalQty === 1 ? '' : 's'}`;
   },
 
-  /* ======== DETALHE ======== */
-  async rDetail(id) {
-    if (this.isPlaceholder) { document.getElementById('mc').innerHTML = this.msgPlaceholder(); return; }
-    const ok = await this.ensureProds();
-    if (!ok) { document.getElementById('mc').innerHTML = this.msgErro('N\u00e3o foi poss\u00edvel carregar o produto','Verifique sua conex\u00e3o e tente novamente.'); return; }
-    const p=this.pmap[id];
-    if(!p){document.getElementById('mc').innerHTML='<div class="page-enter text-center py-20 text-warm-800/40"><p>Produto n\u00e3o encontrado.</p><a href="#/produtos" class="text-gold-500 mt-2 inline-block">Voltar aos produtos</a></div>';return;}
-    const bd=[];
-    if(p.promocao) bd.push('<span class="bdg bg-red-500 text-white">Promo\u00e7\u00e3o</span>');
-    if(p.pronta_entrega) bd.push('<span class="bdg bg-emerald-500 text-white">Pronta Entrega</span>');
-    if(p.destaque) bd.push('<span class="bdg bg-gold-400 text-white">Destaque</span>');
-    if(p.genero) bd.push('<span class="bdg '+(p.genero==='Masculino'?'bg-sky-100 text-sky-700':'bg-pink-100 text-pink-700')+'">'+p.genero+'</span>');
-    const rel=this.prods.filter(x=>x.ativo&&x.id!==p.id&&(x.categoria===p.categoria||x.marca===p.marca)).slice(0,4);
-    document.getElementById('mc').innerHTML = '<div class="page-enter max-w-5xl mx-auto px-4 py-6">'
-      +'<a href="#/produtos" class="inline-flex items-center gap-2 text-sm text-warm-800/50 hover:text-gold-500 transition-colors mb-6"><i class="fa-solid fa-arrow-left"></i> Voltar</a>'
-      +'<div class="grid md:grid-cols-2 gap-8 mb-16">'
-        +'<div class="aspect-square rounded-2xl overflow-hidden bg-rose-50 border border-rose-100">'+(p.imagem?'<img src="'+p.imagem+'" alt="'+this.esc(p.nome)+'" class="w-full h-full object-cover">':'<div class="w-full h-full flex items-center justify-center text-rose-200"><i class="fa-solid fa-image text-6xl"></i></div>')+'</div>'
-        +'<div class="flex flex-col justify-center">'
-          +(bd.length?'<div class="flex flex-wrap gap-2 mb-3">'+bd.join('')+'</div>':'')
-          +'<p class="text-sm text-warm-800/40 font-semibold uppercase tracking-wider mb-2">'+this.esc(p.marca||'')+(p.categoria?' \u00b7 '+this.esc(p.categoria):'')+(p.genero?' \u00b7 '+this.esc(p.genero):'')+'</p>'
-          +'<h1 class="font-display font-bold text-2xl sm:text-3xl text-warm-800 mb-3">'+this.esc(p.nome)+'</h1>'
-          +'<p class="text-gold-500 font-bold text-3xl mb-4">'+this.fmt(p.preco)+'</p>'
-          +'<p class="text-warm-800/60 leading-relaxed mb-6">'+this.esc(p.descricao||'Produto selecionado com carinho pela Vivi Boty.')+'</p>'
-          +'<div class="flex flex-col sm:flex-row gap-3">'
-            +'<button data-add="'+p.id+'" class="btn-p"><i class="fa-solid fa-bag-shopping"></i> Adicionar \u00e0 sacola</button>'
-            +'<button data-wa="'+p.id+'" class="btn-wa"><i class="fa-brands fa-whatsapp text-lg"></i> Quero no WhatsApp</button>'
-          +'</div>'
-          +'<div class="mt-6 flex items-center gap-2 text-sm text-warm-800/40"><i class="fa-solid '+(p.estoque>0?'fa-circle-check text-emerald-400':'fa-circle-xmark text-red-300')+'"></i>'+(p.estoque>0?'Produto dispon\u00edvel':'Consulte disponibilidade')+'</div>'
-        +'</div>'
-      +'</div>'
-      +(rel.length?'<div><h2 class="font-display font-bold text-xl text-warm-800 mb-6">Voc\u00ea tamb\u00e9m pode gostar</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">'+rel.map(r=>this.pCard(r)).join('')+'</div></div>':'')
-    +'</div>';
+  renderCartDrawer() {
+    const container = document.getElementById('cart-items-container');
+    const totalEl = document.getElementById('cart-total-price');
+    const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
+
+    totalEl.textContent = this.formatMoney(total);
+
+    if (this.cart.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-20 text-[#AA999A]">
+          <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-4 text-2xl">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <p class="font-serif font-bold text-lg text-[#241A1B]">Sua sacola está vazia</p>
+          <p class="text-xs text-[#826F70] mt-1">Navegue pelos produtos e escolha seus preferidos.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = this.cart.map(item => `
+      <div class="flex gap-3 py-3 border-b border-[#F0E3DC] items-center">
+        <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#FAF0EB] shrink-0 border border-[#F0E3DC]">
+          ${item.img 
+            ? `<img src="${item.img}" alt="${this.escape(item.nome)}" class="w-full h-full object-cover">` 
+            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>`
+          }
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-xs text-[#241A1B] truncate">${this.escape(item.nome)}</p>
+          <p class="font-serif font-bold text-sm text-[#A97E3B] mt-0.5">${this.formatMoney(item.preco)}</p>
+          
+          <div class="flex items-center gap-2 mt-2">
+            <button onclick="A.updateCartQty('${item.id}', ${item.q - 1})" 
+                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]">
+              -
+            </button>
+            <span class="text-xs font-bold text-[#241A1B] w-5 text-center">${item.q}</span>
+            <button onclick="A.updateCartQty('${item.id}', ${item.q + 1})" 
+                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]">
+              +
+            </button>
+            <button onclick="A.updateCartQty('${item.id}', 0)" 
+                    class="ml-auto text-[#AA999A] hover:text-[#E53E3E] text-xs transition-colors p-1" title="Remover item">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
   },
 
-  /* ======== ADMIN LOGIN ======== */
-  rLogin() {
-    if (this.user && this.isAdmin) { location.hash = '#/admin/produtos'; return; }
-    if (this.isPlaceholder) { document.getElementById('mc').innerHTML = this.msgPlaceholder(); return; }
-    document.getElementById('mc').innerHTML = '<div class="page-enter min-h-[80vh] flex items-center justify-center px-4"><div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-8 w-full max-w-sm"><div class="text-center mb-6"><div class="w-14 h-14 mx-auto mb-3 rounded-full overflow-hidden">'+this.logo('w-full h-full')+'</div><h1 class="font-display font-bold text-xl text-warm-800">\u00c1rea Administrativa</h1><p class="text-sm text-warm-800/40 mt-1">Fa\u00e7a login para gerenciar seus produtos</p></div><div class="space-y-4"><div><label class="block text-sm font-semibold text-warm-800 mb-1">E-mail</label><input type="email" id="le" placeholder="seu@email.com"></div><div><label class="block text-sm font-semibold text-warm-800 mb-1">Senha</label><input type="password" id="lp" placeholder="Sua senha"></div><div id="ler" class="text-red-500 text-sm hidden"></div><button onclick="A.doLogin()" class="btn-p w-full">Entrar</button></div></div></div>';
+  checkoutWhatsApp() {
+    if (this.cart.length === 0) {
+      this.showToast('Adicione produtos à sacola antes de finalizar!', 'error');
+      return;
+    }
+
+    const isGift = document.getElementById('gift-checkbox')?.checked;
+    const lines = this.cart.map(i => `• ${i.q}x ${i.nome} (${this.formatMoney(i.preco * i.q)})`);
+    const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
+
+    let message = `Olá, Vivi! Gostaria de fazer o pedido dos seguintes produtos pelo site:\n\n`
+      + lines.join('\n')
+      + `\n\n💰 Total estimado: ${this.formatMoney(total)}`;
+
+    if (isGift) {
+      message += `\n🎁 *Observação:* Por favor, caprichar na embalagem para presente!`;
+    }
+
+    message += `\n\nPode me confirmar a disponibilidade e forma de entrega?`;
+
+    window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank');
   },
 
-  async doLogin() {
-    const email=document.getElementById('le').value.trim(), pass=document.getElementById('lp').value, err=document.getElementById('ler');
-    if(!email||!pass){err.textContent='Preencha todos os campos.';err.classList.remove('hidden');return;}
+  orderWhatsAppDirect(id) {
+    const p = this.pmap[id];
+    if (!p) return;
+    const text = `Olá, Vivi! Tenho interesse no produto *${p.nome}* no valor de ${this.formatMoney(p.preco)}. Pode me passar mais detalhes e disponibilidade?`;
+    window.open(`${WA_BASE}?text=${encodeURIComponent(text)}`, '_blank');
+  },
+
+  /* ====================== FAVORITES LOGIC ====================== */
+  toggleFav(id) {
+    if (this.favs.includes(id)) {
+      this.favs = this.favs.filter(x => x !== id);
+      this.showToast('Item removido dos favoritos');
+    } else {
+      this.favs.push(id);
+      this.showToast('Item salvo nos seus favoritos!', 'success');
+    }
+    this.saveFavs();
+    this.renderPage(); // refresh badges
+  },
+
+  updateFavUI() {
+    const badge = document.getElementById('fav-badge');
+    if (!badge) return;
+    badge.textContent = this.favs.length;
+    badge.classList.toggle('hidden', this.favs.length === 0);
+  },
+
+  showFavModal() {
+    const modal = document.getElementById('fav-overlay');
+    const container = document.getElementById('fav-items-list');
+    modal.classList.add('open');
+
+    if (this.favs.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-12 text-[#AA999A]">
+          <i class="fa-regular fa-heart text-4xl mb-3 text-[#E8A7A1]"></i>
+          <p class="font-serif font-bold text-base text-[#241A1B]">Você ainda não tem favoritos</p>
+          <p class="text-xs text-[#826F70] mt-1">Clique no coração de qualquer produto para salvar aqui.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = this.favs.map(id => {
+      const p = this.pmap[id];
+      if (!p) return '';
+      return `
+        <div class="flex items-center justify-between p-3 rounded-2xl border border-[#F0E3DC] hover:border-[#C69A55] transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0">
+              ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+            </div>
+            <div>
+              <p class="font-semibold text-xs text-[#241A1B] truncate max-w-[180px]">${this.escape(p.nome)}</p>
+              <p class="font-serif font-bold text-xs text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="A.addToCart('${p.id}'); A.closeFavModal();" class="btn-gold py-1.5 px-3 text-xs">
+              <i class="fa-solid fa-plus"></i> Sacola
+            </button>
+            <button onclick="A.toggleFav('${p.id}'); A.showFavModal();" class="text-[#AA999A] hover:text-[#E53E3E] p-1.5">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  closeFavModal() {
+    document.getElementById('fav-overlay').classList.remove('open');
+  },
+
+  /* ====================== QUICK VIEW MODAL ====================== */
+  openQuickView(id) {
+    const p = this.pmap[id];
+    if (!p) return;
+    const content = document.getElementById('quickview-content');
+    content.innerHTML = `
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+        <div class="aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
+          ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+        </div>
+        <div class="space-y-3">
+          <span class="text-xs uppercase font-bold text-[#A97E3B]">${this.escape(p.marca || 'Boutique')}</span>
+          <h2 class="font-serif font-bold text-xl text-[#241A1B]">${this.escape(p.nome)}</h2>
+          <p class="font-serif font-bold text-2xl text-[#241A1B] text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+          <p class="text-xs text-[#826F70] leading-relaxed">${this.escape(p.descricao || 'Produto original com a qualidade garantida Vivi Boty.')}</p>
+          <div class="pt-2 flex flex-col gap-2">
+            <button onclick="A.addToCart('${p.id}'); A.closeQuickView();" class="btn-gold w-full text-xs py-3">
+              <i class="fa-solid fa-bag-shopping"></i> Adicionar à Sacola
+            </button>
+            <button onclick="A.orderWhatsAppDirect('${p.id}'); A.closeQuickView();" class="btn-whatsapp w-full text-xs py-3">
+              <i class="fa-brands fa-whatsapp text-lg"></i> Pedir no WhatsApp
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById('quickview-overlay').classList.add('open');
+  },
+
+  closeQuickView() {
+    document.getElementById('quickview-overlay').classList.remove('open');
+  },
+
+  shareProduct(id) {
+    const p = this.pmap[id];
+    const url = window.location.origin + window.location.pathname + '#/produto/' + id;
+    if (navigator.share) {
+      navigator.share({ title: p.nome, text: `Olha esse produto na Vivi Boty: ${p.nome}`, url });
+    } else {
+      navigator.clipboard.writeText(url);
+      this.showToast('Link do produto copiado com sucesso!', 'success');
+    }
+  },
+
+  /* ====================== ADMIN VIEWS ====================== */
+  viewAdminLogin() {
+    if (this.user && this.isAdmin) {
+      location.hash = '#/admin/produtos';
+      return;
+    }
+    const main = document.getElementById('main-content');
+    main.innerHTML = `
+      <div class="page-anim min-h-[75vh] flex items-center justify-center px-4">
+        <div class="bg-white rounded-3xl border border-[#F0E3DC] shadow-lg p-8 w-full max-w-sm text-center">
+          <div class="w-14 h-14 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <h1 class="font-serif font-bold text-2xl text-[#241A1B]">Painel da Vivi</h1>
+          <p class="text-xs text-[#826F70] mt-1 mb-6">Acesso exclusivo para gerenciamento de produtos</p>
+          
+          <div class="space-y-4 text-left">
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">E-mail</label>
+              <input type="email" id="login-email" placeholder="seu@email.com" class="lux-input text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Senha</label>
+              <input type="password" id="login-pass" placeholder="••••••••" class="lux-input text-sm">
+            </div>
+            <div id="login-error" class="text-[#E53E3E] text-xs hidden"></div>
+            <button onclick="A.submitLogin()" class="btn-gold w-full py-3 text-sm font-bold">
+              Entrar no Painel
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  async submitLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const err = document.getElementById('login-error');
+    if (!email || !pass) {
+      err.textContent = 'Preencha seu e-mail e senha.';
+      err.classList.remove('hidden');
+      return;
+    }
     err.classList.add('hidden');
     try {
-      const {data,error}=await this.sb.auth.signInWithPassword({email,password:pass});
-      if(error) throw error;
-      this.user=data.user;
-      const admin=await this.chkAdmin();
-      if(!admin){await this.sb.auth.signOut();this.user=null;throw new Error('Voc\u00ea n\u00e3o tem permiss\u00e3o de administrador.');}
-      this.isAdmin=true;this.toast('Login realizado!','success');location.hash='#/admin/produtos';
-    } catch(e) { err.textContent=e.message||'Erro ao fazer login.';err.classList.remove('hidden'); }
-  },
-
-  /* ======== ADMIN LISTA ======== */
-  async rAProds() {
-    if (this.isPlaceholder) { document.getElementById('mc').innerHTML = this.msgPlaceholder(); return; }
-    if (!this.user) { this.rLogin(); return; }
-    if (!this.isAdmin) { const a=await this.chkAdmin();if(!a){await this.sb?.auth.signOut();this.user=null;this.rLogin();this.toast('Sem permiss\u00e3o de administrador.','error');return;}this.isAdmin=true; }
-    const ok = await this.ensureProds();
-    if (!ok) { document.getElementById('mc').innerHTML = this.msgErro('N\u00e3o foi poss\u00edvel carregar os produtos','Verifique sua conex\u00e3o e tente novamente.'); return; }
-    let rows = '';
-    if (this.prods.length === 0) {
-      rows = '<div class="text-center py-16 text-warm-800/30"><i class="fa-solid fa-box-open text-4xl mb-4"></i><p class="font-semibold">Nenhum produto cadastrado</p><p class="text-sm mt-1">Clique em "Novo Produto" para come\u00e7ar.</p></div>';
-    } else {
-      let tRows='',mCards='';
-      this.prods.forEach(p => {
-        const img=p.imagem?'<img src="'+p.imagem+'" alt="" class="w-full h-full object-cover">':'<div class="w-full h-full flex items-center justify-center text-rose-200 text-xs"><i class="fa-solid fa-image"></i></div>';
-        const st=(p.ativo?'<span class="bdg bg-emerald-100 text-emerald-700">Ativo</span>':'<span class="bdg bg-gray-100 text-gray-500">Inativo</span>')+(p.promocao?' <span class="bdg bg-red-100 text-red-600">Promo</span>':'')+(p.pronta_entrega?' <span class="bdg bg-blue-100 text-blue-600">Entrega</span>':'')+(p.destaque?' <span class="bdg bg-amber-100 text-amber-700">Destaque</span>':'')+(p.genero?' <span class="bdg '+(p.genero==='Masculino'?'bg-sky-100 text-sky-700':'bg-pink-100 text-pink-700')+'">'+p.genero+'</span>':'');
-        tRows+='<tr class="hover:bg-rose-50/50 transition-colors '+(!p.ativo?'opacity-50':'')+'"><td class="px-4 py-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg overflow-hidden bg-rose-50 flex-shrink-0">'+img+'</div><span class="font-semibold text-warm-800 truncate max-w-[180px]">'+this.esc(p.nome)+'</span></div></td><td class="px-4 py-3 text-warm-800/60 text-sm">'+this.esc(p.marca||'-')+'</td><td class="px-4 py-3 text-warm-800/60 text-sm">'+this.esc(p.genero||'-')+'</td><td class="px-4 py-3 text-right font-bold text-gold-500">'+this.fmt(p.preco)+'</td><td class="px-4 py-3 text-center"><div class="flex flex-wrap justify-center gap-1">'+st+'</div></td><td class="px-4 py-3 text-center"><div class="flex justify-center gap-1"><a href="#/admin/editar/'+p.id+'" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-amber-100 text-warm-800/50 hover:text-amber-600 flex items-center justify-center transition-colors" title="Editar"><i class="fa-solid fa-pen-to-square text-xs"></i></a><button onclick="A.togAtivo(\''+p.id+'\','+!p.ativo+')" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-emerald-100 text-warm-800/50 hover:text-emerald-600 flex items-center justify-center transition-colors" title="'+(p.ativo?'Desativar':'Ativar')+'"><i class="fa-solid fa-'+(p.ativo?'eye-slash':'eye')+' text-xs"></i></button><button onclick="A.delProd(\''+p.id+'\')" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-red-100 text-warm-800/50 hover:text-red-500 flex items-center justify-center transition-colors" title="Excluir"><i class="fa-solid fa-trash-can text-xs"></i></button></div></td></tr>';
-        mCards+='<div class="p-4 '+( !p.ativo?'opacity-50':'')+'"><div class="flex gap-3"><div class="w-14 h-14 rounded-lg overflow-hidden bg-rose-50 flex-shrink-0">'+img+'</div><div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate">'+this.esc(p.nome)+'</p><p class="text-xs text-warm-800/40">'+this.esc(p.marca||'')+' \u00b7 '+this.esc(p.genero||'-')+'</p><div class="flex flex-wrap gap-1 mt-1">'+st+'</div></div><div class="text-right flex-shrink-0"><p class="font-bold text-gold-500 text-sm">'+this.fmt(p.preco)+'</p></div></div><div class="flex justify-end gap-3 mt-3"><a href="#/admin/editar/'+p.id+'" class="text-xs font-semibold text-gold-500 hover:text-gold-600"><i class="fa-solid fa-pen-to-square mr-1"></i>Editar</a><button onclick="A.togAtivo(\''+p.id+'\','+!p.ativo+')" class="text-xs font-semibold text-warm-800/40 hover:text-warm-800">'+(p.ativo?'Desativar':'Ativar')+'</button><button onclick="A.delProd(\''+p.id+'\')" class="text-xs font-semibold text-warm-800/40 hover:text-red-500">Excluir</button></div></div>';
-      });
-      rows='<div class="hidden md:block overflow-x-auto"><table class="w-full text-sm"><thead class="bg-rose-50 text-warm-800/50 text-xs uppercase tracking-wider"><tr><th class="px-4 py-3 text-left">Produto</th><th class="px-4 py-3 text-left">Marca</th><th class="px-4 py-3 text-left">G\u00eanero</th><th class="px-4 py-3 text-right">Pre\u00e7o</th><th class="px-4 py-3 text-center">Status</th><th class="px-4 py-3 text-center">A\u00e7\u00f5es</th></tr></thead><tbody class="divide-y divide-rose-50">'+tRows+'</tbody></table></div><div class="md:hidden divide-y divide-rose-50">'+mCards+'</div>';
+      const { data, error } = await this.sb.auth.signInWithPassword({ email, password: pass });
+      if (error) throw error;
+      this.user = data.user;
+      const admin = await this.chkAdmin();
+      if (!admin) {
+        await this.sb.auth.signOut();
+        throw new Error('Você não tem acesso de administrador.');
+      }
+      this.isAdmin = true;
+      this.showToast('Bem-vinda, Vivi!', 'success');
+      location.hash = '#/admin/produtos';
+    } catch (e) {
+      err.textContent = e.message || 'Erro ao realizar login.';
+      err.classList.remove('hidden');
     }
-    document.getElementById('mc').innerHTML = '<div class="page-enter max-w-6xl mx-auto px-4 py-6"><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"><div><h1 class="font-display font-bold text-2xl text-warm-800">Meus Produtos</h1><p class="text-sm text-warm-800/40">'+this.prods.length+' produto'+(this.prods.length!==1?'s':'')+' cadastrado'+(this.prods.length!==1?'s':'')+'</p></div><div class="flex gap-2 flex-wrap"><a href="#/" class="btn-o text-sm py-2 px-4"><i class="fa-solid fa-eye"></i> Ver site</a><a href="#/admin/novo" class="btn-p text-sm py-2 px-4"><i class="fa-solid fa-plus"></i> Novo Produto</a><button onclick="A.doLogout()" class="text-sm text-warm-800/40 hover:text-red-400 py-2 px-3 transition-colors" title="Sair"><i class="fa-solid fa-right-from-bracket"></i></button></div></div><div class="bg-white rounded-2xl border border-rose-100 overflow-hidden">'+rows+'</div></div>';
   },
 
-  /* ======== ADMIN FORM ======== */
-  async rAForm(id) {
-    if (this.isPlaceholder) { document.getElementById('mc').innerHTML = this.msgPlaceholder(); return; }
-    if (!this.user || !this.isAdmin) { this.rLogin(); return; }
-    let p={nome:'',marca:'',categoria:'',preco:0,descricao:'',imagem:'',estoque:0,ativo:true,destaque:false,promocao:false,pronta_entrega:false,genero:''};
-    if(id){if(!this.prods.length)await this.ensureProds();const f=this.pmap[id];if(f)p=f;}
-    const ie=!!id;
-    let marOpts='<option value="">Selecione</option>';BRANDS.forEach(b=>{marOpts+='<option value="'+b+'" '+(p.marca===b?'selected':'')+'>'+b+'</option>';});
-    let catOpts='<option value="">Selecione</option>';CATS.forEach(c=>{catOpts+='<option value="'+c+'" '+(p.categoria===c?'selected':'')+'>'+c+'</option>';});
-    let genOpts='<option value="">Nenhum</option>';GENEROS.forEach(g=>{if(g)genOpts+='<option value="'+g+'" '+(p.genero===g?'selected':'')+'>'+g+'</option>';});
+  async viewAdminProducts() {
+    if (!this.user || !this.isAdmin) { this.viewAdminLogin(); return; }
+    await this.ensureProds();
+    const main = document.getElementById('main-content');
 
-    document.getElementById('mc').innerHTML = '<div class="page-enter max-w-2xl mx-auto px-4 py-6">'
-      +'<a href="#/admin/produtos" class="inline-flex items-center gap-2 text-sm text-warm-800/50 hover:text-gold-500 transition-colors mb-6"><i class="fa-solid fa-arrow-left"></i> Voltar aos produtos</a>'
-      +'<div class="bg-white rounded-2xl border border-rose-100 shadow-sm p-6 sm:p-8">'
-        +'<h1 class="font-display font-bold text-xl text-warm-800 mb-6">'+(ie?'Editar':'Novo')+' Produto</h1>'
-        +'<div class="space-y-5">'
-          +'<div><label class="block text-sm font-semibold text-warm-800 mb-1">Nome do Produto *</label><input type="text" id="fn" value="'+this.esc(p.nome)+'" placeholder="Ex: Egeo Dolce"></div>'
-          +'<div class="grid grid-cols-3 gap-4"><div><label class="block text-sm font-semibold text-warm-800 mb-1">Marca</label><select id="fm">'+marOpts+'</select></div><div><label class="block text-sm font-semibold text-warm-800 mb-1">Categoria</label><select id="fc2">'+catOpts+'</select></div><div><label class="block text-sm font-semibold text-warm-800 mb-1">G\u00eanero</label><select id="fgen">'+genOpts+'</select></div></div>'
-          +'<div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-semibold text-warm-800 mb-1">Pre\u00e7o (R$) *</label><input type="number" id="fpr" value="'+(p.preco||'')+'" step="0.01" min="0" placeholder="0.00"></div><div><label class="block text-sm font-semibold text-warm-800 mb-1">Estoque</label><input type="number" id="fes" value="'+(p.estoque||'')+'" min="0" placeholder="0"></div></div>'
-          +'<div><label class="block text-sm font-semibold text-warm-800 mb-1">Descri\u00e7\u00e3o</label><textarea id="fd" rows="3" placeholder="Descri\u00e7\u00e3o do produto...">'+this.esc(p.descricao||'')+'</textarea></div>'
-          +'<div><label class="block text-sm font-semibold text-warm-800 mb-1">Imagem do Produto</label><div class="flex items-start gap-4"><div id="fip" class="w-24 h-24 rounded-xl overflow-hidden bg-rose-50 border border-rose-100 flex-shrink-0">'+(p.imagem?'<img src="'+p.imagem+'" alt="" class="w-full h-full object-cover">':'<div class="w-full h-full flex items-center justify-center text-rose-200"><i class="fa-solid fa-image text-2xl"></i></div>')+'</div><div class="flex-1"><input type="file" id="fif" accept="image/*" class="text-sm"><p class="text-xs text-warm-800/30 mt-1">JPG, PNG. M\u00e1ximo 5MB.</p>'+(p.imagem?'<p class="text-xs text-warm-800/30 mt-1">Imagem atual salva. Selecione novo arquivo para trocar.</p>':'')+'</div></div></div>'
-          +'<div class="border-t border-rose-100 pt-5 space-y-4"><h3 class="font-semibold text-sm text-warm-800">Op\u00e7\u00f5es de exibi\u00e7\u00e3o</h3><div class="grid grid-cols-2 gap-4">'
-            +'<label class="flex items-center justify-between"><span class="text-sm text-warm-800/70">Ativo</span><label class="tog"><input type="checkbox" id="fa" '+(p.ativo?'checked':'')+'><span class="tog-s"></span></label></label>'
-            +'<label class="flex items-center justify-between"><span class="text-sm text-warm-800/70">Destaque</span><label class="tog"><input type="checkbox" id="fds" '+(p.destaque?'checked':'')+'><span class="tog-s"></span></label></label>'
-            +'<label class="flex items-center justify-between"><span class="text-sm text-warm-800/70">Promo\u00e7\u00e3o</span><label class="tog"><input type="checkbox" id="fpr2" '+(p.promocao?'checked':'')+'><span class="tog-s"></span></label></label>'
-            +'<label class="flex items-center justify-between"><span class="text-sm text-warm-800/70">Pronta Entrega</span><label class="tog"><input type="checkbox" id="fpe" '+(p.pronta_entrega?'checked':'')+'><span class="tog-s"></span></label></label>'
-          +'</div></div>'
-          +'<div id="fe" class="text-red-500 text-sm hidden"></div>'
-          +'<button onclick="A.saveProd(\''+(id||'')+'\')" class="btn-p w-full">'+(ie?'Salvar Altera\u00e7\u00f5es':'Cadastrar Produto')+'</button>'
-        +'</div>'
-      +'</div></div>';
+    main.innerHTML = `
+      <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="font-serif font-bold text-2xl sm:text-3xl text-[#241A1B]">Gerenciamento de Produtos</h1>
+            <p class="text-xs sm:text-sm text-[#826F70]">${this.prods.length} produtos cadastrados</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="#/admin/novo" class="btn-gold text-xs py-2.5 px-4">
+              <i class="fa-solid fa-plus"></i> Novo Produto
+            </a>
+            <button onclick="A.logoutAdmin()" class="btn-secondary text-xs py-2 px-3 text-[#E53E3E]">
+              Sair
+            </button>
+          </div>
+        </div>
 
-    document.getElementById('fif')?.addEventListener('change',e=>{
-      const f=e.target.files[0];
-      if(f){const r=new FileReader();r.onload=ev=>{document.getElementById('fip').innerHTML='<img src="'+ev.target.result+'" alt="" class="w-full h-full object-cover">';};r.readAsDataURL(f);}
+        <div class="bg-white rounded-3xl border border-[#F0E3DC] overflow-hidden shadow-sm">
+          <div class="divide-y divide-[#F0E3DC]">
+            ${this.prods.map(p => `
+              <div class="p-4 flex items-center justify-between gap-4 hover:bg-[#FAF4F0]/40 transition-colors">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC]">
+                    ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-semibold text-sm text-[#241A1B] truncate">${this.escape(p.nome)}</p>
+                    <p class="text-xs text-[#826F70]">${this.escape(p.marca || '-')} • ${this.formatMoney(p.preco)}</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <button onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" 
+                          class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}">
+                    ${p.ativo ? 'Ativo' : 'Pausado'}
+                  </button>
+                  <a href="#/admin/editar/${p.id}" class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white transition-colors">
+                    <i class="fa-solid fa-pen text-xs"></i>
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  async viewAdminForm(id) {
+    if (!this.user || !this.isAdmin) { this.viewAdminLogin(); return; }
+    let p = { nome: '', marca: '', categoria: '', preco: '', descricao: '', imagem: '', estoque: 1, ativo: true, destaque: false, promocao: false, pronta_entrega: true, genero: '' };
+    if (id) {
+      await this.ensureProds();
+      if (this.pmap[id]) p = this.pmap[id];
+    }
+
+    const main = document.getElementById('main-content');
+    main.innerHTML = `
+      <div class="page-anim max-w-2xl mx-auto px-4 sm:px-6 py-8">
+        <a href="#/admin/produtos" class="inline-flex items-center gap-2 text-xs font-semibold text-[#826F70] hover:text-[#241A1B] mb-6">
+          <i class="fa-solid fa-arrow-left"></i> Voltar à lista
+        </a>
+
+        <div class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-6 sm:p-8 space-y-5">
+          <h2 class="font-serif font-bold text-2xl text-[#241A1B]">${id ? 'Editar Produto' : 'Cadastrar Novo Produto'}</h2>
+          
+          <div>
+            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Nome do Produto *</label>
+            <input type="text" id="form-name" value="${this.escape(p.nome)}" placeholder="Ex: Elysee Succès Eau de Parfum" class="lux-input text-sm">
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Marca</label>
+              <select id="form-brand" class="lux-input text-xs bg-white">
+                <option value="">Selecione</option>
+                ${BRANDS.map(b => `<option value="${b}" ${p.marca === b ? 'selected' : ''}>${b}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Categoria</label>
+              <select id="form-cat" class="lux-input text-xs bg-white">
+                <option value="">Selecione</option>
+                ${CATS.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${c}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Gênero</label>
+              <select id="form-gen" class="lux-input text-xs bg-white">
+                <option value="">Nenhum</option>
+                ${GENEROS.filter(Boolean).map(g => `<option value="${g}" ${p.genero === g ? 'selected' : ''}>${g}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Preço (R$) *</label>
+              <input type="number" step="0.01" id="form-price" value="${p.preco}" placeholder="189.90" class="lux-input text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Estoque</label>
+              <input type="number" id="form-stock" value="${p.estoque}" class="lux-input text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Descrição</label>
+            <textarea id="form-desc" rows="3" class="lux-input text-sm" placeholder="Detalhes olfativos, modo de usar...">${this.escape(p.descricao || '')}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Imagem do Produto</label>
+            <div class="flex items-center gap-4">
+              <div id="img-preview" class="w-20 h-20 rounded-2xl bg-[#FAF0EB] border border-[#F0E3DC] overflow-hidden flex items-center justify-center shrink-0">
+                ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-image text-xl text-[#AA999A]"></i>'}
+              </div>
+              <input type="file" id="form-file" accept="image/*" class="text-xs">
+            </div>
+          </div>
+
+          <!-- Flags -->
+          <div class="grid grid-cols-2 gap-4 pt-3 border-t border-[#F0E3DC]">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
+              <span class="text-xs font-semibold text-[#241A1B]">Produto Ativo</span>
+              <label class="tog"><input type="checkbox" id="form-active" ${p.ativo ? 'checked' : ''}><span class="tog-slider"></span></label>
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
+              <span class="text-xs font-semibold text-[#241A1B]">Destaque na Home</span>
+              <label class="tog"><input type="checkbox" id="form-feat" ${p.destaque ? 'checked' : ''}><span class="tog-slider"></span></label>
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
+              <span class="text-xs font-semibold text-[#241A1B]">Em Promoção</span>
+              <label class="tog"><input type="checkbox" id="form-promo" ${p.promocao ? 'checked' : ''}><span class="tog-slider"></span></label>
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
+              <span class="text-xs font-semibold text-[#241A1B]">Pronta Entrega</span>
+              <label class="tog"><input type="checkbox" id="form-ready" ${p.pronta_entrega ? 'checked' : ''}><span class="tog-slider"></span></label>
+            </label>
+          </div>
+
+          <div id="form-error" class="text-xs text-[#E53E3E] hidden"></div>
+
+          <button onclick="A.saveProduct('${id || ''}')" class="btn-gold w-full py-3.5 text-sm font-bold">
+            ${id ? 'Salvar Alterações' : 'Cadastrar Produto'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('form-file')?.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          document.getElementById('img-preview').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover">`;
+        };
+        reader.readAsDataURL(file);
+      }
     });
   },
 
-  async saveProd(id) {
-    const err=document.getElementById('fe');
-    const nome=document.getElementById('fn').value.trim();
-    const preco=parseFloat(document.getElementById('fpr').value)||0;
-    if(!nome){err.textContent='O nome do produto \u00e9 obrigat\u00f3rio.';err.classList.remove('hidden');return;}
-    if(preco<=0){err.textContent='Informe um pre\u00e7o v\u00e1lido.';err.classList.remove('hidden');return;}
+  async saveProduct(id) {
+    const err = document.getElementById('form-error');
+    const nome = document.getElementById('form-name').value.trim();
+    const preco = parseFloat(document.getElementById('form-price').value) || 0;
+
+    if (!nome) { err.textContent = 'O nome do produto é obrigatório.'; err.classList.remove('hidden'); return; }
+    if (preco <= 0) { err.textContent = 'Informe um preço válido.'; err.classList.remove('hidden'); return; }
     err.classList.add('hidden');
-    const data={
-      nome,marca:document.getElementById('fm').value,categoria:document.getElementById('fc2').value,
-      genero:document.getElementById('fgen').value,preco,
-      descricao:document.getElementById('fd').value.trim(),estoque:parseInt(document.getElementById('fes').value)||0,
-      ativo:document.getElementById('fa').checked,destaque:document.getElementById('fds').checked,
-      promocao:document.getElementById('fpr2').checked,pronta_entrega:document.getElementById('fpe').checked,
-      data_atualizacao:new Date().toISOString()
+
+    const data = {
+      nome,
+      marca: document.getElementById('form-brand').value,
+      categoria: document.getElementById('form-cat').value,
+      genero: document.getElementById('form-gen').value,
+      preco,
+      descricao: document.getElementById('form-desc').value.trim(),
+      estoque: parseInt(document.getElementById('form-stock').value) || 0,
+      ativo: document.getElementById('form-active').checked,
+      destaque: document.getElementById('form-feat').checked,
+      promocao: document.getElementById('form-promo').checked,
+      pronta_entrega: document.getElementById('form-ready').checked,
+      data_atualizacao: new Date().toISOString()
     };
-    const fi=document.getElementById('fif');
-    if(fi.files.length>0){
-      const file=fi.files[0];
-      if(!file.type.startsWith('image/')){err.textContent='Selecione apenas arquivos de imagem.';err.classList.remove('hidden');return;}
-      if(file.size>5*1024*1024){err.textContent='A imagem deve ter no m\u00e1ximo 5MB. Este arquivo tem '+(file.size/1024/1024).toFixed(1)+'MB.';err.classList.remove('hidden');return;}
-      try{const ext=file.name.split('.').pop();const path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+ext;const{error:ue}=await this.sb.storage.from('products').upload(path,file);if(ue)throw ue;const{data:ud}=this.sb.storage.from('products').getPublicUrl(path);data.imagem=ud.publicUrl;}
-      catch(e){err.textContent='Erro ao enviar imagem: '+(e.message||'');err.classList.remove('hidden');return;}
+
+    const fileInput = document.getElementById('form-file');
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      try {
+        const ext = file.name.split('.').pop();
+        const path = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+        const { error: uploadError } = await this.sb.storage.from('products').upload(path, file);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = this.sb.storage.from('products').getPublicUrl(path);
+        data.imagem = urlData.publicUrl;
+      } catch (e) {
+        err.textContent = 'Erro ao fazer upload da foto: ' + e.message;
+        err.classList.remove('hidden');
+        return;
+      }
     }
-    try{
-      if(id){if(!fi.files.length)delete data.imagem;const{error}=await this.sb.from('products').update(data).eq('id',id);if(error)throw error;this.toast('Produto atualizado!','success');}
-      else{data.imagem=data.imagem||'';const{error}=await this.sb.from('products').insert(data);if(error)throw error;this.toast('Produto cadastrado!','success');}
-      this.prods=[];this.pmap={};location.hash='#/admin/produtos';
-    }catch(e){err.textContent='Erro ao salvar: '+(e.message||'');err.classList.remove('hidden');}
+
+    try {
+      if (id) {
+        const { error } = await this.sb.from('products').update(data).eq('id', id);
+        if (error) throw error;
+        this.showToast('Produto atualizado com sucesso!', 'success');
+      } else {
+        const { error } = await this.sb.from('products').insert(data);
+        if (error) throw error;
+        this.showToast('Produto criado com sucesso!', 'success');
+      }
+      this.prods = [];
+      location.hash = '#/admin/produtos';
+    } catch (e) {
+      err.textContent = 'Erro ao salvar no banco: ' + e.message;
+      err.classList.remove('hidden');
+    }
   },
 
-  async togAtivo(id,ativo) { try{const{error}=await this.sb.from('products').update({ativo,data_atualizacao:new Date().toISOString()}).eq('id',id);if(error)throw error;const p=this.pmap[id];if(p)p.ativo=ativo;this.toast(ativo?'Produto ativado':'Produto desativado','success');this.rAProds();}catch(e){this.toast('Erro: '+e.message,'error');} },
-  delProd(id) { if(document.querySelector('.dm')){document.querySelector('.dm').remove();return;}const d=document.createElement('div');d.className='dm fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4';d.innerHTML='<div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl page-enter"><h3 class="font-display font-bold text-lg text-warm-800 mb-2">Excluir produto?</h3><p class="text-sm text-warm-800/50 mb-6">Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.</p><div class="flex gap-3"><button onclick="this.closest(\'.dm\').remove()" class="btn-o flex-1 text-sm py-2">Cancelar</button><button onclick="A.cfDel(\''+id+'\')" class="flex-1 bg-red-500 text-white rounded-lg font-bold text-sm py-2 hover:bg-red-600 transition-colors cursor-pointer border-none">Excluir</button></div></div>';document.body.appendChild(d); },
-  async cfDel(id) { document.querySelector('.dm')?.remove();try{const{error}=await this.sb.from('products').delete().eq('id',id);if(error)throw error;this.prods=this.prods.filter(x=>x.id!==id);delete this.pmap[id];this.toast('Produto exclu\u00eddo','success');this.rAProds();}catch(e){this.toast('Erro: '+e.message,'error');} },
-  async doLogout() { if(this.sb)await this.sb.auth.signOut();this.user=null;this.isAdmin=false;this.toast('Voc\u00ea saiu do painel','info');location.hash='#/admin'; },
+  async toggleProductActive(id, ativo) {
+    try {
+      await this.sb.from('products').update({ ativo }).eq('id', id);
+      const p = this.pmap[id];
+      if (p) p.ativo = ativo;
+      this.showToast(`Produto ${ativo ? 'ativado' : 'pausado'}!`, 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      this.showToast('Erro ao atualizar status', 'error');
+    }
+  },
 
-  fmt(v){return 'R$ '+Number(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');},
-  esc(s){if(!s)return '';const d=document.createElement('div');d.textContent=s;return d.innerHTML;},
-  toast(msg,type){type=type||'info';const c=document.getElementById('tc');const cl={success:'bg-emerald-500',error:'bg-red-500',info:'bg-warm-800'};const ic={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};const t=document.createElement('div');t.className='toast-i '+(cl[type]||cl.info)+' text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-semibold max-w-sm';t.innerHTML='<i class="fa-solid '+(ic[type]||ic.info)+'"></i><span>'+msg+'</span>';c.appendChild(t);setTimeout(()=>t.remove(),3100);}
+  async logoutAdmin() {
+    if (this.sb) await this.sb.auth.signOut();
+    this.user = null;
+    this.isAdmin = false;
+    this.showToast('Desconectada com segurança');
+    location.hash = '#/';
+  },
+
+  /* ====================== UTILS ====================== */
+  formatMoney(v) {
+    return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  },
+
+  escape(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  },
+
+  showToast(msg, type = 'info') {
+    const c = document.getElementById('toast-container');
+    if (!c) return;
+    const t = document.createElement('div');
+    const isSuccess = type === 'success';
+    const isError = type === 'error';
+
+    t.className = `lux-toast flex items-center gap-2.5 px-4 py-3 rounded-2xl text-xs font-bold shadow-xl border pointer-events-auto ${
+      isSuccess ? 'bg-[#1D8A58] text-white border-[#156640]' : 
+      isError ? 'bg-[#E53E3E] text-white border-[#B91C1C]' : 
+      'bg-[#241A1B] text-white border-white/10'
+    }`;
+    t.innerHTML = `
+      <i class="fa-solid ${isSuccess ? 'fa-check-circle' : isError ? 'fa-triangle-exclamation' : 'fa-bell'}"></i>
+      <span>${msg}</span>
+    `;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => A.init());
-document.addEventListener('touchstart',()=>document.body.classList.add('touch-active'),{passive:true});
-document.addEventListener('touchmove',()=>document.body.classList.add('touch-active'),{passive:true});
-document.addEventListener('touchend',()=>setTimeout(()=>document.body.classList.remove('touch-active'),150));
 </script>
 </body>
 </html>
