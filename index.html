@@ -2,23 +2,49 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes Exclusivos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes</title>
+<link rel="canonical" href="https://vivicarvalhoboty.com.br/">
 <link rel="icon" type="image/png" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.png">
-<meta name="description" content="Sua boutique digital de perfumes, cosméticos e presentes de luxo. Produtos originais O Boticário, Natura, Eudora com atendimento humanizado direto pelo WhatsApp.">
+<link rel="apple-touch-icon" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#241A1B">
+<meta name="description" content="Boutique digital de perfumes, cosméticos e presentes originais O Boticário, Natura e Eudora. Atendimento humanizado direto pelo WhatsApp.">
+<meta name="keywords" content="Vivi Boty, Vivi Carvalho, perfumes, O Boticário, Natura, Eudora, cosméticos, presentes">
+<meta property="og:site_name" content="Vivi Carvalho Boty">
 <meta property="og:title" content="Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes">
-<meta property="og:description" content="Fragrâncias marcantes, cuidados especiais e kits de presentes com pronta entrega e atendimento pelo WhatsApp.">
+<meta property="og:description" content="Fragrâncias, cuidados e kits de presente com pronta entrega e atendimento pelo WhatsApp.">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://vivicarvalhoboty.com.br/">
 <meta property="og:image" content="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/preview-whatsapp.jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vivi Carvalho Boty">
+<meta name="twitter:description" content="Perfumes, cosméticos e presentes originais com atendimento pelo WhatsApp.">
+<meta name="twitter:image" content="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/preview-whatsapp.jpeg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "Vivi Carvalho Boty",
+  "url": "https://vivicarvalhoboty.com.br/",
+  "image": "https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg",
+  "description": "Boutique digital de perfumes, cosméticos e presentes originais.",
+  "telephone": "+5518997871211",
+  "address": { "@type": "PostalAddress", "addressCountry": "BR" },
+  "sameAs": ["https://www.facebook.com/profile.php?id=61591208489955"]
+}
+</script>
 
 <style>
 :root {
@@ -53,13 +79,20 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
-
 h1, h2, h3, h4, .font-serif {
   font-family: var(--font-serif);
   letter-spacing: -0.01em;
 }
+:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 3px;
+}
+.skip-link {
+  position: absolute; left: 12px; top: -40px; z-index: 100;
+  background: #241A1B; color: #fff; padding: 8px 14px; border-radius: 8px;
+}
+.skip-link:focus { top: 12px; }
 
-/* Glassmorphism & Micro-effects */
 .glass {
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
@@ -67,37 +100,32 @@ h1, h2, h3, h4, .font-serif {
   border-bottom: 1px solid rgba(240, 227, 220, 0.7);
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-}
-
-/* Luxury animations */
 @keyframes fadeInScale {
   from { opacity: 0; transform: translateY(14px) scale(0.99); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes pulseGold {
   0%, 100% { box-shadow: 0 0 0 0 rgba(198, 154, 85, 0.45); }
   70% { box-shadow: 0 0 0 16px rgba(198, 154, 85, 0); }
 }
-
 @keyframes floatGentle {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(0.5deg); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
-
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+@keyframes bagPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 .page-anim { animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .float-subtle { animation: floatGentle 5s ease-in-out infinite; }
 .wa-glow { animation: pulseGold 2.5s infinite; }
+.bag-pulse { animation: bagPulse 0.45s ease; }
 
 .skeleton-lux {
   background: linear-gradient(90deg, #F3EAE4 25%, #FAF4F0 50%, #F3EAE4 75%);
@@ -106,7 +134,6 @@ h1, h2, h3, h4, .font-serif {
   border-radius: 12px;
 }
 
-/* Product Card Styling */
 .product-card {
   background: #FFFFFF;
   border: 1px solid var(--border-light);
@@ -122,14 +149,9 @@ h1, h2, h3, h4, .font-serif {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-lg);
 }
-.product-card .img-box img {
-  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.product-card:hover .img-box img {
-  transform: scale(1.08);
-}
+.product-card .img-box img { transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1); }
+.product-card:hover .img-box img { transform: scale(1.08); }
 
-/* Badges */
 .badge-tag {
   font-size: 0.68rem;
   font-weight: 700;
@@ -148,7 +170,6 @@ h1, h2, h3, h4, .font-serif {
 .badge-masc { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
 .badge-uni { background: #F3E8FF; color: #6B21A8; border: 1px solid #E9D5FF; }
 
-/* Interactive Filter Chips */
 .filter-chip {
   padding: 8px 18px;
   border-radius: 9999px;
@@ -178,10 +199,7 @@ h1, h2, h3, h4, .font-serif {
   box-shadow: var(--shadow-sm);
 }
 
-/* Custom Buttons */
-.btn-gold {
-  background: linear-gradient(135deg, #D4A864 0%, #B68A44 100%);
-  color: #FFFFFF;
+.btn-gold, .btn-whatsapp, .btn-secondary {
   border: none;
   font-weight: 600;
   padding: 12px 24px;
@@ -192,54 +210,33 @@ h1, h2, h3, h4, .font-serif {
   justify-content: center;
   gap: 8px;
   transition: all 0.25s ease;
-  box-shadow: var(--shadow-gold);
   text-decoration: none;
   font-size: 0.95rem;
 }
-.btn-gold:hover {
+.btn-gold:disabled, .btn-whatsapp:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-gold {
+  background: linear-gradient(135deg, #D4A864 0%, #B68A44 100%);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-gold);
+}
+.btn-gold:hover:not(:disabled) {
   filter: brightness(1.07);
   transform: translateY(-2px);
   box-shadow: 0 12px 28px -4px rgba(198, 154, 85, 0.4);
 }
-.btn-gold:active { transform: translateY(0); }
-
 .btn-whatsapp {
   background: #25D366;
   color: #FFFFFF;
-  border: none;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.25s ease;
-  text-decoration: none;
   box-shadow: 0 6px 18px -2px rgba(37, 211, 102, 0.35);
-  font-size: 0.95rem;
 }
-.btn-whatsapp:hover {
+.btn-whatsapp:hover:not(:disabled) {
   background: #20BA5A;
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px -2px rgba(37, 211, 102, 0.45);
 }
-
 .btn-secondary {
   background: #FFFFFF;
   color: var(--fg-main);
   border: 1.5px solid var(--border-light);
-  font-weight: 600;
-  padding: 11px 22px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-  text-decoration: none;
 }
 .btn-secondary:hover {
   border-color: var(--accent-gold);
@@ -247,23 +244,22 @@ h1, h2, h3, h4, .font-serif {
   background: var(--accent-gold-light);
 }
 
-/* Drawers & Overlays */
 .drawer-overlay {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
   background: rgba(36, 26, 27, 0.45);
   backdrop-filter: blur(4px);
 }
-.drawer-overlay.open { opacity: 1; pointer-events: auto; }
-
+.drawer-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
 .drawer-panel {
   transform: translateX(100%);
-  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: hidden;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.38s;
 }
-.drawer-panel.open { transform: translateX(0); }
+.drawer-panel.open { transform: translateX(0); visibility: visible; }
 
-/* Custom Inputs */
 .lux-input {
   width: 100%;
   padding: 12px 16px;
@@ -281,49 +277,53 @@ h1, h2, h3, h4, .font-serif {
   box-shadow: 0 0 0 4px rgba(198, 154, 85, 0.15);
 }
 
-/* Toast Notification */
 .lux-toast {
   animation: slideToastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeToastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 2.7s forwards;
 }
 @keyframes slideToastIn { from { transform: translateY(-20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 @keyframes fadeToastOut { to { transform: translateY(-10px); opacity: 0; } }
 
-/* Toggle Switch */
-.tog { position: relative; width: 44px; height: 24px; cursor: pointer; display: inline-block; }
+.tog { position: relative; width: 44px; height: 24px; cursor: pointer; display: inline-block; flex-shrink: 0; }
 .tog input { opacity: 0; width: 0; height: 0; position: absolute; }
 .tog-slider { position: absolute; inset: 0; background: #D6C7C0; border-radius: 24px; transition: 0.3s; }
 .tog-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #FFF; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
 .tog input:checked + .tog-slider { background: var(--accent-gold); }
 .tog input:checked + .tog-slider::before { transform: translateX(20px); }
 
-/* Quick Utilities */
 .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+.nav-link.active { color: #A97E3B; }
+.faq-item[open] summary i { transform: rotate(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 
 <body>
+<a href="#main-content" class="skip-link">Pular para o conteúdo</a>
 <div id="app" class="relative">
 
-  <!-- TOP ANNOUNCEMENT BANNER -->
   <div class="bg-[#241A1B] text-[#F3EAE4] py-2 px-4 text-center text-xs tracking-wider flex items-center justify-center gap-2 font-medium">
-    <span>✨ Atendimento Personalizado no WhatsApp</span>
+    <span>Atendimento personalizado no WhatsApp</span>
     <span class="opacity-40">•</span>
-    <span>Produtos 100% Originais</span>
+    <span>Produtos 100% originais</span>
     <span class="opacity-40 hidden sm:inline">•</span>
-    <span class="hidden sm:inline">Embalagem de Presente Disponível 🎁</span>
+    <span class="hidden sm:inline">Embalagem de presente disponível</span>
   </div>
 
-  <!-- HEADER NAVBAR -->
   <header id="navbar" class="sticky top-0 z-40 glass transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
-      
-      <!-- Brand Logo -->
-      <a href="#/" class="flex items-center gap-3 no-underline group">
+      <a href="/" data-link class="flex items-center gap-3 no-underline group">
         <div class="relative w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] shadow-md transition-transform group-hover:scale-105">
-          <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg" 
-               alt="Vivi Boty" 
+          <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg"
+               alt="Logo Vivi Boty"
                class="w-full h-full rounded-full object-cover bg-white"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="w-full h-full rounded-full bg-[#3D2C2E] text-white font-serif font-bold text-sm hidden items-center justify-center">VB</div>
@@ -334,211 +334,187 @@ h1, h2, h3, h4, .font-serif {
         </div>
       </a>
 
-      <!-- Desktop Navigation Links -->
-      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-[#826F70]">
-        <a href="#/" class="hover:text-[#C69A55] transition-colors">Início</a>
-        <a href="#/produtos" class="hover:text-[#C69A55] transition-colors">Catálogo Completo</a>
-        <a href="#/produtos?destaque=true" class="hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#A97E3B]">
-          <i class="fa-solid fa-sparkles text-xs"></i> Mais Desejados
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-[#826F70]" aria-label="Principal">
+        <a href="/" data-link class="nav-link hover:text-[#C69A55] transition-colors">Início</a>
+        <a href="/produtos" data-link class="nav-link hover:text-[#C69A55] transition-colors">Catálogo</a>
+        <a href="/produtos?destaque=1" data-link class="nav-link hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#A97E3B]">
+          <i class="fa-solid fa-sparkles text-xs" aria-hidden="true"></i> Mais desejados
         </a>
       </nav>
 
-      <!-- Action Buttons (Favorites, Cart, Admin) -->
       <div class="flex items-center gap-3">
-        <!-- Favorites Button -->
-        <button onclick="A.showFavModal()" class="relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] flex items-center justify-center transition-all" aria-label="Favoritos" title="Meus Favoritos">
-          <i class="fa-regular fa-heart text-base"></i>
+        <button type="button" onclick="A.showFavModal()" class="relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] flex items-center justify-center transition-all" aria-label="Favoritos">
+          <i class="fa-regular fa-heart text-base" aria-hidden="true"></i>
           <span id="fav-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-[#E8A7A1] text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
         </button>
 
-        <!-- Cart Bag Button -->
-        <button onclick="A.toggleCart(true)" class="relative flex items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm hover:shadow" aria-label="Sacola">
-          <i class="fa-solid fa-bag-shopping text-sm text-[#D4A864]"></i>
+        <button type="button" id="cart-open-btn" onclick="A.toggleCart(true)" class="relative flex items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm" aria-label="Abrir sacola" aria-controls="cart-drawer">
+          <i class="fa-solid fa-bag-shopping text-sm text-[#D4A864]" aria-hidden="true"></i>
           <span class="hidden sm:inline">Sacola</span>
           <span id="cart-counter" class="bg-[#C69A55] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
         </button>
 
-        <!-- Admin Shortcut -->
-        <a href="#/admin" class="w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel Administrativo" title="Painel Admin">
-          <i class="fa-solid fa-lock text-xs"></i>
+        <a href="/admin" data-link class="w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel administrativo">
+          <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
         </a>
       </div>
-
     </div>
   </header>
 
-  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
-  <main id="main-content" class="min-h-screen pb-24 md:pb-12"></main>
+  <main id="main-content" class="min-h-[70vh] pb-28 md:pb-12" tabindex="-1"></main>
 
-  <!-- CART SIDEBAR DRAWER -->
   <div id="cart-overlay" class="drawer-overlay fixed inset-0 z-50" onclick="A.toggleCart(false)"></div>
-  <aside id="cart-drawer" class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-50 shadow-2xl flex flex-col border-l border-[#F0E3DC]">
-    <!-- Header -->
+  <aside id="cart-drawer" class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-50 shadow-2xl flex flex-col border-l border-[#F0E3DC]" role="dialog" aria-modal="true" aria-labelledby="cart-title">
     <div class="p-6 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]">
       <div class="flex items-center gap-2.5">
         <div class="w-9 h-9 rounded-full bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center">
-          <i class="fa-solid fa-bag-shopping"></i>
+          <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
         </div>
         <div>
-          <h3 class="font-serif font-bold text-lg text-[#241A1B] leading-none">Minha Sacola</h3>
-          <span id="cart-drawer-count" class="text-xs text-[#826F70]">0 itens adicionados</span>
+          <h3 id="cart-title" class="font-serif font-bold text-lg text-[#241A1B] leading-none">Minha Sacola</h3>
+          <span id="cart-drawer-count" class="text-xs text-[#826F70]">0 itens</span>
         </div>
       </div>
-      <button onclick="A.toggleCart(false)" class="w-9 h-9 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center transition-colors" aria-label="Fechar">
-        <i class="fa-solid fa-xmark text-sm"></i>
+      <button type="button" onclick="A.toggleCart(false)" class="w-9 h-9 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center" aria-label="Fechar sacola">
+        <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
       </button>
     </div>
-
-    <!-- Items List -->
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-
-    <!-- Extra Options & Checkout Footer -->
     <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
-      <!-- Gift Option Checkbox -->
       <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
         <input type="checkbox" id="gift-checkbox" class="mt-0.5 rounded text-[#C69A55] focus:ring-[#C69A55]">
-        <div class="text-xs">
-          <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]"></i> É para presente?</span>
-          <p class="text-[#826F70] mt-0.5">Avisaremos a Vivi para caprichar em uma embalagem linda de presente.</p>
-        </div>
+        <span class="text-xs">
+          <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> É para presente?</span>
+          <span class="block text-[#826F70] mt-0.5">Avisamos a Vivi para caprichar na embalagem.</span>
+        </span>
       </label>
-
-      <!-- Subtotal and CTA -->
       <div>
         <div class="flex justify-between items-baseline mb-3">
           <span class="text-sm font-semibold text-[#826F70]">Total estimado:</span>
           <span id="cart-total-price" class="font-serif font-bold text-2xl text-[#241A1B]">R$ 0,00</span>
         </div>
-        <button onclick="A.checkoutWhatsApp()" class="btn-whatsapp w-full py-3.5 text-base shadow-lg">
-          <i class="fa-brands fa-whatsapp text-xl"></i>
-          <span>Finalizar Pedido no WhatsApp</span>
+        <button type="button" id="checkout-btn" onclick="A.checkoutWhatsApp()" class="btn-whatsapp w-full py-3.5 text-base shadow-lg">
+          <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
+          <span>Finalizar pedido no WhatsApp</span>
         </button>
-        <button onclick="A.clearCart()" class="w-full text-center text-xs font-semibold text-[#826F70] hover:text-[#E53E3E] mt-3 py-1 transition-colors">
+        <button type="button" onclick="A.clearCart()" class="w-full text-center text-xs font-semibold text-[#826F70] hover:text-[#E53E3E] mt-3 py-1">
           Esvaziar sacola
         </button>
       </div>
     </div>
   </aside>
 
-  <!-- QUICK VIEW MODAL -->
-  <div id="quickview-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div id="quickview-card" class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 sm:p-8 relative">
-      <button onclick="A.closeQuickView()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center">
-        <i class="fa-solid fa-xmark"></i>
+  <div id="quickview-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4" onclick="A.closeQuickView()">
+    <div id="quickview-card" class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 sm:p-8 relative" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Visualização rápida">
+      <button type="button" onclick="A.closeQuickView()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center" aria-label="Fechar">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
       <div id="quickview-content"></div>
     </div>
   </div>
 
-  <!-- FAVORITES DRAWER/MODAL -->
-  <div id="fav-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 relative">
+  <div id="fav-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4" onclick="A.closeFavModal()">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 relative" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="fav-title">
       <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#F0E3DC]">
-        <h3 class="font-serif font-bold text-xl text-[#241A1B] flex items-center gap-2">
-          <i class="fa-solid fa-heart text-[#E8A7A1]"></i> Meus Favoritos
+        <h3 id="fav-title" class="font-serif font-bold text-xl text-[#241A1B] flex items-center gap-2">
+          <i class="fa-solid fa-heart text-[#E8A7A1]" aria-hidden="true"></i> Meus favoritos
         </h3>
-        <button onclick="A.closeFavModal()" class="w-8 h-8 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
+        <button type="button" onclick="A.closeFavModal()" class="w-8 h-8 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center" aria-label="Fechar favoritos">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
       <div id="fav-items-list" class="space-y-3"></div>
     </div>
   </div>
 
-  <!-- FLOATING WHATSAPP PILL -->
-  <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado." 
-     target="_blank" rel="noopener" 
-     class="fixed bottom-24 md:bottom-8 right-5 z-40 bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline" 
-     aria-label="Falar no WhatsApp">
-    <i class="fa-brands fa-whatsapp text-2xl"></i>
+  <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado."
+     target="_blank" rel="noopener noreferrer"
+     class="fixed bottom-24 md:bottom-8 right-5 z-40 bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline"
+     aria-label="Falar com a Vivi no WhatsApp">
+    <i class="fa-brands fa-whatsapp text-2xl" aria-hidden="true"></i>
     <span class="hidden sm:inline font-bold text-sm tracking-wide">Falar com a Vivi</span>
   </a>
 
-  <!-- TOAST NOTIFICATIONS -->
-  <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
-  <!-- MOBILE BOTTOM NAVIGATION -->
-  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0E3DC] md:hidden px-4 py-2 flex justify-around items-center">
-    <a href="#/" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-house text-lg"></i> Início
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0E3DC] md:hidden px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex justify-around items-center" aria-label="Navegação móvel">
+    <a href="/" data-link class="nav-link flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-house text-lg" aria-hidden="true"></i> Início
     </a>
-    <a href="#/produtos" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-magnifying-glass text-lg"></i> Catálogo
+    <a href="/produtos" data-link class="nav-link flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-magnifying-glass text-lg" aria-hidden="true"></i> Catálogo
     </a>
-    <button onclick="A.showFavModal()" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-regular fa-heart text-lg"></i> Desejos
+    <button type="button" onclick="A.showFavModal()" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-regular fa-heart text-lg" aria-hidden="true"></i> Desejos
     </button>
-    <button onclick="A.toggleCart(true)" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-bag-shopping text-lg"></i> Sacola
+    <button type="button" onclick="A.toggleCart(true)" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-bag-shopping text-lg" aria-hidden="true"></i> Sacola
     </button>
-    <a href="#/admin" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-user-shield text-lg"></i> Admin
-    </a>
   </nav>
 
-  <!-- LUXURY FOOTER -->
-  <footer class="bg-[#1C1415] text-[#D8CECA] border-t border-white/5 pt-16 pb-12">
+  <footer class="bg-[#1C1415] text-[#D8CECA] border-t border-white/5 pt-16 pb-28 md:pb-12">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-      <!-- Col 1: About -->
       <div class="md:col-span-2 space-y-4">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] p-0.5">
-            <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg" alt="Vivi Boty" class="w-full h-full rounded-full object-cover">
+            <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg" alt="" class="w-full h-full rounded-full object-cover">
           </div>
           <span class="font-serif font-bold text-2xl text-white">Vivi Carvalho Boty</span>
         </div>
         <p class="text-sm text-[#A89C98] leading-relaxed max-w-md">
-          Sua consultora de beleza e bem-estar de confiança. Seleção refinada de fragrâncias, cosméticos e kits para presente com agilidade e carinho.
+          Consultora de beleza e bem-estar. Seleção de fragrâncias, cosméticos e kits para presente, com agilidade e carinho no atendimento.
         </p>
         <div class="flex items-center gap-4 text-lg pt-2">
-          <a href="https://wa.me/5518997871211" target="_blank" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://wa.me/5518997871211" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors" aria-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
         </div>
       </div>
-
-      <!-- Col 2: Brands -->
       <div class="space-y-3">
-        <h4 class="font-serif font-bold text-white tracking-wide">Marcas Parceiras</h4>
+        <h4 class="font-serif font-bold text-white tracking-wide">Marcas</h4>
         <ul class="text-sm space-y-2 text-[#A89C98]">
-          <li><a href="#/produtos?marca=O%20Botic%C3%A1rio" class="hover:text-[#D4A864] transition-colors">O Boticário</a></li>
-          <li><a href="#/produtos?marca=Natura" class="hover:text-[#D4A864] transition-colors">Natura</a></li>
-          <li><a href="#/produtos?marca=Eudora" class="hover:text-[#D4A864] transition-colors">Eudora</a></li>
-          <li><span class="text-xs text-[#706461]">100% Originais e Lacrados</span></li>
+          <li><a href="/produtos?marca=O%20Botic%C3%A1rio" data-link class="hover:text-[#D4A864] transition-colors">O Boticário</a></li>
+          <li><a href="/produtos?marca=Natura" data-link class="hover:text-[#D4A864] transition-colors">Natura</a></li>
+          <li><a href="/produtos?marca=Eudora" data-link class="hover:text-[#D4A864] transition-colors">Eudora</a></li>
+          <li><span class="text-xs text-[#706461]">100% originais e lacrados</span></li>
         </ul>
       </div>
-
-      <!-- Col 3: Dúvidas / FAQ -->
       <div class="space-y-3">
-        <h4 class="font-serif font-bold text-white tracking-wide">Como Funciona?</h4>
+        <h4 class="font-serif font-bold text-white tracking-wide">Como funciona</h4>
         <div class="text-xs text-[#A89C98] space-y-2 leading-relaxed">
-          <p><strong>1. Escolha:</strong> Navegue pelos produtos e monte sua sacola.</p>
-          <p><strong>2. WhatsApp:</strong> Envie o orçamento formatado com um clique.</p>
-          <p><strong>3. Receba:</strong> A Vivi confirma a entrega e você recebe com total segurança.</p>
+          <p><strong>1. Escolha:</strong> navegue e monte a sacola.</p>
+          <p><strong>2. WhatsApp:</strong> envie o orçamento com um toque.</p>
+          <p><strong>3. Receba:</strong> a Vivi confirma entrega e disponibilidade.</p>
         </div>
       </div>
     </div>
-
     <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#706461]">
       <p>© 2026 Vivi Boty — Todos os direitos reservados.</p>
-      <p class="flex items-center gap-1">Feito com muito carinho para a melhor mãe e consultora 💖</p>
+      <p>Feito com carinho para a melhor mãe e consultora</p>
     </div>
   </footer>
-
 </div>
 
-<!-- APPLICATION JAVASCRIPT LOGIC -->
+<noscript>
+  <div style="padding:2rem;text-align:center;font-family:sans-serif">
+    Ative o JavaScript para ver o catálogo da Vivi Boty, ou fale direto no
+    <a href="https://wa.me/5518997871211">WhatsApp</a>.
+  </div>
+</noscript>
+
 <script>
+const SITE_URL = 'https://vivicarvalhoboty.com.br';
 const VIVI_LOGO = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg';
 const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
 const WA_PHONE = '5518997871211';
 const WA_BASE = 'https://wa.me/' + WA_PHONE;
-
 const CATS = ['Perfumes', 'Maquiagem', 'Cremes', 'Corpo e Banho', 'Presentes', 'Outros'];
 const BRANDS = ['O Boticário', 'Natura', 'Eudora', 'Outros'];
-const GENEROS = ['', 'Feminino', 'Masculino', 'Unissex'];
+const GENEROS = ['Feminino', 'Masculino', 'Unissex'];
 const CART_KEY = 'viviboty_cart_v2';
 const FAV_KEY = 'viviboty_favs_v2';
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 const A = {
   sb: null,
@@ -548,22 +524,28 @@ const A = {
   pmap: {},
   cart: [],
   favs: [],
-  route: '',
-  filt: { q: '', cat: '', brand: '', promo: false, ready: false, genero: '', sort: 'relevancia' },
+  path: '/',
+  prodsLoaded: false,
+  haveAll: false,
+  lastFetch: 0,
+  searchTimer: null,
+  renderToken: 0,
 
   async init() {
+    this.migrateHash();
     this.loadStorage();
+    this.bindGlobalEvents();
     if (window.supabase) {
       try {
         this.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const { data: sd } = await this.sb.auth.getSession();
-        if (sd && sd.session && sd.session.user) {
+        if (sd?.session?.user) {
           this.user = sd.session.user;
           this.isAdmin = await this.chkAdmin();
         }
-        this.sb.auth.onAuthStateChange((_, s) => {
-          this.user = s && s.user ? s.user : null;
-          if (!this.user) this.isAdmin = false;
+        this.sb.auth.onAuthStateChange(async (_, s) => {
+          this.user = s?.user || null;
+          this.isAdmin = this.user ? await this.chkAdmin() : false;
         });
       } catch (e) {
         console.warn('Erro ao conectar Supabase:', e);
@@ -571,31 +553,102 @@ const A = {
     }
     this.updateCartUI();
     this.updateFavUI();
+    this.handleRoute();
+  },
 
-    window.addEventListener('hashchange', () => this.handleRoute(location.hash));
-    this.handleRoute(location.hash || '#/');
+  migrateHash() {
+    if (!location.hash.startsWith('#/')) return;
+    const next = location.hash.slice(1);
+    history.replaceState(null, '', next);
+  },
+
+  bindGlobalEvents() {
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-link]');
+      if (!a) return;
+      const url = new URL(a.getAttribute('href'), location.origin);
+      if (url.origin !== location.origin) return;
+      e.preventDefault();
+      this.navigate(url.pathname + url.search);
+    });
+    window.addEventListener('popstate', () => this.handleRoute());
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      this.toggleCart(false);
+      this.closeQuickView();
+      this.closeFavModal();
+    });
+  },
+
+  navigate(to, replace = false) {
+    const url = to.startsWith('/') ? to : '/' + to;
+    if (replace) history.replaceState(null, '', url);
+    else if (location.pathname + location.search !== url) history.pushState(null, '', url);
+    this.handleRoute();
+  },
+
+  handleRoute() {
+    this.migrateHash();
+    this.path = (location.pathname.replace(/\/+$/, '') || '/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.updateNav();
+    this.renderPage();
+  },
+
+  updateNav() {
+    document.querySelectorAll('.nav-link').forEach(el => {
+      const href = el.getAttribute('href');
+      const active = href === '/' ? this.path === '/' : this.path === href || (href === '/produtos' && this.path === '/produtos');
+      el.classList.toggle('active', active);
+    });
+  },
+
+  setMeta({ title, desc, url, image }) {
+    document.title = title;
+    const set = (sel, attr, val) => {
+      const el = document.querySelector(sel);
+      if (el) el.setAttribute(attr, val);
+    };
+    set('meta[name="description"]', 'content', desc);
+    set('link[rel="canonical"]', 'href', url);
+    set('meta[property="og:title"]', 'content', title);
+    set('meta[property="og:description"]', 'content', desc);
+    set('meta[property="og:url"]', 'content', url);
+    if (image) set('meta[property="og:image"]', 'content', image);
   },
 
   loadStorage() {
     try { this.cart = JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { this.cart = []; }
-    try { this.favs = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { this.favs = []; }
+    try { this.favs = (JSON.parse(localStorage.getItem(FAV_KEY)) || []).map(String); } catch { this.favs = []; }
+    this.cart = this.cart.filter(i => i && i.id).map(i => ({ ...i, id: String(i.id), q: Math.max(1, parseInt(i.q, 10) || 1) }));
   },
   saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(this.cart)); this.updateCartUI(); },
   saveFavs() { localStorage.setItem(FAV_KEY, JSON.stringify(this.favs)); this.updateFavUI(); },
 
-  async fetchProds() {
+  isAdminPath() {
+    return this.path === '/admin' || this.path.startsWith('/admin/');
+  },
+
+  async fetchProds(all = false) {
     if (!this.sb) return false;
     try {
-      const { data, error } = await this.sb.from('products').select('*').order('data_criacao', { ascending: false });
+      let q = this.sb.from('products').select('*').order('data_criacao', { ascending: false });
+      if (!all) q = q.eq('ativo', true);
+      const { data, error } = await q;
       if (error) throw error;
       this.prods = (data || []).map(p => ({
         ...p,
+        id: String(p.id),
         preco: parseFloat(p.preco) || 0,
         genero: p.genero || '',
-        estoque: parseInt(p.estoque) || 0
+        estoque: parseInt(p.estoque, 10) || 0
       }));
       this.pmap = {};
       this.prods.forEach(p => { this.pmap[p.id] = p; });
+      this.prodsLoaded = true;
+      this.haveAll = all;
+      this.lastFetch = Date.now();
+      this.syncCartPrices();
       return true;
     } catch (e) {
       console.error('Erro ao buscar produtos:', e);
@@ -604,513 +657,510 @@ const A = {
   },
 
   async ensureProds() {
-    if (this.prods.length > 0) return true;
-    return await this.fetchProds();
+    const wantAll = this.isAdminPath() && this.isAdmin;
+    const stale = Date.now() - this.lastFetch > 25000;
+    if (this.prodsLoaded && !stale && this.haveAll === wantAll) return true;
+    return this.fetchProds(wantAll);
+  },
+
+  syncCartPrices() {
+    this.cart.forEach(item => {
+      const p = this.pmap[String(item.id)];
+      if (p) {
+        item.preco = p.preco;
+        item.nome = p.nome;
+        item.img = p.imagem;
+      }
+    });
+    this.saveCart();
   },
 
   async chkAdmin() {
     if (!this.user || !this.sb) return false;
     try {
-      const { data } = await this.sb.from('admin_users').select('id').eq('email', this.user.email).single();
+      const { data } = await this.sb.from('admin_users').select('id').eq('email', this.user.email).maybeSingle();
       return !!data;
     } catch { return false; }
   },
 
-  handleRoute(h) {
-    this.route = h || '#/';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    this.renderPage();
+  loadingHtml() {
+    return `<div class="max-w-6xl mx-auto px-4 py-16 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      ${Array.from({ length: 8 }).map(() => `<div class="rounded-2xl border border-[#F0E3DC] overflow-hidden">
+        <div class="skeleton-lux aspect-square"></div>
+        <div class="p-4 space-y-2"><div class="skeleton-lux h-3 w-16"></div><div class="skeleton-lux h-4 w-full"></div><div class="skeleton-lux h-4 w-20"></div></div>
+      </div>`).join('')}
+    </div>`;
+  },
+
+  errorHtml(msg) {
+    return `<div class="page-anim text-center py-24 px-4">
+      <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-wifi"></i></div>
+      <h2 class="font-serif font-bold text-2xl mb-2">Não foi possível carregar o catálogo</h2>
+      <p class="text-sm text-[#826F70] mb-6">${this.escape(msg || 'Verifique sua conexão e tente novamente.')}</p>
+      <button type="button" onclick="A.lastFetch=0;A.renderPage()" class="btn-gold">Tentar novamente</button>
+    </div>`;
   },
 
   async renderPage() {
     const main = document.getElementById('main-content');
-    main.innerHTML = '<div class="max-w-6xl mx-auto px-4 py-24 flex flex-col items-center justify-center gap-4"><div class="skeleton-lux w-48 h-8"></div><div class="skeleton-lux w-80 h-4"></div></div>';
+    const token = ++this.renderToken;
+    main.innerHTML = this.loadingHtml();
+    const path = this.path;
 
-    if (this.route === '#/' || this.route === '#/home') return await this.viewHome();
-    if (this.route.startsWith('#/produtos')) return await this.viewCatalog();
-    if (this.route.startsWith('#/produto/')) return await this.viewDetail(this.route.split('#/produto/')[1]);
-    if (this.route === '#/admin') return this.viewAdminLogin();
-    if (this.route === '#/admin/produtos') return await this.viewAdminProducts();
-    if (this.route === '#/admin/novo') return this.viewAdminForm();
-    if (this.route.startsWith('#/admin/editar/')) return await this.viewAdminForm(this.route.split('#/admin/editar/')[1]);
-    return await this.viewHome();
+    if (path === '/' || path === '/home') { await this.viewHome(); }
+    else if (path === '/produtos') { await this.viewCatalog(); }
+    else if (path.startsWith('/produto/')) { await this.viewDetail(path.split('/produto/')[1]); }
+    else if (path === '/admin' || path === '/admin/login') { this.viewAdminLogin(); }
+    else if (path === '/admin/produtos') { await this.viewAdminProducts(); }
+    else if (path === '/admin/novo') { await this.viewAdminForm(); }
+    else if (path.startsWith('/admin/editar/')) { await this.viewAdminForm(path.split('/admin/editar/')[1]); }
+    else { this.viewNotFound(); }
+
+    if (token !== this.renderToken) return;
   },
 
-  /* ====================== HOME VIEW ====================== */
-  async viewHome() {
-    await this.ensureProds();
-    const featured = this.prods.filter(p => p.ativo && p.destaque).slice(0, 4);
-    const promos = this.prods.filter(p => p.ativo && p.promocao).slice(0, 4);
+  viewNotFound() {
+    this.setMeta({ title: 'Página não encontrada | Vivi Boty', desc: 'A página pedida não existe.', url: SITE_URL + location.pathname });
+    document.getElementById('main-content').innerHTML = `
+      <div class="page-anim text-center py-24 px-4">
+        <p class="text-sm font-bold tracking-widest text-[#A97E3B] mb-2">404</p>
+        <h1 class="font-serif font-bold text-3xl mb-3">Essa página não existe</h1>
+        <p class="text-[#826F70] mb-6">Que tal voltar ao catálogo e escolher um mimo?</p>
+        <a href="/produtos" data-link class="btn-gold">Ver catálogo</a>
+      </div>`;
+  },
 
+  async viewHome() {
+    this.setMeta({
+      title: 'Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes',
+      desc: 'Boutique digital de perfumes, cosméticos e presentes originais com atendimento pelo WhatsApp.',
+      url: SITE_URL + '/'
+    });
+    const ok = await this.ensureProds();
     const main = document.getElementById('main-content');
+    if (!ok && !this.prods.length) { main.innerHTML = this.errorHtml(); return; }
+
+    const active = this.prods.filter(p => p.ativo !== false);
+    const featured = active.filter(p => p.destaque).slice(0, 8);
+    const showcase = featured.length ? featured : active.slice(0, 8);
+    const promos = active.filter(p => p.promocao).slice(0, 8);
+
     main.innerHTML = `
       <div class="page-anim">
-        <!-- HERO SECTION -->
         <section class="relative overflow-hidden bg-gradient-to-b from-[#FAF4F0] via-[#FCF9F7] to-[#FCF9F7] pt-12 pb-20 px-4 sm:px-6">
           <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
             <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#F0E3DC] shadow-sm text-xs font-bold text-[#A97E3B]">
-                <i class="fa-solid fa-sparkles"></i> Perfumaria, Maquiagem & Cosméticos
+                <i class="fa-solid fa-sparkles" aria-hidden="true"></i> Perfumaria, maquiagem & cosméticos
               </div>
               <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241A1B] leading-[1.12]">
                 O encanto da beleza com o carinho do atendimento <span class="italic text-[#A97E3B]">exclusivo</span>.
               </h1>
               <p class="text-base sm:text-lg text-[#826F70] leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Explore as marcas mais amadas: <strong>O Boticário, Natura e Eudora</strong>. Escolha seus favoritos, monte sua sacola e feche seu pedido com a Vivi no WhatsApp sem burocracia.
+                Explore <strong>O Boticário, Natura e Eudora</strong>. Monte a sacola e feche com a Vivi no WhatsApp, sem cadastro e sem burocracia.
               </p>
               <div class="flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start pt-2">
-                <a href="#/produtos" class="btn-gold">
-                  <i class="fa-solid fa-store"></i> Explorar Catálogo
-                </a>
-                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Adorei o seu site e gostaria de tirar uma dúvida sobre seus produtos.')}" target="_blank" class="btn-secondary">
-                  <i class="fa-brands fa-whatsapp text-lg text-[#25D366]"></i> Falar com a Vivi
+                <a href="/produtos" data-link class="btn-gold"><i class="fa-solid fa-store" aria-hidden="true"></i> Explorar catálogo</a>
+                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Adorei o seu site e gostaria de tirar uma dúvida sobre seus produtos.')}" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                  <i class="fa-brands fa-whatsapp text-lg text-[#25D366]" aria-hidden="true"></i> Falar com a Vivi
                 </a>
               </div>
-              
-              <!-- Trust Indicators -->
               <div class="grid grid-cols-3 gap-4 pt-6 border-t border-[#F0E3DC]/80 max-w-lg mx-auto lg:mx-0 text-left">
-                <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">100%</p>
-                  <p class="text-[11px] text-[#826F70] font-medium">Originais & Lacrados</p>
-                </div>
-                <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">Rápido</p>
-                  <p class="text-[11px] text-[#826F70] font-medium">Pronta Entrega</p>
-                </div>
-                <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">Mimos 🎁</p>
-                  <p class="text-[11px] text-[#826F70] font-medium">Embalagens Especiais</p>
-                </div>
+                <div><p class="font-serif font-bold text-lg">100%</p><p class="text-[11px] text-[#826F70] font-medium">Originais e lacrados</p></div>
+                <div><p class="font-serif font-bold text-lg">Rápido</p><p class="text-[11px] text-[#826F70] font-medium">Pronta entrega</p></div>
+                <div><p class="font-serif font-bold text-lg">Mimos</p><p class="text-[11px] text-[#826F70] font-medium">Embalagens especiais</p></div>
               </div>
             </div>
-
-            <!-- Hero Visual Badge Collage -->
             <div class="lg:col-span-5 flex justify-center relative">
-              <div class="relative w-72 sm:w-84 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle">
-                <img src="${VIVI_LOGO}" alt="Vivi Boty Catálogo" class="w-full h-full object-cover">
+              <div class="relative w-72 sm:w-80 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle">
+                <img src="${VIVI_LOGO}" alt="Vivi Carvalho, consultora Vivi Boty" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 <div class="absolute bottom-6 left-6 right-6 text-white text-left">
-                  <span class="badge-tag badge-star mb-2">Consultora Oficial</span>
+                  <span class="badge-tag badge-star mb-2">Consultora oficial</span>
                   <p class="font-serif font-bold text-xl">Vivi Carvalho</p>
                   <p class="text-xs text-white/80">Atendimento acolhedor e dedicado</p>
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
-        <!-- VALUE PROPOSITIONS -->
         <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-truck-fast"></i></div>
-              <div><h4 class="font-bold text-sm text-[#241A1B]">Pronta Entrega</h4><p class="text-xs text-[#826F70]">Envio ágil e cuidadoso</p></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#FCE7F3] text-[#9D174D] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
-              <div><h4 class="font-bold text-sm text-[#241A1B]">Para Presentear</h4><p class="text-xs text-[#826F70]">Kits com sacolas lindas</p></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#DCFCE7] text-[#1D8A58] flex items-center justify-center text-xl shrink-0"><i class="fa-brands fa-whatsapp"></i></div>
-              <div><h4 class="font-bold text-sm text-[#241A1B]">Sem Senhas</h4><p class="text-xs text-[#826F70]">Compra direto no chat</p></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-badge-check"></i></div>
-              <div><h4 class="font-bold text-sm text-[#241A1B]">Garantia Real</h4><p class="text-xs text-[#826F70]">Marcas homologadas</p></div>
-            </div>
+            ${[
+              ['fa-truck-fast','#FBF4E8','#A97E3B','Pronta entrega','Envio ágil e cuidadoso'],
+              ['fa-gift','#FCE7F3','#9D174D','Para presentear','Kits com sacolas lindas'],
+              ['fa-brands fa-whatsapp','#DCFCE7','#1D8A58','Sem cadastro','Compra direto no chat'],
+              ['fa-solid fa-shield-halved','#FEF3C7','#D97706','Garantia real','Marcas oficiais']
+            ].map(([icon,bg,color,t,s]) => `
+              <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0" style="background:${bg};color:${color}"><i class="${icon}" aria-hidden="true"></i></div>
+                <div><p class="font-bold text-sm">${t}</p><p class="text-xs text-[#826F70]">${s}</p></div>
+              </div>`).join('')}
           </div>
         </section>
 
-        <!-- FEATURED SHOWCASE -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+          <h2 class="text-2xl font-serif font-bold mb-6">Compre por categoria</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            ${CATS.map(c => `<a href="/produtos?categoria=${encodeURIComponent(c)}" data-link class="bg-white border border-[#F0E3DC] hover:border-[#C69A55] rounded-2xl p-4 text-center font-semibold text-sm transition-colors">${c}</a>`).join('')}
+          </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
           <div class="flex items-end justify-between mb-8">
             <div>
-              <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Seleção da Consultora</span>
-              <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#241A1B] mt-1">Destaques Mais Desejados</h2>
+              <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Seleção da consultora</span>
+              <h2 class="text-2xl sm:text-3xl font-serif font-bold mt-1">${featured.length ? 'Destaques mais desejados' : 'Novidades do catálogo'}</h2>
             </div>
-            <a href="#/produtos" class="text-sm font-bold text-[#A97E3B] hover:text-[#C69A55] flex items-center gap-1.5 transition-colors">
-              Ver tudo <i class="fa-solid fa-arrow-right"></i>
-            </a>
+            <a href="/produtos" data-link class="text-sm font-bold text-[#A97E3B] hover:text-[#C69A55] flex items-center gap-1.5">Ver tudo <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            ${featured.map(p => this.renderCard(p)).join('')}
-          </div>
+          ${showcase.length ? `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">${showcase.map(p => this.renderCard(p)).join('')}</div>`
+            : `<p class="text-sm text-[#826F70]">Em breve novos produtos por aqui. Enquanto isso, chame a Vivi no WhatsApp.</p>`}
         </section>
 
-        <!-- SPECIAL PROMOTIONS BANNER -->
-        ${promos.length > 0 ? `
+        ${promos.length ? `
           <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-            <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2] shadow-sm">
-              <div class="flex items-center justify-between mb-6">
+            <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2]">
+              <div class="flex items-center justify-between mb-6 gap-3">
                 <div class="flex items-center gap-3">
-                  <span class="w-10 h-10 rounded-full bg-[#E53E3E] text-white flex items-center justify-center text-lg"><i class="fa-solid fa-fire"></i></span>
+                  <span class="w-10 h-10 rounded-full bg-[#E53E3E] text-white flex items-center justify-center"><i class="fa-solid fa-fire" aria-hidden="true"></i></span>
                   <div>
-                    <h3 class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B]">Ofertas & Promoções Especiais</h3>
-                    <p class="text-xs sm:text-sm text-[#826F70]">Condições limitadas enquanto durarem os estoques</p>
+                    <h2 class="font-serif font-bold text-xl sm:text-2xl">Ofertas e promoções</h2>
+                    <p class="text-xs sm:text-sm text-[#826F70]">Enquanto durarem os estoques</p>
                   </div>
                 </div>
-                <a href="#/produtos?promo=true" class="btn-secondary text-xs sm:text-sm">Ver Todas</a>
+                <a href="/produtos?promo=1" data-link class="btn-secondary text-xs sm:text-sm">Ver todas</a>
               </div>
-              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                ${promos.map(p => this.renderCard(p)).join('')}
-              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">${promos.map(p => this.renderCard(p)).join('')}</div>
             </div>
-          </section>
-        ` : ''}
+          </section>` : ''}
 
-      </div>
-    `;
+        <section class="max-w-3xl mx-auto px-4 sm:px-6 pb-20">
+          <h2 class="text-2xl font-serif font-bold mb-6 text-center">Dúvidas frequentes</h2>
+          <div class="space-y-3">
+            ${[
+              ['Os produtos são originais?', 'Sim. Tudo é original, lacrado e das marcas oficiais O Boticário, Natura e Eudora.'],
+              ['Como faço o pedido?', 'Adicione os itens na sacola e toque em finalizar. O WhatsApp abre com o orçamento pronto para a Vivi confirmar.'],
+              ['Posso pedir embalagem de presente?', 'Pode. Marque a opção na sacola ou avise no chat que é para presente.']
+            ].map(([q,a]) => `<details class="faq-item bg-white border border-[#F0E3DC] rounded-2xl p-4">
+              <summary class="cursor-pointer font-semibold text-sm flex items-center justify-between">${q}<i class="fa-solid fa-chevron-down text-xs text-[#AA999A] transition-transform" aria-hidden="true"></i></summary>
+              <p class="text-sm text-[#826F70] mt-3 leading-relaxed">${a}</p>
+            </details>`).join('')}
+          </div>
+        </section>
+      </div>`;
   },
 
-  /* ====================== CATALOG VIEW ====================== */
+  catalogFilters() {
+    const p = new URLSearchParams(location.search);
+    const flag = k => p.get(k) === '1' || p.get(k) === 'true';
+    return {
+      q: p.get('q') || '',
+      cat: p.get('categoria') || '',
+      brand: p.get('marca') || '',
+      genero: p.get('genero') || '',
+      promo: flag('promo'),
+      destaque: flag('destaque'),
+      ready: flag('pronta'),
+      sort: p.get('sort') || 'relevancia'
+    };
+  },
+
+  setCatalogFilters(patch, push = true) {
+    const f = { ...this.catalogFilters(), ...patch };
+    const p = new URLSearchParams();
+    if (f.q) p.set('q', f.q);
+    if (f.cat) p.set('categoria', f.cat);
+    if (f.brand) p.set('marca', f.brand);
+    if (f.genero) p.set('genero', f.genero);
+    if (f.promo) p.set('promo', '1');
+    if (f.destaque) p.set('destaque', '1');
+    if (f.ready) p.set('pronta', '1');
+    if (f.sort && f.sort !== 'relevancia') p.set('sort', f.sort);
+    const qs = p.toString();
+    this.navigate('/produtos' + (qs ? '?' + qs : ''), !push);
+  },
+
   async viewCatalog() {
-    await this.ensureProds();
-
-    // Check query params
-    const hash = this.route;
-    if (hash.includes('?')) {
-      const qParams = new URLSearchParams(hash.split('?')[1]);
-      if (qParams.has('marca')) this.filt.brand = decodeURIComponent(qParams.get('marca'));
-      if (qParams.has('categoria')) this.filt.cat = decodeURIComponent(qParams.get('categoria'));
-      if (qParams.has('promo')) this.filt.promo = true;
-      if (qParams.has('destaque')) this.filt.ready = false;
-    }
-
-    const filtered = this.getFilteredProds();
-
+    const f = this.catalogFilters();
+    this.setMeta({
+      title: 'Catálogo | Vivi Carvalho Boty',
+      desc: 'Veja perfumes, cosméticos e presentes originais disponíveis para pedido no WhatsApp.',
+      url: SITE_URL + '/produtos' + location.search
+    });
+    const ok = await this.ensureProds();
     const main = document.getElementById('main-content');
+    if (!ok && !this.prods.length) { main.innerHTML = this.errorHtml(); return; }
+
+    const filtered = this.getFilteredProds(f);
     main.innerHTML = `
       <div class="page-anim max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        
-        <!-- Header Title & Fast Search -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 class="text-3xl font-serif font-bold text-[#241A1B]">Catálogo de Produtos</h1>
-            <p class="text-xs sm:text-sm text-[#826F70] mt-0.5">${filtered.length} produtos disponíveis para você</p>
+            <h1 class="text-3xl font-serif font-bold">Catálogo de produtos</h1>
+            <p class="text-xs sm:text-sm text-[#826F70] mt-0.5">${filtered.length} ${filtered.length === 1 ? 'produto encontrado' : 'produtos encontrados'}</p>
           </div>
-
-          <!-- Search Bar -->
           <div class="relative w-full md:w-80">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#AA999A]"></i>
-            <input type="text" id="catalog-search" placeholder="Buscar por perfume, hidratante..." 
-                   value="${this.escape(this.filt.q)}"
-                   class="lux-input pl-11 pr-4 py-2.5 text-sm">
-            ${this.filt.q ? `
-              <button onclick="A.clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA999A] hover:text-[#241A1B] text-xs">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            ` : ''}
+            <label for="catalog-search" class="sr-only">Buscar produtos</label>
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#AA999A]" aria-hidden="true"></i>
+            <input type="search" id="catalog-search" placeholder="Buscar por nome, marca..." value="${this.escape(f.q)}" class="lux-input pl-11 pr-10 py-2.5 text-sm" autocomplete="off">
+            ${f.q ? `<button type="button" onclick="A.setCatalogFilters({q:''})" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA999A]" aria-label="Limpar busca"><i class="fa-solid fa-xmark"></i></button>` : ''}
           </div>
         </div>
 
-        <!-- Filter Chips Row 1: Categories -->
         <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
-          <button onclick="A.setCategory('')" class="filter-chip ${!this.filt.cat && !this.filt.promo ? 'active' : ''}">
-            Todos
-          </button>
-          <button onclick="A.togglePromoFilter()" class="filter-chip ${this.filt.promo ? 'active' : ''} text-[#E53E3E]">
-            <i class="fa-solid fa-tag"></i> Promoções
-          </button>
-          ${CATS.map(c => `
-            <button onclick="A.setCategory('${c}')" class="filter-chip ${this.filt.cat === c ? 'active' : ''}">
-              ${c}
-            </button>
-          `).join('')}
+          <button type="button" onclick="A.setCatalogFilters({cat:'',promo:false,destaque:false,ready:false})" class="filter-chip ${!f.cat && !f.promo && !f.destaque && !f.ready ? 'active' : ''}">Todos</button>
+          <button type="button" onclick="A.setCatalogFilters({promo:!A.catalogFilters().promo,cat:''})" class="filter-chip ${f.promo ? 'active' : ''}"><i class="fa-solid fa-tag" aria-hidden="true"></i> Promoções</button>
+          <button type="button" onclick="A.setCatalogFilters({destaque:!A.catalogFilters().destaque})" class="filter-chip ${f.destaque ? 'active' : ''}"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> Destaques</button>
+          <button type="button" onclick="A.setCatalogFilters({ready:!A.catalogFilters().ready})" class="filter-chip ${f.ready ? 'active' : ''}"><i class="fa-solid fa-check" aria-hidden="true"></i> Pronta entrega</button>
+          ${CATS.map(c => `<button type="button" onclick="A.setCatalogFilters({cat:'${c}',promo:false})" class="filter-chip ${f.cat === c ? 'active' : ''}">${c}</button>`).join('')}
         </div>
 
-        <!-- Filter Chips Row 2: Brands & Gênero -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-[#F0E3DC]">
           <div class="flex items-center gap-2 overflow-x-auto scrollbar-none">
-            <span class="text-xs font-bold text-[#AA999A] uppercase tracking-wider mr-1">Marcas:</span>
-            <button onclick="A.setBrand('')" class="filter-chip text-xs ${!this.filt.brand ? 'active' : ''}">Todas</button>
-            ${BRANDS.map(b => `
-              <button onclick="A.setBrand('${b}')" class="filter-chip text-xs ${this.filt.brand === b ? 'active' : ''}">${b}</button>
-            `).join('')}
+            <span class="text-xs font-bold text-[#AA999A] uppercase tracking-wider mr-1">Marcas</span>
+            <button type="button" onclick="A.setCatalogFilters({brand:''})" class="filter-chip text-xs ${!f.brand ? 'active' : ''}">Todas</button>
+            ${BRANDS.map(b => `<button type="button" onclick="A.setCatalogFilters({brand:'${b}'})" class="filter-chip text-xs ${f.brand === b ? 'active' : ''}">${b}</button>`).join('')}
           </div>
-
-          <!-- Sort Select -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-medium text-[#826F70]">Ordenar por:</span>
-            <select id="sort-selector" onchange="A.setSort(this.value)" class="lux-input py-1.5 px-3 text-xs w-auto bg-white">
-              <option value="relevancia" ${this.filt.sort === 'relevancia' ? 'selected' : ''}>Mais Relevantes</option>
-              <option value="menor_preco" ${this.filt.sort === 'menor_preco' ? 'selected' : ''}>Menor Preço</option>
-              <option value="maior_preco" ${this.filt.sort === 'maior_preco' ? 'selected' : ''}>Maior Preço</option>
-              <option value="nome_asc" ${this.filt.sort === 'nome_asc' ? 'selected' : ''}>Nome (A-Z)</option>
+          <div class="flex flex-wrap items-center gap-2">
+            <label class="text-xs font-medium text-[#826F70]" for="genero-selector">Gênero</label>
+            <select id="genero-selector" class="lux-input py-1.5 px-3 text-xs w-auto bg-white" onchange="A.setCatalogFilters({genero:this.value})">
+              <option value="">Todos</option>
+              ${GENEROS.map(g => `<option value="${g}" ${f.genero === g ? 'selected' : ''}>${g}</option>`).join('')}
+            </select>
+            <label class="text-xs font-medium text-[#826F70]" for="sort-selector">Ordenar</label>
+            <select id="sort-selector" class="lux-input py-1.5 px-3 text-xs w-auto bg-white" onchange="A.setCatalogFilters({sort:this.value})">
+              <option value="relevancia" ${f.sort === 'relevancia' ? 'selected' : ''}>Mais relevantes</option>
+              <option value="menor_preco" ${f.sort === 'menor_preco' ? 'selected' : ''}>Menor preço</option>
+              <option value="maior_preco" ${f.sort === 'maior_preco' ? 'selected' : ''}>Maior preço</option>
+              <option value="nome_asc" ${f.sort === 'nome_asc' ? 'selected' : ''}>Nome (A-Z)</option>
             </select>
           </div>
         </div>
 
-        <!-- Products Grid / Empty State -->
         ${filtered.length === 0 ? `
           <div class="text-center py-24 bg-white rounded-3xl border border-[#F0E3DC] p-8 max-w-lg mx-auto">
-            <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl">
-              <i class="fa-solid fa-box-open"></i>
-            </div>
-            <h3 class="font-serif font-bold text-xl text-[#241A1B] mb-2">Nenhum produto encontrado</h3>
-            <p class="text-xs sm:text-sm text-[#826F70] mb-6">Tente remover alguns filtros ou buscar por outro termo.</p>
-            <button onclick="A.resetFilters()" class="btn-secondary text-xs">Limpar todos os filtros</button>
-          </div>
-        ` : `
+            <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-box-open"></i></div>
+            <h2 class="font-serif font-bold text-xl mb-2">Nenhum produto encontrado</h2>
+            <p class="text-sm text-[#826F70] mb-6">Tente outro termo ou limpe os filtros.</p>
+            <button type="button" onclick="A.navigate('/produtos')" class="btn-secondary text-xs">Limpar filtros</button>
+          </div>` : `
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             ${filtered.map(p => this.renderCard(p)).join('')}
-          </div>
-        `}
+          </div>`}
+      </div>`;
 
-      </div>
-    `;
-
-    // Search input listener
-    let deb;
-    document.getElementById('catalog-search')?.addEventListener('input', e => {
-      clearTimeout(deb);
-      deb = setTimeout(() => {
-        this.filt.q = e.target.value;
-        this.viewCatalog();
-      }, 300);
-    });
+    const input = document.getElementById('catalog-search');
+    if (input) {
+      input.addEventListener('input', e => {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = setTimeout(() => this.setCatalogFilters({ q: e.target.value.trim() }, false), 280);
+      });
+      if (document.activeElement !== input && f.q) {
+        const v = input.value;
+        input.focus();
+        input.setSelectionRange(v.length, v.length);
+      }
+    }
   },
 
-  getFilteredProds() {
+  getFilteredProds(f = this.catalogFilters()) {
+    const q = (f.q || '').toLowerCase();
     let list = this.prods.filter(p => {
-      if (!p.ativo) return false;
-      if (this.filt.q && !p.nome.toLowerCase().includes(this.filt.q.toLowerCase())) return false;
-      if (this.filt.cat && p.categoria !== this.filt.cat) return false;
-      if (this.filt.brand && p.marca !== this.filt.brand) return false;
-      if (this.filt.promo && !p.promocao) return false;
-      if (this.filt.genero && p.genero !== this.filt.genero) return false;
+      if (p.ativo === false) return false;
+      if (q) {
+        const hay = `${p.nome || ''} ${p.marca || ''} ${p.descricao || ''} ${p.categoria || ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      if (f.cat && p.categoria !== f.cat) return false;
+      if (f.brand && p.marca !== f.brand) return false;
+      if (f.genero && p.genero !== f.genero) return false;
+      if (f.promo && !p.promocao) return false;
+      if (f.destaque && !p.destaque) return false;
+      if (f.ready && !p.pronta_entrega) return false;
       return true;
     });
-
-    if (this.filt.sort === 'menor_preco') list.sort((a, b) => a.preco - b.preco);
-    else if (this.filt.sort === 'maior_preco') list.sort((a, b) => b.preco - a.preco);
-    else if (this.filt.sort === 'nome_asc') list.sort((a, b) => a.nome.localeCompare(b.nome));
-
+    if (f.sort === 'menor_preco') list.sort((a, b) => a.preco - b.preco);
+    else if (f.sort === 'maior_preco') list.sort((a, b) => b.preco - a.preco);
+    else if (f.sort === 'nome_asc') list.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR'));
+    else list.sort((a, b) => Number(!!b.destaque) - Number(!!a.destaque) || Number(!!b.promocao) - Number(!!a.promocao));
     return list;
   },
 
-  setCategory(c) { this.filt.cat = c; this.filt.promo = false; this.viewCatalog(); },
-  setBrand(b) { this.filt.brand = b; this.viewCatalog(); },
-  togglePromoFilter() { this.filt.promo = !this.filt.promo; this.filt.cat = ''; this.viewCatalog(); },
-  setSort(s) { this.filt.sort = s; this.viewCatalog(); },
-  clearSearch() { this.filt.q = ''; this.viewCatalog(); },
-  resetFilters() { this.filt = { q: '', cat: '', brand: '', promo: false, ready: false, genero: '', sort: 'relevancia' }; this.viewCatalog(); },
-
-  /* ====================== PRODUCT CARD COMPONENT ====================== */
   renderCard(p) {
-    const isFav = this.favs.includes(p.id);
+    const id = this.safeId(p.id);
+    const isFav = this.favs.includes(id);
     const badges = [];
-    if (p.promocao) badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire"></i> Promo</span>');
-    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check"></i> Pronta Entrega</span>');
+    if (p.promocao) badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire" aria-hidden="true"></i> Promo</span>');
+    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check" aria-hidden="true"></i> Pronta entrega</span>');
     if (p.destaque) badges.push('<span class="badge-tag badge-star">Destaque</span>');
     if (p.genero === 'Feminino') badges.push('<span class="badge-tag badge-fem">Fem</span>');
     if (p.genero === 'Masculino') badges.push('<span class="badge-tag badge-masc">Masc</span>');
+    if (p.genero === 'Unissex') badges.push('<span class="badge-tag badge-uni">Uni</span>');
 
     return `
-      <div class="product-card group" data-id="${p.id}">
-        <!-- Image Box -->
-        <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${p.id}')">
-          ${p.imagem 
-            ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover" loading="lazy">` 
-            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`
-          }
-          
-          <!-- Badges Overlay -->
-          <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">
-            ${badges.join('')}
-          </div>
-
-          <!-- Favorite Button Overlay -->
-          <button onclick="event.stopPropagation(); A.toggleFav('${p.id}')" 
-                  class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-colors">
-            <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs"></i>
+      <article class="product-card group">
+        <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${id}')">
+          ${p.imagem
+            ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">`
+            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
+          <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">${badges.join('')}</div>
+          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+            <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs" aria-hidden="true"></i>
           </button>
-
-          <!-- Quick Preview Pill Overlay (Hover desktop) -->
           <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onclick="event.stopPropagation(); A.openQuickView('${p.id}')" 
-                    class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white transition-all flex items-center gap-1.5">
-              <i class="fa-solid fa-eye text-[11px]"></i> Espiar
+            <button type="button" onclick="event.stopPropagation(); A.openQuickView('${id}')" class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-eye text-[11px]" aria-hidden="true"></i> Espiar
             </button>
           </div>
         </div>
-
-        <!-- Product Details -->
         <div class="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
           <div>
             <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A]">${this.escape(p.marca || 'Boutique')}</span>
-            <h3 onclick="A.goToDetail('${p.id}')" class="font-semibold text-xs sm:text-sm text-[#241A1B] line-clamp-2 mt-0.5 cursor-pointer hover:text-[#A97E3B] transition-colors leading-snug">
-              ${this.escape(p.nome)}
+            <h3 class="font-semibold text-xs sm:text-sm mt-0.5 leading-snug">
+              <a href="/produto/${id}" data-link class="hover:text-[#A97E3B] line-clamp-2">${this.escape(p.nome)}</a>
             </h3>
           </div>
-
           <div class="mt-3 pt-3 border-t border-[#F0E3DC] flex items-center justify-between gap-2">
             <div>
               <span class="text-[10px] text-[#AA999A] block leading-none">Preço</span>
-              <span class="font-serif font-bold text-sm sm:text-base text-[#241A1B]">${this.formatMoney(p.preco)}</span>
+              <span class="font-serif font-bold text-sm sm:text-base">${this.formatMoney(p.preco)}</span>
             </div>
-
             <div class="flex items-center gap-1">
-              <button onclick="event.stopPropagation(); A.addToCart('${p.id}')" 
-                      class="w-8 h-8 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center transition-colors" 
-                      title="Adicionar à sacola">
-                <i class="fa-solid fa-plus text-xs"></i>
+              <button type="button" onclick="A.addToCart('${id}')" class="w-8 h-8 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center" title="Adicionar à sacola" aria-label="Adicionar à sacola">
+                <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
               </button>
-              <button onclick="event.stopPropagation(); A.orderWhatsAppDirect('${p.id}')" 
-                      class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors" 
-                      title="Pedir no WhatsApp">
-                <i class="fa-brands fa-whatsapp text-sm"></i>
+              <button type="button" onclick="A.orderWhatsAppDirect('${id}')" class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir no WhatsApp">
+                <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      </article>`;
   },
 
-  goToDetail(id) {
-    location.hash = '#/produto/' + id;
-  },
+  goToDetail(id) { this.navigate('/produto/' + id); },
 
-  /* ====================== DETAIL VIEW ====================== */
-  async viewDetail(id) {
-    await this.ensureProds();
-    const p = this.pmap[id];
+  async viewDetail(rawId) {
+    const id = this.safeId(decodeURIComponent(rawId || ''));
+    const ok = await this.ensureProds();
     const main = document.getElementById('main-content');
-
+    if (!ok && !this.prods.length) { main.innerHTML = this.errorHtml(); return; }
+    const p = this.pmap[id];
     if (!p) {
-      main.innerHTML = `
-        <div class="page-anim text-center py-24">
-          <p class="text-[#826F70]">Produto não encontrado ou indisponível.</p>
-          <a href="#/produtos" class="btn-gold mt-4 inline-flex">Voltar ao Catálogo</a>
-        </div>
-      `;
+      this.setMeta({ title: 'Produto não encontrado | Vivi Boty', desc: 'Este produto não está disponível.', url: SITE_URL + '/produto/' + id });
+      main.innerHTML = `<div class="page-anim text-center py-24"><p class="text-[#826F70] mb-4">Produto não encontrado ou indisponível.</p><a href="/produtos" data-link class="btn-gold">Voltar ao catálogo</a></div>`;
       return;
     }
-
-    const isFav = this.favs.includes(p.id);
-    const related = this.prods.filter(x => x.ativo && x.id !== p.id && (x.categoria === p.categoria || x.marca === p.marca)).slice(0, 4);
+    this.setMeta({
+      title: `${p.nome} | Vivi Carvalho Boty`,
+      desc: (p.descricao || `${p.nome} na Vivi Boty.`).slice(0, 160),
+      url: SITE_URL + '/produto/' + id,
+      image: p.imagem
+    });
+    const isFav = this.favs.includes(id);
+    const related = this.prods.filter(x => x.ativo !== false && x.id !== p.id && (x.categoria === p.categoria || x.marca === p.marca)).slice(0, 4);
+    const genClass = p.genero === 'Masculino' ? 'badge-masc' : p.genero === 'Unissex' ? 'badge-uni' : 'badge-fem';
 
     main.innerHTML = `
       <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        
-        <!-- Breadcrumb navigation -->
-        <div class="flex items-center gap-2 text-xs text-[#826F70] mb-6">
-          <a href="#/" class="hover:text-[#241A1B]">Início</a>
-          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]"></i>
-          <a href="#/produtos" class="hover:text-[#241A1B]">Catálogo</a>
-          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]"></i>
+        <nav class="flex items-center gap-2 text-xs text-[#826F70] mb-6" aria-label="Você está em">
+          <a href="/" data-link class="hover:text-[#241A1B]">Início</a>
+          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]" aria-hidden="true"></i>
+          <a href="/produtos" data-link class="hover:text-[#241A1B]">Catálogo</a>
+          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]" aria-hidden="true"></i>
           <span class="text-[#241A1B] font-semibold truncate">${this.escape(p.nome)}</span>
-        </div>
-
+        </nav>
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 sm:p-10 border border-[#F0E3DC] shadow-sm mb-16">
-          
-          <!-- Product Image Showcase -->
           <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
-            ${p.imagem 
-              ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover">` 
-              : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`
-            }
-            <button onclick="A.toggleFav('${p.id}')" 
-                    class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md text-[#241A1B] flex items-center justify-center transition-transform hover:scale-110">
-              <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base"></i>
+            ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`}
+            <button type="button" onclick="A.toggleFav('${id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+              <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base" aria-hidden="true"></i>
             </button>
           </div>
-
-          <!-- Product Buy Info -->
           <div class="md:col-span-7 flex flex-col justify-center space-y-5">
             <div class="space-y-2">
               <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs font-bold uppercase tracking-wider text-[#A97E3B] bg-[#FBF4E8] px-2.5 py-1 rounded-md">${this.escape(p.marca || 'Boutique')}</span>
-                ${p.promocao ? '<span class="badge-tag badge-promo">Em Oferta</span>' : ''}
-                ${p.pronta_entrega ? '<span class="badge-tag badge-ready">Pronta Entrega</span>' : ''}
-                ${p.genero ? `<span class="badge-tag badge-fem">${p.genero}</span>` : ''}
+                ${p.promocao ? '<span class="badge-tag badge-promo">Em oferta</span>' : ''}
+                ${p.pronta_entrega ? '<span class="badge-tag badge-ready">Pronta entrega</span>' : ''}
+                ${p.genero ? `<span class="badge-tag ${genClass}">${this.escape(p.genero)}</span>` : ''}
               </div>
-              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#241A1B] leading-tight">${this.escape(p.nome)}</h1>
-              <p class="font-serif font-bold text-3xl text-[#241A1B] text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold leading-tight">${this.escape(p.nome)}</h1>
+              <p class="font-serif font-bold text-3xl text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
             </div>
-
             <div class="border-t border-b border-[#F0E3DC] py-4 text-sm text-[#826F70] leading-relaxed">
-              <p>${this.escape(p.descricao || 'Produto original selecionado com carinho pela Vivi Boty. Entre em contato para saber sobre notas olfativas, combinações ou kits de presente.')}</p>
+              <p>${this.escape(p.descricao || 'Produto original selecionado com carinho pela Vivi Boty. Fale no WhatsApp para notas olfativas, combinações ou kits de presente.')}</p>
             </div>
-
-            <!-- Action buttons -->
             <div class="space-y-3 pt-2">
               <div class="flex flex-col sm:flex-row gap-3">
-                <button onclick="A.addToCart('${p.id}')" class="btn-gold flex-1 py-3.5">
-                  <i class="fa-solid fa-bag-shopping"></i> Adicionar à Sacola
-                </button>
-                <button onclick="A.orderWhatsAppDirect('${p.id}')" class="btn-whatsapp flex-1 py-3.5">
-                  <i class="fa-brands fa-whatsapp text-xl"></i> Comprar no WhatsApp
-                </button>
+                <button type="button" onclick="A.addToCart('${id}')" class="btn-gold flex-1 py-3.5"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Adicionar à sacola</button>
+                <button type="button" onclick="A.orderWhatsAppDirect('${id}')" class="btn-whatsapp flex-1 py-3.5"><i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i> Comprar no WhatsApp</button>
               </div>
-              <button onclick="A.shareProduct('${p.id}')" class="w-full text-xs font-semibold text-[#826F70] hover:text-[#241A1B] py-2 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-share-nodes"></i> Compartilhar este produto com amigos
+              <button type="button" onclick="A.shareProduct('${id}')" class="w-full text-xs font-semibold text-[#826F70] hover:text-[#241A1B] py-2 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Compartilhar este produto
               </button>
             </div>
-
-            <!-- Perks box -->
             <div class="grid grid-cols-2 gap-3 pt-4 text-xs text-[#826F70]">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-check-circle text-[#1D8A58]"></i> Produto 100% Original
-              </div>
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-gift text-[#C69A55]"></i> Opção para Presente
-              </div>
+              <div class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-[#1D8A58]" aria-hidden="true"></i> Produto 100% original</div>
+              <div class="flex items-center gap-2"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> Opção para presente</div>
             </div>
-
           </div>
-
         </div>
-
-        <!-- Related products -->
-        ${related.length > 0 ? `
-          <div class="mt-12">
-            <h3 class="font-serif font-bold text-2xl text-[#241A1B] mb-6">Você Também Pode Gostar</h3>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              ${related.map(r => this.renderCard(r)).join('')}
-            </div>
-          </div>
-        ` : ''}
-
-      </div>
-    `;
+        ${related.length ? `<div class="mt-4"><h2 class="font-serif font-bold text-2xl mb-6">Você também pode gostar</h2><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">${related.map(r => this.renderCard(r)).join('')}</div></div>` : ''}
+      </div>`;
   },
 
-  /* ====================== CART LOGIC ====================== */
+  setDialogOpen(ids, open) {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('open', open);
+      if (open) el.removeAttribute('inert');
+      else el.setAttribute('inert', '');
+    });
+  },
+
+  anyDialogOpen() {
+    return ['cart-drawer', 'quickview-overlay', 'fav-overlay']
+      .some(id => document.getElementById(id)?.classList.contains('open'));
+  },
+
   toggleCart(open) {
-    document.getElementById('cart-drawer').classList.toggle('open', open);
-    document.getElementById('cart-overlay').classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    this.setDialogOpen(['cart-drawer', 'cart-overlay'], open);
+    document.body.style.overflow = open || this.anyDialogOpen() ? 'hidden' : '';
     if (open) this.renderCartDrawer();
   },
 
   addToCart(id) {
+    id = this.safeId(id);
     const p = this.pmap[id];
     if (!p) return;
-    const existing = this.cart.find(item => item.id === id);
-    if (existing) {
-      existing.q++;
-    } else {
-      this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.imagem, q: 1 });
-    }
+    const existing = this.cart.find(item => String(item.id) === id);
+    if (existing) existing.q = Math.min(20, existing.q + 1);
+    else this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.imagem, q: 1 });
     this.saveCart();
-    this.showToast('Produto adicionado à sua sacola!', 'success');
+    this.showToast('Produto adicionado à sacola', 'success');
+    const btn = document.getElementById('cart-open-btn');
+    if (btn) { btn.classList.remove('bag-pulse'); void btn.offsetWidth; btn.classList.add('bag-pulse'); }
   },
 
   updateCartQty(id, qty) {
-    if (qty <= 0) {
-      this.cart = this.cart.filter(i => i.id !== id);
-    } else {
-      const it = this.cart.find(i => i.id === id);
-      if (it) it.q = qty;
+    id = this.safeId(id);
+    qty = parseInt(qty, 10);
+    if (qty <= 0) this.cart = this.cart.filter(i => String(i.id) !== id);
+    else {
+      const it = this.cart.find(i => String(i.id) === id);
+      if (it) it.q = Math.min(20, qty);
     }
     this.saveCart();
     this.renderCartDrawer();
   },
 
   clearCart() {
+    if (!this.cart.length) return;
+    if (!confirm('Esvaziar a sacola?')) return;
     this.cart = [];
     this.saveCart();
     this.renderCartDrawer();
@@ -1121,102 +1171,83 @@ const A = {
     const counter = document.getElementById('cart-counter');
     if (counter) counter.textContent = totalQty;
     const drawerCount = document.getElementById('cart-drawer-count');
-    if (drawerCount) drawerCount.textContent = `${totalQty} ite${totalQty === 1 ? 'm' : 'ns'} selecionado${totalQty === 1 ? '' : 's'}`;
+    if (drawerCount) drawerCount.textContent = `${totalQty} ${totalQty === 1 ? 'item' : 'itens'}`;
   },
 
   renderCartDrawer() {
     const container = document.getElementById('cart-items-container');
     const totalEl = document.getElementById('cart-total-price');
+    const checkout = document.getElementById('checkout-btn');
     const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
-
     totalEl.textContent = this.formatMoney(total);
+    if (checkout) checkout.disabled = this.cart.length === 0;
+    this.updateCartUI();
 
-    if (this.cart.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-20 text-[#AA999A]">
-          <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-4 text-2xl">
-            <i class="fa-solid fa-bag-shopping"></i>
-          </div>
-          <p class="font-serif font-bold text-lg text-[#241A1B]">Sua sacola está vazia</p>
-          <p class="text-xs text-[#826F70] mt-1">Navegue pelos produtos e escolha seus preferidos.</p>
-        </div>
-      `;
+    if (!this.cart.length) {
+      container.innerHTML = `<div class="text-center py-20 text-[#AA999A]">
+        <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-bag-shopping"></i></div>
+        <p class="font-serif font-bold text-lg text-[#241A1B]">Sua sacola está vazia</p>
+        <p class="text-xs text-[#826F70] mt-1">Escolha seus produtos preferidos no catálogo.</p>
+      </div>`;
       return;
     }
 
-    container.innerHTML = this.cart.map(item => `
-      <div class="flex gap-3 py-3 border-b border-[#F0E3DC] items-center">
+    container.innerHTML = this.cart.map(item => {
+      const id = this.safeId(item.id);
+      return `<div class="flex gap-3 py-3 border-b border-[#F0E3DC] items-center">
         <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#FAF0EB] shrink-0 border border-[#F0E3DC]">
-          ${item.img 
-            ? `<img src="${item.img}" alt="${this.escape(item.nome)}" class="w-full h-full object-cover">` 
-            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>`
-          }
+          ${item.img ? `<img src="${this.escapeAttr(item.img)}" alt="" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>`}
         </div>
         <div class="flex-1 min-w-0">
-          <p class="font-semibold text-xs text-[#241A1B] truncate">${this.escape(item.nome)}</p>
+          <p class="font-semibold text-xs truncate">${this.escape(item.nome)}</p>
           <p class="font-serif font-bold text-sm text-[#A97E3B] mt-0.5">${this.formatMoney(item.preco)}</p>
-          
           <div class="flex items-center gap-2 mt-2">
-            <button onclick="A.updateCartQty('${item.id}', ${item.q - 1})" 
-                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]">
-              -
-            </button>
-            <span class="text-xs font-bold text-[#241A1B] w-5 text-center">${item.q}</span>
-            <button onclick="A.updateCartQty('${item.id}', ${item.q + 1})" 
-                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]">
-              +
-            </button>
-            <button onclick="A.updateCartQty('${item.id}', 0)" 
-                    class="ml-auto text-[#AA999A] hover:text-[#E53E3E] text-xs transition-colors p-1" title="Remover item">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
+            <button type="button" onclick="A.updateCartQty('${id}', ${item.q - 1})" class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs" aria-label="Diminuir">-</button>
+            <span class="text-xs font-bold w-5 text-center">${item.q}</span>
+            <button type="button" onclick="A.updateCartQty('${id}', ${item.q + 1})" class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs" aria-label="Aumentar">+</button>
+            <button type="button" onclick="A.updateCartQty('${id}', 0)" class="ml-auto text-[#AA999A] hover:text-[#E53E3E] text-xs p-1" aria-label="Remover item"><i class="fa-solid fa-trash-can"></i></button>
           </div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   },
 
   checkoutWhatsApp() {
-    if (this.cart.length === 0) {
-      this.showToast('Adicione produtos à sacola antes de finalizar!', 'error');
+    if (!this.cart.length) {
+      this.showToast('Adicione produtos à sacola antes de finalizar', 'error');
       return;
     }
-
     const isGift = document.getElementById('gift-checkbox')?.checked;
     const lines = this.cart.map(i => `• ${i.q}x ${i.nome} (${this.formatMoney(i.preco * i.q)})`);
     const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
-
     let message = `Olá, Vivi! Gostaria de fazer o pedido dos seguintes produtos pelo site:\n\n`
       + lines.join('\n')
-      + `\n\n💰 Total estimado: ${this.formatMoney(total)}`;
-
-    if (isGift) {
-      message += `\n🎁 *Observação:* Por favor, caprichar na embalagem para presente!`;
-    }
-
-    message += `\n\nPode me confirmar a disponibilidade e forma de entrega?`;
-
-    window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank');
+      + `\n\nTotal estimado: ${this.formatMoney(total)}`;
+    if (isGift) message += `\nObservação: por favor, caprichar na embalagem para presente.`;
+    message += `\n\nPode me confirmar a disponibilidade e a forma de entrega?`;
+    window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
   },
 
   orderWhatsAppDirect(id) {
-    const p = this.pmap[id];
+    const p = this.pmap[this.safeId(id)];
     if (!p) return;
-    const text = `Olá, Vivi! Tenho interesse no produto *${p.nome}* no valor de ${this.formatMoney(p.preco)}. Pode me passar mais detalhes e disponibilidade?`;
-    window.open(`${WA_BASE}?text=${encodeURIComponent(text)}`, '_blank');
+    const text = `Olá, Vivi! Tenho interesse no produto ${p.nome} no valor de ${this.formatMoney(p.preco)}. Pode me passar mais detalhes e a disponibilidade?`;
+    window.open(`${WA_BASE}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   },
 
-  /* ====================== FAVORITES LOGIC ====================== */
   toggleFav(id) {
+    id = this.safeId(id);
     if (this.favs.includes(id)) {
       this.favs = this.favs.filter(x => x !== id);
-      this.showToast('Item removido dos favoritos');
+      this.showToast('Removido dos favoritos');
     } else {
       this.favs.push(id);
-      this.showToast('Item salvo nos seus favoritos!', 'success');
+      this.showToast('Salvo nos favoritos', 'success');
     }
     this.saveFavs();
-    this.renderPage(); // refresh badges
+    const favOpen = document.getElementById('fav-overlay')?.classList.contains('open');
+    this.renderPage();
+    if (favOpen) this.showFavModal();
   },
 
   updateFavUI() {
@@ -1227,141 +1258,116 @@ const A = {
   },
 
   showFavModal() {
-    const modal = document.getElementById('fav-overlay');
     const container = document.getElementById('fav-items-list');
-    modal.classList.add('open');
-
-    if (this.favs.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-12 text-[#AA999A]">
-          <i class="fa-regular fa-heart text-4xl mb-3 text-[#E8A7A1]"></i>
-          <p class="font-serif font-bold text-base text-[#241A1B]">Você ainda não tem favoritos</p>
-          <p class="text-xs text-[#826F70] mt-1">Clique no coração de qualquer produto para salvar aqui.</p>
-        </div>
-      `;
+    this.setDialogOpen(['fav-overlay'], true);
+    document.body.style.overflow = 'hidden';
+    if (!this.favs.length) {
+      container.innerHTML = `<div class="text-center py-12 text-[#AA999A]">
+        <i class="fa-regular fa-heart text-4xl mb-3 text-[#E8A7A1]"></i>
+        <p class="font-serif font-bold text-base text-[#241A1B]">Você ainda não tem favoritos</p>
+        <p class="text-xs text-[#826F70] mt-1">Toque no coração de um produto para salvar aqui.</p>
+      </div>`;
       return;
     }
-
     container.innerHTML = this.favs.map(id => {
       const p = this.pmap[id];
-      if (!p) return '';
-      return `
-        <div class="flex items-center justify-between p-3 rounded-2xl border border-[#F0E3DC] hover:border-[#C69A55] transition-colors">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0">
-              ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
-            </div>
-            <div>
-              <p class="font-semibold text-xs text-[#241A1B] truncate max-w-[180px]">${this.escape(p.nome)}</p>
-              <p class="font-serif font-bold text-xs text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="A.addToCart('${p.id}'); A.closeFavModal();" class="btn-gold py-1.5 px-3 text-xs">
-              <i class="fa-solid fa-plus"></i> Sacola
-            </button>
-            <button onclick="A.toggleFav('${p.id}'); A.showFavModal();" class="text-[#AA999A] hover:text-[#E53E3E] p-1.5">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-          </div>
+      if (!p) return `<div class="text-xs text-[#AA999A] p-3">Um item salvo não está mais disponível.</div>`;
+      return `<div class="flex items-center justify-between p-3 rounded-2xl border border-[#F0E3DC]">
+        <button type="button" class="flex items-center gap-3 min-w-0 text-left" onclick="A.closeFavModal(); A.goToDetail('${p.id}')">
+          <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0">${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : ''}</div>
+          <div class="min-w-0"><p class="font-semibold text-xs truncate max-w-[180px]">${this.escape(p.nome)}</p><p class="font-serif font-bold text-xs text-[#A97E3B]">${this.formatMoney(p.preco)}</p></div>
+        </button>
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="A.addToCart('${p.id}')" class="btn-gold py-1.5 px-3 text-xs"><i class="fa-solid fa-plus"></i> Sacola</button>
+          <button type="button" onclick="A.toggleFav('${p.id}')" class="text-[#AA999A] hover:text-[#E53E3E] p-1.5" aria-label="Remover"><i class="fa-solid fa-trash-can text-xs"></i></button>
         </div>
-      `;
+      </div>`;
     }).join('');
   },
 
   closeFavModal() {
-    document.getElementById('fav-overlay').classList.remove('open');
+    this.setDialogOpen(['fav-overlay'], false);
+    if (!this.anyDialogOpen()) document.body.style.overflow = '';
   },
 
-  /* ====================== QUICK VIEW MODAL ====================== */
   openQuickView(id) {
-    const p = this.pmap[id];
+    const p = this.pmap[this.safeId(id)];
     if (!p) return;
-    const content = document.getElementById('quickview-content');
-    content.innerHTML = `
+    document.getElementById('quickview-content').innerHTML = `
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
         <div class="aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
-          ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+          ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover">` : ''}
         </div>
         <div class="space-y-3">
           <span class="text-xs uppercase font-bold text-[#A97E3B]">${this.escape(p.marca || 'Boutique')}</span>
-          <h2 class="font-serif font-bold text-xl text-[#241A1B]">${this.escape(p.nome)}</h2>
-          <p class="font-serif font-bold text-2xl text-[#241A1B] text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
-          <p class="text-xs text-[#826F70] leading-relaxed">${this.escape(p.descricao || 'Produto original com a qualidade garantida Vivi Boty.')}</p>
+          <h2 class="font-serif font-bold text-xl">${this.escape(p.nome)}</h2>
+          <p class="font-serif font-bold text-2xl text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+          <p class="text-xs text-[#826F70] leading-relaxed">${this.escape(p.descricao || 'Produto original com a qualidade Vivi Boty.')}</p>
           <div class="pt-2 flex flex-col gap-2">
-            <button onclick="A.addToCart('${p.id}'); A.closeQuickView();" class="btn-gold w-full text-xs py-3">
-              <i class="fa-solid fa-bag-shopping"></i> Adicionar à Sacola
-            </button>
-            <button onclick="A.orderWhatsAppDirect('${p.id}'); A.closeQuickView();" class="btn-whatsapp w-full text-xs py-3">
-              <i class="fa-brands fa-whatsapp text-lg"></i> Pedir no WhatsApp
-            </button>
+            <button type="button" onclick="A.addToCart('${p.id}'); A.closeQuickView();" class="btn-gold w-full text-xs py-3"><i class="fa-solid fa-bag-shopping"></i> Adicionar à sacola</button>
+            <button type="button" onclick="A.orderWhatsAppDirect('${p.id}'); A.closeQuickView();" class="btn-whatsapp w-full text-xs py-3"><i class="fa-brands fa-whatsapp text-lg"></i> Pedir no WhatsApp</button>
+            <a href="/produto/${p.id}" data-link onclick="A.closeQuickView()" class="text-center text-xs font-semibold text-[#A97E3B]">Ver página completa</a>
           </div>
         </div>
-      </div>
-    `;
-    document.getElementById('quickview-overlay').classList.add('open');
+      </div>`;
+    this.setDialogOpen(['quickview-overlay'], true);
+    document.body.style.overflow = 'hidden';
   },
 
   closeQuickView() {
-    document.getElementById('quickview-overlay').classList.remove('open');
+    this.setDialogOpen(['quickview-overlay'], false);
+    if (!this.anyDialogOpen()) document.body.style.overflow = '';
   },
 
-  shareProduct(id) {
-    const p = this.pmap[id];
-    const url = window.location.origin + window.location.pathname + '#/produto/' + id;
-    if (navigator.share) {
-      navigator.share({ title: p.nome, text: `Olha esse produto na Vivi Boty: ${p.nome}`, url });
-    } else {
-      navigator.clipboard.writeText(url);
-      this.showToast('Link do produto copiado com sucesso!', 'success');
+  async shareProduct(id) {
+    const p = this.pmap[this.safeId(id)];
+    if (!p) return;
+    const url = SITE_URL + '/produto/' + p.id;
+    try {
+      if (navigator.share) await navigator.share({ title: p.nome, text: `Olha este produto na Vivi Boty: ${p.nome}`, url });
+      else {
+        await navigator.clipboard.writeText(url);
+        this.showToast('Link copiado', 'success');
+      }
+    } catch (e) {
+      if (e?.name !== 'AbortError') this.showToast('Não foi possível compartilhar', 'error');
     }
   },
 
-  /* ====================== ADMIN VIEWS ====================== */
   viewAdminLogin() {
-    if (this.user && this.isAdmin) {
-      location.hash = '#/admin/produtos';
-      return;
-    }
-    const main = document.getElementById('main-content');
-    main.innerHTML = `
+    if (this.user && this.isAdmin) { this.navigate('/admin/produtos', true); return; }
+    this.setMeta({ title: 'Painel | Vivi Boty', desc: 'Acesso administrativo.', url: SITE_URL + '/admin' });
+    document.getElementById('main-content').innerHTML = `
       <div class="page-anim min-h-[75vh] flex items-center justify-center px-4">
-        <div class="bg-white rounded-3xl border border-[#F0E3DC] shadow-lg p-8 w-full max-w-sm text-center">
-          <div class="w-14 h-14 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl">
-            <i class="fa-solid fa-lock"></i>
-          </div>
-          <h1 class="font-serif font-bold text-2xl text-[#241A1B]">Painel da Vivi</h1>
-          <p class="text-xs text-[#826F70] mt-1 mb-6">Acesso exclusivo para gerenciamento de produtos</p>
-          
+        <form onsubmit="event.preventDefault(); A.submitLogin();" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-lg p-8 w-full max-w-sm text-center">
+          <div class="w-14 h-14 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-lock"></i></div>
+          <h1 class="font-serif font-bold text-2xl">Painel da Vivi</h1>
+          <p class="text-xs text-[#826F70] mt-1 mb-6">Acesso exclusivo para gerenciar produtos</p>
           <div class="space-y-4 text-left">
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">E-mail</label>
-              <input type="email" id="login-email" placeholder="seu@email.com" class="lux-input text-sm">
+              <label class="block text-xs font-bold uppercase mb-1" for="login-email">E-mail</label>
+              <input type="email" id="login-email" autocomplete="username" required placeholder="seu@email.com" class="lux-input text-sm">
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Senha</label>
-              <input type="password" id="login-pass" placeholder="••••••••" class="lux-input text-sm">
+              <label class="block text-xs font-bold uppercase mb-1" for="login-pass">Senha</label>
+              <input type="password" id="login-pass" autocomplete="current-password" required placeholder="••••••••" class="lux-input text-sm">
             </div>
-            <div id="login-error" class="text-[#E53E3E] text-xs hidden"></div>
-            <button onclick="A.submitLogin()" class="btn-gold w-full py-3 text-sm font-bold">
-              Entrar no Painel
-            </button>
+            <div id="login-error" class="text-[#E53E3E] text-xs hidden" role="alert"></div>
+            <button type="submit" id="login-btn" class="btn-gold w-full py-3 text-sm font-bold">Entrar no painel</button>
           </div>
-        </div>
-      </div>
-    `;
+        </form>
+      </div>`;
   },
 
   async submitLogin() {
     const email = document.getElementById('login-email').value.trim();
     const pass = document.getElementById('login-pass').value;
     const err = document.getElementById('login-error');
-    if (!email || !pass) {
-      err.textContent = 'Preencha seu e-mail e senha.';
-      err.classList.remove('hidden');
-      return;
-    }
+    const btn = document.getElementById('login-btn');
+    if (!email || !pass) { err.textContent = 'Preencha e-mail e senha.'; err.classList.remove('hidden'); return; }
     err.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Entrando…';
     try {
       const { data, error } = await this.sb.auth.signInWithPassword({ email, password: pass });
       if (error) throw error;
@@ -1369,192 +1375,157 @@ const A = {
       const admin = await this.chkAdmin();
       if (!admin) {
         await this.sb.auth.signOut();
-        throw new Error('Você não tem acesso de administrador.');
+        throw new Error('Este e-mail não tem acesso de administradora.');
       }
       this.isAdmin = true;
+      this.lastFetch = 0;
       this.showToast('Bem-vinda, Vivi!', 'success');
-      location.hash = '#/admin/produtos';
+      this.navigate('/admin/produtos');
     } catch (e) {
-      err.textContent = e.message || 'Erro ao realizar login.';
+      err.textContent = e.message || 'Erro ao entrar.';
       err.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Entrar no painel';
     }
+  },
+
+  async guardAdmin() {
+    if (this.user && this.isAdmin) return true;
+    if (this.user && !this.isAdmin) this.isAdmin = await this.chkAdmin();
+    if (this.user && this.isAdmin) return true;
+    this.viewAdminLogin();
+    return false;
   },
 
   async viewAdminProducts() {
-    if (!this.user || !this.isAdmin) { this.viewAdminLogin(); return; }
+    if (!(await this.guardAdmin())) return;
+    this.setMeta({ title: 'Produtos | Painel Vivi Boty', desc: 'Gerenciar catálogo.', url: SITE_URL + '/admin/produtos' });
     await this.ensureProds();
-    const main = document.getElementById('main-content');
-
-    main.innerHTML = `
+    const q = (document.getElementById('admin-search')?.value || '').toLowerCase();
+    const list = this.prods.filter(p => !q || `${p.nome} ${p.marca}`.toLowerCase().includes(q));
+    const ativos = this.prods.filter(p => p.ativo).length;
+    document.getElementById('main-content').innerHTML = `
       <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 class="font-serif font-bold text-2xl sm:text-3xl text-[#241A1B]">Gerenciamento de Produtos</h1>
-            <p class="text-xs sm:text-sm text-[#826F70]">${this.prods.length} produtos cadastrados</p>
+            <h1 class="font-serif font-bold text-2xl sm:text-3xl">Gerenciar produtos</h1>
+            <p class="text-sm text-[#826F70]">${this.prods.length} cadastrados • ${ativos} visíveis na loja</p>
           </div>
           <div class="flex items-center gap-2">
-            <a href="#/admin/novo" class="btn-gold text-xs py-2.5 px-4">
-              <i class="fa-solid fa-plus"></i> Novo Produto
-            </a>
-            <button onclick="A.logoutAdmin()" class="btn-secondary text-xs py-2 px-3 text-[#E53E3E]">
-              Sair
-            </button>
+            <a href="/admin/novo" data-link class="btn-gold text-xs py-2.5 px-4"><i class="fa-solid fa-plus"></i> Novo produto</a>
+            <button type="button" onclick="A.logoutAdmin()" class="btn-secondary text-xs py-2 px-3 text-[#E53E3E]">Sair</button>
           </div>
         </div>
-
+        <input type="search" id="admin-search" value="${this.escape(q)}" placeholder="Buscar no painel..." class="lux-input text-sm mb-4 max-w-sm" oninput="A.viewAdminProducts()">
         <div class="bg-white rounded-3xl border border-[#F0E3DC] overflow-hidden shadow-sm">
-          <div class="divide-y divide-[#F0E3DC]">
-            ${this.prods.map(p => `
-              <div class="p-4 flex items-center justify-between gap-4 hover:bg-[#FAF4F0]/40 transition-colors">
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC]">
-                    ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
-                  </div>
-                  <div class="min-w-0">
-                    <p class="font-semibold text-sm text-[#241A1B] truncate">${this.escape(p.nome)}</p>
-                    <p class="text-xs text-[#826F70]">${this.escape(p.marca || '-')} • ${this.formatMoney(p.preco)}</p>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-2 shrink-0">
-                  <button onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" 
-                          class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}">
-                    ${p.ativo ? 'Ativo' : 'Pausado'}
-                  </button>
-                  <a href="#/admin/editar/${p.id}" class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white transition-colors">
-                    <i class="fa-solid fa-pen text-xs"></i>
-                  </a>
+          ${list.length ? `<div class="divide-y divide-[#F0E3DC]">${list.map(p => `
+            <div class="p-4 flex items-center justify-between gap-4 hover:bg-[#FAF4F0]/40">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC]">${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : ''}</div>
+                <div class="min-w-0">
+                  <p class="font-semibold text-sm truncate">${this.escape(p.nome)}</p>
+                  <p class="text-xs text-[#826F70]">${this.escape(p.marca || '-')} • ${this.formatMoney(p.preco)}</p>
                 </div>
               </div>
-            `).join('')}
-          </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button type="button" onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}">${p.ativo ? 'Ativo' : 'Pausado'}</button>
+                <a href="/admin/editar/${p.id}" data-link class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white" aria-label="Editar"><i class="fa-solid fa-pen text-xs"></i></a>
+                <button type="button" onclick="A.deleteProduct('${p.id}')" class="w-8 h-8 rounded-lg bg-red-50 text-[#E53E3E] flex items-center justify-center hover:bg-[#E53E3E] hover:text-white" aria-label="Excluir"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              </div>
+            </div>`).join('')}</div>` : `<p class="p-10 text-center text-sm text-[#826F70]">Nenhum produto neste filtro. <a href="/admin/novo" data-link class="text-[#A97E3B] font-semibold">Cadastrar o primeiro</a></p>`}
         </div>
-      </div>
-    `;
+      </div>`;
+    const s = document.getElementById('admin-search');
+    if (s && q) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
   },
 
   async viewAdminForm(id) {
-    if (!this.user || !this.isAdmin) { this.viewAdminLogin(); return; }
+    if (!(await this.guardAdmin())) return;
+    await this.ensureProds();
     let p = { nome: '', marca: '', categoria: '', preco: '', descricao: '', imagem: '', estoque: 1, ativo: true, destaque: false, promocao: false, pronta_entrega: true, genero: '' };
-    if (id) {
-      await this.ensureProds();
-      if (this.pmap[id]) p = this.pmap[id];
-    }
-
-    const main = document.getElementById('main-content');
-    main.innerHTML = `
+    if (id && this.pmap[id]) p = this.pmap[id];
+    this.setMeta({ title: (id ? 'Editar' : 'Novo') + ' produto | Painel', desc: 'Cadastro de produto.', url: location.href });
+    document.getElementById('main-content').innerHTML = `
       <div class="page-anim max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <a href="#/admin/produtos" class="inline-flex items-center gap-2 text-xs font-semibold text-[#826F70] hover:text-[#241A1B] mb-6">
-          <i class="fa-solid fa-arrow-left"></i> Voltar à lista
-        </a>
-
-        <div class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-6 sm:p-8 space-y-5">
-          <h2 class="font-serif font-bold text-2xl text-[#241A1B]">${id ? 'Editar Produto' : 'Cadastrar Novo Produto'}</h2>
-          
+        <a href="/admin/produtos" data-link class="inline-flex items-center gap-2 text-xs font-semibold text-[#826F70] hover:text-[#241A1B] mb-6"><i class="fa-solid fa-arrow-left"></i> Voltar à lista</a>
+        <form onsubmit="event.preventDefault(); A.saveProduct('${id ? this.safeId(id) : ''}');" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-6 sm:p-8 space-y-5">
+          <h2 class="font-serif font-bold text-2xl">${id ? 'Editar produto' : 'Cadastrar produto'}</h2>
           <div>
-            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Nome do Produto *</label>
-            <input type="text" id="form-name" value="${this.escape(p.nome)}" placeholder="Ex: Elysee Succès Eau de Parfum" class="lux-input text-sm">
+            <label class="block text-xs font-bold uppercase mb-1" for="form-name">Nome *</label>
+            <input type="text" id="form-name" required value="${this.escapeAttr(p.nome)}" class="lux-input text-sm" maxlength="120">
           </div>
-
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Marca</label>
-              <select id="form-brand" class="lux-input text-xs bg-white">
-                <option value="">Selecione</option>
-                ${BRANDS.map(b => `<option value="${b}" ${p.marca === b ? 'selected' : ''}>${b}</option>`).join('')}
-              </select>
+              <label class="block text-xs font-bold uppercase mb-1" for="form-brand">Marca</label>
+              <select id="form-brand" class="lux-input text-xs bg-white"><option value="">Selecione</option>${BRANDS.map(b => `<option value="${b}" ${p.marca === b ? 'selected' : ''}>${b}</option>`).join('')}</select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Categoria</label>
-              <select id="form-cat" class="lux-input text-xs bg-white">
-                <option value="">Selecione</option>
-                ${CATS.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${c}</option>`).join('')}
-              </select>
+              <label class="block text-xs font-bold uppercase mb-1" for="form-cat">Categoria</label>
+              <select id="form-cat" class="lux-input text-xs bg-white"><option value="">Selecione</option>${CATS.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${c}</option>`).join('')}</select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Gênero</label>
-              <select id="form-gen" class="lux-input text-xs bg-white">
-                <option value="">Nenhum</option>
-                ${GENEROS.filter(Boolean).map(g => `<option value="${g}" ${p.genero === g ? 'selected' : ''}>${g}</option>`).join('')}
-              </select>
+              <label class="block text-xs font-bold uppercase mb-1" for="form-gen">Gênero</label>
+              <select id="form-gen" class="lux-input text-xs bg-white"><option value="">Nenhum</option>${GENEROS.map(g => `<option value="${g}" ${p.genero === g ? 'selected' : ''}>${g}</option>`).join('')}</select>
             </div>
           </div>
-
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Preço (R$) *</label>
-              <input type="number" step="0.01" id="form-price" value="${p.preco}" placeholder="189.90" class="lux-input text-sm">
+              <label class="block text-xs font-bold uppercase mb-1" for="form-price">Preço (R$) *</label>
+              <input type="number" step="0.01" min="0.01" id="form-price" required value="${p.preco}" class="lux-input text-sm">
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Estoque</label>
-              <input type="number" id="form-stock" value="${p.estoque}" class="lux-input text-sm">
+              <label class="block text-xs font-bold uppercase mb-1" for="form-stock">Estoque</label>
+              <input type="number" min="0" id="form-stock" value="${p.estoque}" class="lux-input text-sm">
             </div>
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Descrição</label>
-            <textarea id="form-desc" rows="3" class="lux-input text-sm" placeholder="Detalhes olfativos, modo de usar...">${this.escape(p.descricao || '')}</textarea>
+            <label class="block text-xs font-bold uppercase mb-1" for="form-desc">Descrição</label>
+            <textarea id="form-desc" rows="3" class="lux-input text-sm" maxlength="2000">${this.escape(p.descricao || '')}</textarea>
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Imagem do Produto</label>
+            <label class="block text-xs font-bold uppercase mb-1" for="form-file">Imagem (JPG, PNG ou WEBP, até 5 MB)</label>
             <div class="flex items-center gap-4">
               <div id="img-preview" class="w-20 h-20 rounded-2xl bg-[#FAF0EB] border border-[#F0E3DC] overflow-hidden flex items-center justify-center shrink-0">
-                ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-image text-xl text-[#AA999A]"></i>'}
+                ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : '<i class="fa-solid fa-image text-xl text-[#AA999A]"></i>'}
               </div>
-              <input type="file" id="form-file" accept="image/*" class="text-xs">
+              <input type="file" id="form-file" accept="image/jpeg,image/png,image/webp,image/gif">
             </div>
           </div>
-
-          <!-- Flags -->
-          <div class="grid grid-cols-2 gap-4 pt-3 border-t border-[#F0E3DC]">
-            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
-              <span class="text-xs font-semibold text-[#241A1B]">Produto Ativo</span>
-              <label class="tog"><input type="checkbox" id="form-active" ${p.ativo ? 'checked' : ''}><span class="tog-slider"></span></label>
-            </label>
-            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
-              <span class="text-xs font-semibold text-[#241A1B]">Destaque na Home</span>
-              <label class="tog"><input type="checkbox" id="form-feat" ${p.destaque ? 'checked' : ''}><span class="tog-slider"></span></label>
-            </label>
-            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
-              <span class="text-xs font-semibold text-[#241A1B]">Em Promoção</span>
-              <label class="tog"><input type="checkbox" id="form-promo" ${p.promocao ? 'checked' : ''}><span class="tog-slider"></span></label>
-            </label>
-            <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
-              <span class="text-xs font-semibold text-[#241A1B]">Pronta Entrega</span>
-              <label class="tog"><input type="checkbox" id="form-ready" ${p.pronta_entrega ? 'checked' : ''}><span class="tog-slider"></span></label>
-            </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#F0E3DC]">
+            ${[['form-active','Produto visível na loja', p.ativo],['form-feat','Destaque na home', p.destaque],['form-promo','Em promoção', p.promocao],['form-ready','Pronta entrega', p.pronta_entrega]].map(([fid,label,on]) => `
+              <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
+                <span class="text-xs font-semibold">${label}</span>
+                <span class="tog"><input type="checkbox" id="${fid}" ${on ? 'checked' : ''}><span class="tog-slider"></span></span>
+              </div>`).join('')}
           </div>
-
-          <div id="form-error" class="text-xs text-[#E53E3E] hidden"></div>
-
-          <button onclick="A.saveProduct('${id || ''}')" class="btn-gold w-full py-3.5 text-sm font-bold">
-            ${id ? 'Salvar Alterações' : 'Cadastrar Produto'}
-          </button>
-        </div>
-      </div>
-    `;
-
+          <div id="form-error" class="text-xs text-[#E53E3E] hidden" role="alert"></div>
+          <button type="submit" id="save-btn" class="btn-gold w-full py-3.5 text-sm font-bold">${id ? 'Salvar alterações' : 'Cadastrar produto'}</button>
+        </form>
+      </div>`;
     document.getElementById('form-file')?.addEventListener('change', e => {
       const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = ev => {
-          document.getElementById('img-preview').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover">`;
-        };
-        reader.readAsDataURL(file);
+      if (!file) return;
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type) || file.size > MAX_IMAGE_BYTES) {
+        this.showToast('Envie uma imagem de até 5 MB (JPG, PNG ou WEBP)', 'error');
+        e.target.value = '';
+        return;
       }
+      const reader = new FileReader();
+      reader.onload = ev => { document.getElementById('img-preview').innerHTML = `<img src="${ev.target.result}" alt="" class="w-full h-full object-cover">`; };
+      reader.readAsDataURL(file);
     });
   },
 
   async saveProduct(id) {
     const err = document.getElementById('form-error');
+    const btn = document.getElementById('save-btn');
     const nome = document.getElementById('form-name').value.trim();
     const preco = parseFloat(document.getElementById('form-price').value) || 0;
-
-    if (!nome) { err.textContent = 'O nome do produto é obrigatório.'; err.classList.remove('hidden'); return; }
+    if (!nome) { err.textContent = 'O nome é obrigatório.'; err.classList.remove('hidden'); return; }
     if (preco <= 0) { err.textContent = 'Informe um preço válido.'; err.classList.remove('hidden'); return; }
     err.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Salvando…';
 
     const data = {
       nome,
@@ -1563,7 +1534,7 @@ const A = {
       genero: document.getElementById('form-gen').value,
       preco,
       descricao: document.getElementById('form-desc').value.trim(),
-      estoque: parseInt(document.getElementById('form-stock').value) || 0,
+      estoque: parseInt(document.getElementById('form-stock').value, 10) || 0,
       ativo: document.getElementById('form-active').checked,
       destaque: document.getElementById('form-feat').checked,
       promocao: document.getElementById('form-promo').checked,
@@ -1572,18 +1543,26 @@ const A = {
     };
 
     const fileInput = document.getElementById('form-file');
-    if (fileInput.files.length > 0) {
+    if (fileInput.files.length) {
       const file = fileInput.files[0];
-      try {
-        const ext = file.name.split('.').pop();
-        const path = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-        const { error: uploadError } = await this.sb.storage.from('products').upload(path, file);
-        if (uploadError) throw uploadError;
-        const { data: urlData } = this.sb.storage.from('products').getPublicUrl(path);
-        data.imagem = urlData.publicUrl;
-      } catch (e) {
-        err.textContent = 'Erro ao fazer upload da foto: ' + e.message;
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type) || file.size > MAX_IMAGE_BYTES) {
+        err.textContent = 'Imagem inválida. Use JPG, PNG ou WEBP de até 5 MB.';
         err.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Salvar';
+        return;
+      }
+      try {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+        const path = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const { error: uploadError } = await this.sb.storage.from('products').upload(path, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw uploadError;
+        data.imagem = this.sb.storage.from('products').getPublicUrl(path).data.publicUrl;
+      } catch (e) {
+        err.textContent = 'Erro no upload: ' + e.message;
+        err.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Salvar';
         return;
       }
     }
@@ -1592,29 +1571,48 @@ const A = {
       if (id) {
         const { error } = await this.sb.from('products').update(data).eq('id', id);
         if (error) throw error;
-        this.showToast('Produto atualizado com sucesso!', 'success');
+        this.showToast('Produto atualizado', 'success');
       } else {
         const { error } = await this.sb.from('products').insert(data);
         if (error) throw error;
-        this.showToast('Produto criado com sucesso!', 'success');
+        this.showToast('Produto cadastrado', 'success');
       }
-      this.prods = [];
-      location.hash = '#/admin/produtos';
+      this.lastFetch = 0;
+      this.prodsLoaded = false;
+      this.navigate('/admin/produtos');
     } catch (e) {
-      err.textContent = 'Erro ao salvar no banco: ' + e.message;
+      err.textContent = 'Erro ao salvar: ' + e.message;
       err.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Salvar';
     }
   },
 
   async toggleProductActive(id, ativo) {
     try {
-      await this.sb.from('products').update({ ativo }).eq('id', id);
+      const { error } = await this.sb.from('products').update({ ativo }).eq('id', id);
+      if (error) throw error;
       const p = this.pmap[id];
       if (p) p.ativo = ativo;
-      this.showToast(`Produto ${ativo ? 'ativado' : 'pausado'}!`, 'success');
+      this.showToast(ativo ? 'Produto visível na loja' : 'Produto pausado', 'success');
       this.viewAdminProducts();
-    } catch (e) {
-      this.showToast('Erro ao atualizar status', 'error');
+    } catch {
+      this.showToast('Não foi possível atualizar o status', 'error');
+    }
+  },
+
+  async deleteProduct(id) {
+    const p = this.pmap[id];
+    if (!confirm(`Excluir "${p?.nome || 'este produto'}"? Essa ação não pode ser desfeita.`)) return;
+    try {
+      const { error } = await this.sb.from('products').delete().eq('id', id);
+      if (error) throw error;
+      this.prods = this.prods.filter(x => x.id !== id);
+      delete this.pmap[id];
+      this.showToast('Produto excluído', 'success');
+      this.viewAdminProducts();
+    } catch {
+      this.showToast('Não foi possível excluir', 'error');
     }
   },
 
@@ -1622,21 +1620,21 @@ const A = {
     if (this.sb) await this.sb.auth.signOut();
     this.user = null;
     this.isAdmin = false;
-    this.showToast('Desconectada com segurança');
-    location.hash = '#/';
+    this.lastFetch = 0;
+    this.prodsLoaded = false;
+    this.showToast('Você saiu do painel');
+    this.navigate('/');
   },
 
-  /* ====================== UTILS ====================== */
   formatMoney(v) {
     return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   },
-
   escape(str) {
     if (!str) return '';
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   },
+  escapeAttr(str) { return this.escape(str); },
+  safeId(id) { return String(id || '').replace(/[^a-zA-Z0-9-]/g, ''); },
 
   showToast(msg, type = 'info') {
     const c = document.getElementById('toast-container');
@@ -1644,22 +1642,24 @@ const A = {
     const t = document.createElement('div');
     const isSuccess = type === 'success';
     const isError = type === 'error';
-
     t.className = `lux-toast flex items-center gap-2.5 px-4 py-3 rounded-2xl text-xs font-bold shadow-xl border pointer-events-auto ${
-      isSuccess ? 'bg-[#1D8A58] text-white border-[#156640]' : 
-      isError ? 'bg-[#E53E3E] text-white border-[#B91C1C]' : 
+      isSuccess ? 'bg-[#1D8A58] text-white border-[#156640]' :
+      isError ? 'bg-[#E53E3E] text-white border-[#B91C1C]' :
       'bg-[#241A1B] text-white border-white/10'
     }`;
-    t.innerHTML = `
-      <i class="fa-solid ${isSuccess ? 'fa-check-circle' : isError ? 'fa-triangle-exclamation' : 'fa-bell'}"></i>
-      <span>${msg}</span>
-    `;
+    t.innerHTML = `<i class="fa-solid ${isSuccess ? 'fa-check-circle' : isError ? 'fa-triangle-exclamation' : 'fa-bell'}" aria-hidden="true"></i><span></span>`;
+    t.querySelector('span').textContent = msg;
     c.appendChild(t);
     setTimeout(() => t.remove(), 3000);
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => A.init());
+document.addEventListener('DOMContentLoaded', () => {
+  ['cart-drawer', 'cart-overlay', 'quickview-overlay', 'fav-overlay'].forEach(id => {
+    document.getElementById(id)?.setAttribute('inert', '');
+  });
+  A.init();
+});
 </script>
 </body>
 </html>

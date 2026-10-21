@@ -1,32 +1,71 @@
 export const config = { matcher: '/produto/:path*' };
 
-const BOT_UA = /facebookexternalhit|whatsapp|instagram|twitterbot|linkedinbot|slackbot|telegrambot/i;
+const BOT_UA = /facebookexternalhit|WhatsApp|Instagram|Twitterbot|linkedinbot|Slackbot|TelegramBot|Discordbot|Pinterest|Googlebot/i;
+const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
+const FALLBACK_IMAGE = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/preview-whatsapp.jpeg';
+
+function esc(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 export default async function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
   if (!BOT_UA.test(ua)) return;
 
   const url = new URL(request.url);
-  const productId = url.pathname.split('/').pop();
-  const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
-  const SUPABASE_ANON_KEY = 'SUA_ANON_KEY_AQUI';
+  const productId = url.pathname.split('/').filter(Boolean).pop();
+  if (!productId) return;
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${productId}&select=nome,descricao,imagem`, {
-    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+  let product = null;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(productId)}&select=nome,descricao,imagem,preco,marca,ativo`,
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      }
+    );
+    if (res.ok) {
+      const rows = await res.json();
+      product = Array.isArray(rows) ? rows[0] : null;
+    }
+  } catch {
+    product = null;
+  }
+
+  const title = product?.nome
+    ? `${product.nome} | Vivi Carvalho Boty`
+    : 'Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes';
+  const desc = (product?.descricao || 'Perfumes, cosméticos e presentes originais com atendimento humanizado pelo WhatsApp.').slice(0, 160);
+  const image = product?.imagem || FALLBACK_IMAGE;
+  const canonical = `https://vivicarvalhoboty.com.br/produto/${encodeURIComponent(productId)}`;
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="UTF-8">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<link rel="canonical" href="${esc(canonical)}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:image" content="${esc(image)}">
+<meta property="og:url" content="${esc(canonical)}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="refresh" content="0;url=${esc(canonical)}">
+</head><body>
+<p>Redirecionando para <a href="${esc(canonical)}">${esc(product?.nome || 'Vivi Boty')}</a>…</p>
+</body></html>`;
+
+  return new Response(html, {
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300' }
   });
-  const [p] = await res.json();
-
-  const title = p ? `${p.nome} | Vivi Carvalho Boty` : 'Vivi Carvalho Boty';
-  const desc = p?.descricao?.slice(0,160) || 'Perfumes, cosméticos e presentes escolhidos com carinho para você.';
-  const image = p?.imagem || 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/preview-whatsapp.jpeg';
-
-  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
-    <title>${title}</title>
-    <meta property="og:title" content="${title}">
-    <meta property="og:description" content="${desc}">
-    <meta property="og:image" content="${image}">
-    <meta property="og:type" content="website">
-  </head><body></body></html>`;
-
-  return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8' } });
 }
