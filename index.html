@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes Exclusivos</title>
+
+<!-- Security: CSP -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https: blob:; connect-src https://ifqbuhrhmefqiwrpzvsh.supabase.co; frame-ancestors 'none';">
+
+<!-- SEO canonical (updated dynamically by JS for hash routes) -->
+<link rel="canonical" id="canonical-tag" href="https://viviboty.com.br/">
+
 <link rel="icon" type="image/png" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.png">
 <meta name="description" content="Sua boutique digital de perfumes, cosméticos e presentes de luxo. Produtos originais O Boticário, Natura, Eudora com atendimento humanizado direto pelo WhatsApp.">
 <meta property="og:title" content="Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes">
@@ -13,11 +20,16 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 
+<!-- Performance: font preload with display=swap -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+<!-- Performance: compiled Tailwind CSS instead of CDN runtime -->
+<link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script src="https://cdn.tailwindcss.com"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -59,7 +71,6 @@ h1, h2, h3, h4, .font-serif {
   letter-spacing: -0.01em;
 }
 
-/* Glassmorphism & Micro-effects */
 .glass {
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
@@ -74,22 +85,18 @@ h1, h2, h3, h4, .font-serif {
   border: 1px solid rgba(255, 255, 255, 0.9);
 }
 
-/* Luxury animations */
 @keyframes fadeInScale {
   from { opacity: 0; transform: translateY(14px) scale(0.99); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes pulseGold {
   0%, 100% { box-shadow: 0 0 0 0 rgba(198, 154, 85, 0.45); }
   70% { box-shadow: 0 0 0 16px rgba(198, 154, 85, 0); }
 }
-
 @keyframes floatGentle {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-8px) rotate(0.5deg); }
 }
-
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -106,7 +113,6 @@ h1, h2, h3, h4, .font-serif {
   border-radius: 12px;
 }
 
-/* Product Card Styling */
 .product-card {
   background: #FFFFFF;
   border: 1px solid var(--border-light);
@@ -129,7 +135,6 @@ h1, h2, h3, h4, .font-serif {
   transform: scale(1.08);
 }
 
-/* Badges */
 .badge-tag {
   font-size: 0.68rem;
   font-weight: 700;
@@ -148,7 +153,6 @@ h1, h2, h3, h4, .font-serif {
 .badge-masc { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
 .badge-uni { background: #F3E8FF; color: #6B21A8; border: 1px solid #E9D5FF; }
 
-/* Interactive Filter Chips */
 .filter-chip {
   padding: 8px 18px;
   border-radius: 9999px;
@@ -178,7 +182,6 @@ h1, h2, h3, h4, .font-serif {
   box-shadow: var(--shadow-sm);
 }
 
-/* Custom Buttons */
 .btn-gold {
   background: linear-gradient(135deg, #D4A864 0%, #B68A44 100%);
   color: #FFFFFF;
@@ -196,12 +199,9 @@ h1, h2, h3, h4, .font-serif {
   text-decoration: none;
   font-size: 0.95rem;
 }
-.btn-gold:hover {
-  filter: brightness(1.07);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -4px rgba(198, 154, 85, 0.4);
-}
+.btn-gold:hover { filter: brightness(1.07); transform: translateY(-2px); box-shadow: 0 12px 28px -4px rgba(198,154,85,0.4); }
 .btn-gold:active { transform: translateY(0); }
+.btn-gold:disabled { opacity: 0.6; cursor: not-allowed; transform: none; filter: none; }
 
 .btn-whatsapp {
   background: #25D366;
@@ -217,14 +217,10 @@ h1, h2, h3, h4, .font-serif {
   gap: 8px;
   transition: all 0.25s ease;
   text-decoration: none;
-  box-shadow: 0 6px 18px -2px rgba(37, 211, 102, 0.35);
+  box-shadow: 0 6px 18px -2px rgba(37,211,102,0.35);
   font-size: 0.95rem;
 }
-.btn-whatsapp:hover {
-  background: #20BA5A;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px -2px rgba(37, 211, 102, 0.45);
-}
+.btn-whatsapp:hover { background: #20BA5A; transform: translateY(-2px); box-shadow: 0 10px 22px -2px rgba(37,211,102,0.45); }
 
 .btn-secondary {
   background: #FFFFFF;
@@ -241,13 +237,8 @@ h1, h2, h3, h4, .font-serif {
   transition: all 0.2s ease;
   text-decoration: none;
 }
-.btn-secondary:hover {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold-dark);
-  background: var(--accent-gold-light);
-}
+.btn-secondary:hover { border-color: var(--accent-gold); color: var(--accent-gold-dark); background: var(--accent-gold-light); }
 
-/* Drawers & Overlays */
 .drawer-overlay {
   opacity: 0;
   pointer-events: none;
@@ -263,7 +254,6 @@ h1, h2, h3, h4, .font-serif {
 }
 .drawer-panel.open { transform: translateX(0); }
 
-/* Custom Inputs */
 .lux-input {
   width: 100%;
   padding: 12px 16px;
@@ -276,19 +266,14 @@ h1, h2, h3, h4, .font-serif {
   transition: all 0.2s;
   font-family: var(--font-sans);
 }
-.lux-input:focus {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 4px rgba(198, 154, 85, 0.15);
-}
+.lux-input:focus { border-color: var(--accent-gold); box-shadow: 0 0 0 4px rgba(198,154,85,0.15); }
 
-/* Toast Notification */
 .lux-toast {
   animation: slideToastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1), fadeToastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 2.7s forwards;
 }
 @keyframes slideToastIn { from { transform: translateY(-20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 @keyframes fadeToastOut { to { transform: translateY(-10px); opacity: 0; } }
 
-/* Toggle Switch */
 .tog { position: relative; width: 44px; height: 24px; cursor: pointer; display: inline-block; }
 .tog input { opacity: 0; width: 0; height: 0; position: absolute; }
 .tog-slider { position: absolute; inset: 0; background: #D6C7C0; border-radius: 24px; transition: 0.3s; }
@@ -296,15 +281,19 @@ h1, h2, h3, h4, .font-serif {
 .tog input:checked + .tog-slider { background: var(--accent-gold); }
 .tog input:checked + .tog-slider::before { transform: translateX(20px); }
 
-/* Quick Utilities */
 .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Spinner for loading states */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.7s linear infinite; display: inline-block; }
 </style>
 </head>
 
 <body>
 <div id="app" class="relative">
+
 
   <!-- TOP ANNOUNCEMENT BANNER -->
   <div class="bg-[#241A1B] text-[#F3EAE4] py-2 px-4 text-center text-xs tracking-wider flex items-center justify-center gap-2 font-medium">
@@ -318,52 +307,48 @@ h1, h2, h3, h4, .font-serif {
   <!-- HEADER NAVBAR -->
   <header id="navbar" class="sticky top-0 z-40 glass transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
-      
+
       <!-- Brand Logo -->
       <a href="#/" class="flex items-center gap-3 no-underline group">
         <div class="relative w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] shadow-md transition-transform group-hover:scale-105">
-          <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg" 
-               alt="Vivi Boty" 
+          <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg"
+               alt="Vivi Boty"
                class="w-full h-full rounded-full object-cover bg-white"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="w-full h-full rounded-full bg-[#3D2C2E] text-white font-serif font-bold text-sm hidden items-center justify-center">VB</div>
         </div>
         <div class="flex flex-col">
           <span class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B] tracking-tight group-hover:text-[#A97E3B] transition-colors leading-none">Vivi Boty</span>
-          <span class="text-[10px] tracking-[0.2em] uppercase text-[#826F70] font-semibold mt-1">Perfumaria & Presentes</span>
+          <span class="text-[10px] tracking-[0.2em] uppercase text-[#826F70] font-semibold mt-1">Perfumaria &amp; Presentes</span>
         </div>
       </a>
 
-      <!-- Desktop Navigation Links -->
+      <!-- Desktop Navigation -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-[#826F70]">
-        <a href="#/" class="hover:text-[#C69A55] transition-colors">Início</a>
-        <a href="#/produtos" class="hover:text-[#C69A55] transition-colors">Catálogo Completo</a>
-        <a href="#/produtos?destaque=true" class="hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#A97E3B]">
-          <i class="fa-solid fa-sparkles text-xs"></i> Mais Desejados
+        <a href="#/" id="nav-home" class="hover:text-[#C69A55] transition-colors">Início</a>
+        <a href="#/produtos" id="nav-produtos" class="hover:text-[#C69A55] transition-colors">Catálogo Completo</a>
+        <a href="#/produtos?destaque=true" id="nav-destaque" class="hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#A97E3B]">
+          <i class="fa-solid fa-sparkles text-xs" aria-hidden="true"></i> Mais Desejados
         </a>
       </nav>
 
-      <!-- Action Buttons (Favorites, Cart, Admin) -->
+      <!-- Action Buttons -->
       <div class="flex items-center gap-3">
-        <!-- Favorites Button -->
-        <button onclick="A.showFavModal()" class="relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] flex items-center justify-center transition-all" aria-label="Favoritos" title="Meus Favoritos">
-          <i class="fa-regular fa-heart text-base"></i>
-          <span id="fav-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-[#E8A7A1] text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+        <button id="btn-favs" class="relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] flex items-center justify-center transition-all" aria-label="Meus Favoritos">
+          <i class="fa-regular fa-heart text-base" aria-hidden="true"></i>
+          <span id="fav-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-[#E8A7A1] text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden" aria-hidden="true">0</span>
         </button>
 
-        <!-- Cart Bag Button -->
-        <button onclick="A.toggleCart(true)" class="relative flex items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm hover:shadow" aria-label="Sacola">
-          <i class="fa-solid fa-bag-shopping text-sm text-[#D4A864]"></i>
+        <button id="btn-cart" class="relative flex items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm hover:shadow" aria-label="Abrir sacola de compras">
+          <i class="fa-solid fa-bag-shopping text-sm text-[#D4A864]" aria-hidden="true"></i>
           <span class="hidden sm:inline">Sacola</span>
-          <span id="cart-counter" class="bg-[#C69A55] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
+          <span id="cart-counter" class="bg-[#C69A55] text-white text-[11px] font-bold px-2 py-0.5 rounded-full" aria-live="polite" aria-label="Itens na sacola">0</span>
         </button>
 
-        <!-- Admin Shortcut -->
-        <a href="#/admin" class="w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel Administrativo" title="Painel Admin">
-          <i class="fa-solid fa-lock text-xs"></i>
+        <a href="#/admin" class="w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel Administrativo">
+          <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
         </a>
       </div>
-
     </div>
   </header>
 
@@ -371,49 +356,43 @@ h1, h2, h3, h4, .font-serif {
   <main id="main-content" class="min-h-screen pb-24 md:pb-12"></main>
 
   <!-- CART SIDEBAR DRAWER -->
-  <div id="cart-overlay" class="drawer-overlay fixed inset-0 z-50" onclick="A.toggleCart(false)"></div>
-  <aside id="cart-drawer" class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-50 shadow-2xl flex flex-col border-l border-[#F0E3DC]">
-    <!-- Header -->
+  <div id="cart-overlay" class="drawer-overlay fixed inset-0 z-50" role="presentation"></div>
+  <aside id="cart-drawer" class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-50 shadow-2xl flex flex-col border-l border-[#F0E3DC]" aria-label="Sacola de compras" role="dialog" aria-modal="true">
     <div class="p-6 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]">
       <div class="flex items-center gap-2.5">
         <div class="w-9 h-9 rounded-full bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center">
-          <i class="fa-solid fa-bag-shopping"></i>
+          <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
         </div>
         <div>
           <h3 class="font-serif font-bold text-lg text-[#241A1B] leading-none">Minha Sacola</h3>
           <span id="cart-drawer-count" class="text-xs text-[#826F70]">0 itens adicionados</span>
         </div>
       </div>
-      <button onclick="A.toggleCart(false)" class="w-9 h-9 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center transition-colors" aria-label="Fechar">
-        <i class="fa-solid fa-xmark text-sm"></i>
+      <button id="btn-close-cart" class="w-9 h-9 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center transition-colors" aria-label="Fechar sacola">
+        <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
       </button>
     </div>
 
-    <!-- Items List -->
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
 
-    <!-- Extra Options & Checkout Footer -->
     <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
-      <!-- Gift Option Checkbox -->
       <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
         <input type="checkbox" id="gift-checkbox" class="mt-0.5 rounded text-[#C69A55] focus:ring-[#C69A55]">
         <div class="text-xs">
-          <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]"></i> É para presente?</span>
+          <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> É para presente?</span>
           <p class="text-[#826F70] mt-0.5">Avisaremos a Vivi para caprichar em uma embalagem linda de presente.</p>
         </div>
       </label>
-
-      <!-- Subtotal and CTA -->
       <div>
         <div class="flex justify-between items-baseline mb-3">
           <span class="text-sm font-semibold text-[#826F70]">Total estimado:</span>
           <span id="cart-total-price" class="font-serif font-bold text-2xl text-[#241A1B]">R$ 0,00</span>
         </div>
-        <button onclick="A.checkoutWhatsApp()" class="btn-whatsapp w-full py-3.5 text-base shadow-lg">
-          <i class="fa-brands fa-whatsapp text-xl"></i>
+        <button id="btn-checkout-wa" class="btn-whatsapp w-full py-3.5 text-base shadow-lg">
+          <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
           <span>Finalizar Pedido no WhatsApp</span>
         </button>
-        <button onclick="A.clearCart()" class="w-full text-center text-xs font-semibold text-[#826F70] hover:text-[#E53E3E] mt-3 py-1 transition-colors">
+        <button id="btn-clear-cart" class="w-full text-center text-xs font-semibold text-[#826F70] hover:text-[#E53E3E] mt-3 py-1 transition-colors">
           Esvaziar sacola
         </button>
       </div>
@@ -421,24 +400,24 @@ h1, h2, h3, h4, .font-serif {
   </aside>
 
   <!-- QUICK VIEW MODAL -->
-  <div id="quickview-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div id="quickview-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Visualização rápida do produto">
     <div id="quickview-card" class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 sm:p-8 relative">
-      <button onclick="A.closeQuickView()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center">
-        <i class="fa-solid fa-xmark"></i>
+      <button id="btn-close-quickview" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center" aria-label="Fechar visualização">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
       <div id="quickview-content"></div>
     </div>
   </div>
 
-  <!-- FAVORITES DRAWER/MODAL -->
-  <div id="fav-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+  <!-- FAVORITES MODAL -->
+  <div id="fav-overlay" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Meus favoritos">
     <div class="bg-white rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] p-6 relative">
       <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#F0E3DC]">
         <h3 class="font-serif font-bold text-xl text-[#241A1B] flex items-center gap-2">
-          <i class="fa-solid fa-heart text-[#E8A7A1]"></i> Meus Favoritos
+          <i class="fa-solid fa-heart text-[#E8A7A1]" aria-hidden="true"></i> Meus Favoritos
         </h3>
-        <button onclick="A.closeFavModal()" class="w-8 h-8 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
+        <button id="btn-close-fav" class="w-8 h-8 rounded-full bg-[#FCF9F7] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center" aria-label="Fechar favoritos">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
       <div id="fav-items-list" class="space-y-3"></div>
@@ -446,40 +425,40 @@ h1, h2, h3, h4, .font-serif {
   </div>
 
   <!-- FLOATING WHATSAPP PILL -->
-  <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado." 
-     target="_blank" rel="noopener" 
-     class="fixed bottom-24 md:bottom-8 right-5 z-40 bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline" 
-     aria-label="Falar no WhatsApp">
-    <i class="fa-brands fa-whatsapp text-2xl"></i>
+  <a id="wa-floating"
+     href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado."
+     target="_blank" rel="noopener noreferrer"
+     class="fixed bottom-24 md:bottom-8 right-5 z-40 bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline"
+     aria-label="Falar com a Vivi no WhatsApp">
+    <i class="fa-brands fa-whatsapp text-2xl" aria-hidden="true"></i>
     <span class="hidden sm:inline font-bold text-sm tracking-wide">Falar com a Vivi</span>
   </a>
 
   <!-- TOAST NOTIFICATIONS -->
-  <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none" role="status" aria-live="polite" aria-atomic="false"></div>
 
   <!-- MOBILE BOTTOM NAVIGATION -->
-  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0E3DC] md:hidden px-4 py-2 flex justify-around items-center">
-    <a href="#/" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-house text-lg"></i> Início
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0E3DC] md:hidden px-4 py-2 flex justify-around items-center" aria-label="Navegação principal">
+    <a href="#/" id="mob-nav-home" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-house text-lg" aria-hidden="true"></i> Início
     </a>
-    <a href="#/produtos" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-magnifying-glass text-lg"></i> Catálogo
+    <a href="#/produtos" id="mob-nav-produtos" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-magnifying-glass text-lg" aria-hidden="true"></i> Catálogo
     </a>
-    <button onclick="A.showFavModal()" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-regular fa-heart text-lg"></i> Desejos
+    <button id="mob-btn-favs" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]" aria-label="Meus favoritos">
+      <i class="fa-regular fa-heart text-lg" aria-hidden="true"></i> Desejos
     </button>
-    <button onclick="A.toggleCart(true)" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-bag-shopping text-lg"></i> Sacola
+    <button id="mob-btn-cart" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]" aria-label="Sacola de compras">
+      <i class="fa-solid fa-bag-shopping text-lg" aria-hidden="true"></i> Sacola
     </button>
     <a href="#/admin" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-user-shield text-lg"></i> Admin
+      <i class="fa-solid fa-user-shield text-lg" aria-hidden="true"></i> Admin
     </a>
   </nav>
 
   <!-- LUXURY FOOTER -->
   <footer class="bg-[#1C1415] text-[#D8CECA] border-t border-white/5 pt-16 pb-12">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-      <!-- Col 1: About -->
       <div class="md:col-span-2 space-y-4">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] p-0.5">
@@ -491,12 +470,15 @@ h1, h2, h3, h4, .font-serif {
           Sua consultora de beleza e bem-estar de confiança. Seleção refinada de fragrâncias, cosméticos e kits para presente com agilidade e carinho.
         </p>
         <div class="flex items-center gap-4 text-lg pt-2">
-          <a href="https://wa.me/5518997871211" target="_blank" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://wa.me/5518997871211" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors" aria-label="WhatsApp">
+            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors" aria-label="Facebook">
+            <i class="fa-brands fa-facebook" aria-hidden="true"></i>
+          </a>
         </div>
       </div>
 
-      <!-- Col 2: Brands -->
       <div class="space-y-3">
         <h4 class="font-serif font-bold text-white tracking-wide">Marcas Parceiras</h4>
         <ul class="text-sm space-y-2 text-[#A89C98]">
@@ -507,7 +489,6 @@ h1, h2, h3, h4, .font-serif {
         </ul>
       </div>
 
-      <!-- Col 3: Dúvidas / FAQ -->
       <div class="space-y-3">
         <h4 class="font-serif font-bold text-white tracking-wide">Como Funciona?</h4>
         <div class="text-xs text-[#A89C98] space-y-2 leading-relaxed">
@@ -526,8 +507,10 @@ h1, h2, h3, h4, .font-serif {
 
 </div>
 
-<!-- APPLICATION JAVASCRIPT LOGIC -->
+
+<!-- APPLICATION JAVASCRIPT -->
 <script>
+'use strict';
 const VIVI_LOGO = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg';
 const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
@@ -540,6 +523,10 @@ const GENEROS = ['', 'Feminino', 'Masculino', 'Unissex'];
 const CART_KEY = 'viviboty_cart_v2';
 const FAV_KEY = 'viviboty_favs_v2';
 
+// Module-level debounce variable — prevents stacking listeners on re-renders (Bug #10)
+let _searchDebounce = null;
+let _searchHandler = null;
+
 const A = {
   sb: null,
   user: null,
@@ -549,7 +536,7 @@ const A = {
   cart: [],
   favs: [],
   route: '',
-  filt: { q: '', cat: '', brand: '', promo: false, ready: false, genero: '', sort: 'relevancia' },
+  filt: { q: '', cat: '', brand: '', promo: false, destaque: false, genero: '', sort: 'relevancia' },
 
   async init() {
     this.loadStorage();
@@ -571,17 +558,49 @@ const A = {
     }
     this.updateCartUI();
     this.updateFavUI();
+    this._bindStaticButtons();
 
     window.addEventListener('hashchange', () => this.handleRoute(location.hash));
     this.handleRoute(location.hash || '#/');
+  },
+
+  // Bind all static buttons once — avoids re-binding on every renderPage
+  _bindStaticButtons() {
+    document.getElementById('btn-favs')?.addEventListener('click', () => this.showFavModal());
+    document.getElementById('mob-btn-favs')?.addEventListener('click', () => this.showFavModal());
+    document.getElementById('btn-cart')?.addEventListener('click', () => this.toggleCart(true));
+    document.getElementById('mob-btn-cart')?.addEventListener('click', () => this.toggleCart(true));
+    document.getElementById('btn-close-cart')?.addEventListener('click', () => this.toggleCart(false));
+    document.getElementById('cart-overlay')?.addEventListener('click', () => this.toggleCart(false));
+    document.getElementById('btn-close-quickview')?.addEventListener('click', () => this.closeQuickView());
+    document.getElementById('btn-close-fav')?.addEventListener('click', () => this.closeFavModal());
+    document.getElementById('btn-checkout-wa')?.addEventListener('click', () => this.checkoutWhatsApp());
+    document.getElementById('btn-clear-cart')?.addEventListener('click', () => this.clearCart());
+
+    // Event delegation for product cards — fixes XSS from inline onclick with dynamic IDs
+    document.getElementById('main-content')?.addEventListener('click', e => {
+      const card = e.target.closest('[data-id]');
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      e.stopPropagation();
+      const id = btn.dataset.id || card?.dataset.id;
+      if (!id) return;
+      const action = btn.dataset.action;
+      if (action === 'add-cart')    { this.addToCart(id); }
+      if (action === 'toggle-fav')  { this.toggleFav(id); }
+      if (action === 'quick-view')  { this.openQuickView(id); }
+      if (action === 'wa-direct')   { this.orderWhatsAppDirect(id); }
+      if (action === 'go-detail')   { this.goToDetail(id); }
+      if (action === 'share')       { this.shareProduct(id); }
+    });
   },
 
   loadStorage() {
     try { this.cart = JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { this.cart = []; }
     try { this.favs = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { this.favs = []; }
   },
-  saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(this.cart)); this.updateCartUI(); },
-  saveFavs() { localStorage.setItem(FAV_KEY, JSON.stringify(this.favs)); this.updateFavUI(); },
+  saveCart()  { localStorage.setItem(CART_KEY, JSON.stringify(this.cart)); this.updateCartUI(); },
+  saveFavs()  { localStorage.setItem(FAV_KEY, JSON.stringify(this.favs)); this.updateFavUI(); },
 
   async fetchProds() {
     if (!this.sb) return false;
@@ -618,29 +637,66 @@ const A = {
 
   handleRoute(h) {
     this.route = h || '#/';
+    // Update canonical tag for SEO
+    const canonical = document.getElementById('canonical-tag');
+    if (canonical) canonical.href = 'https://viviboty.com.br/' + (h && h !== '#/' ? h : '');
+    // Update aria-current on desktop nav
+    this._updateNavCurrent(h);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.renderPage();
   },
 
+  _updateNavCurrent(h) {
+    const navMap = {
+      'nav-home':     h === '#/' || h === '#/home',
+      'nav-produtos': h.startsWith('#/produtos'),
+      'nav-destaque': h === '#/produtos?destaque=true',
+      'mob-nav-home':    h === '#/' || h === '#/home',
+      'mob-nav-produtos': h.startsWith('#/produtos'),
+    };
+    Object.entries(navMap).forEach(([id, active]) => {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('aria-current', active ? 'page' : 'false');
+    });
+  },
+
   async renderPage() {
     const main = document.getElementById('main-content');
-    main.innerHTML = '<div class="max-w-6xl mx-auto px-4 py-24 flex flex-col items-center justify-center gap-4"><div class="skeleton-lux w-48 h-8"></div><div class="skeleton-lux w-80 h-4"></div></div>';
+    main.innerHTML = '<div class="max-w-6xl mx-auto px-4 py-24 flex flex-col items-center justify-center gap-4"><div class="skeleton-lux w-48 h-8"></div><div class="skeleton-lux w-80 h-4 mt-2"></div></div>';
 
-    if (this.route === '#/' || this.route === '#/home') return await this.viewHome();
-    if (this.route.startsWith('#/produtos')) return await this.viewCatalog();
-    if (this.route.startsWith('#/produto/')) return await this.viewDetail(this.route.split('#/produto/')[1]);
-    if (this.route === '#/admin') return this.viewAdminLogin();
-    if (this.route === '#/admin/produtos') return await this.viewAdminProducts();
-    if (this.route === '#/admin/novo') return this.viewAdminForm();
-    if (this.route.startsWith('#/admin/editar/')) return await this.viewAdminForm(this.route.split('#/admin/editar/')[1]);
-    return await this.viewHome();
+    if (this.route === '#/' || this.route === '#/home')           return await this.viewHome();
+    if (this.route.startsWith('#/produtos'))                      return await this.viewCatalog();
+    if (this.route.startsWith('#/produto/'))                      return await this.viewDetail(this.route.split('#/produto/')[1]);
+    if (this.route === '#/admin')                                  return this.viewAdminLogin();
+    if (this.route === '#/admin/produtos')                         return await this.viewAdminProducts();
+    if (this.route === '#/admin/novo')                             return this.viewAdminForm();
+    if (this.route.startsWith('#/admin/editar/'))                  return await this.viewAdminForm(this.route.split('#/admin/editar/')[1]);
+    return this.view404();
+  },
+
+  /* ====================== 404 VIEW ====================== */
+  view404() {
+    const main = document.getElementById('main-content');
+    main.innerHTML = `
+      <div class="page-anim min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-24">
+        <div class="w-20 h-20 rounded-full bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center mx-auto mb-6 text-4xl">
+          <i class="fa-solid fa-compass-slash" aria-hidden="true"></i>
+        </div>
+        <h1 class="font-serif font-bold text-4xl text-[#241A1B] mb-3">Página não encontrada</h1>
+        <p class="text-[#826F70] text-sm max-w-md mb-8">Esta página não existe ou foi movida. Explore o catálogo ou volte para o início.</p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="#/" class="btn-gold"><i class="fa-solid fa-house" aria-hidden="true"></i> Ir para o Início</a>
+          <a href="#/produtos" class="btn-secondary"><i class="fa-solid fa-store" aria-hidden="true"></i> Ver Catálogo</a>
+        </div>
+      </div>
+    `;
   },
 
   /* ====================== HOME VIEW ====================== */
   async viewHome() {
     await this.ensureProds();
     const featured = this.prods.filter(p => p.ativo && p.destaque).slice(0, 4);
-    const promos = this.prods.filter(p => p.ativo && p.promocao).slice(0, 4);
+    const promos   = this.prods.filter(p => p.ativo && p.promocao).slice(0, 4);
 
     const main = document.getElementById('main-content');
     main.innerHTML = `
@@ -648,10 +704,9 @@ const A = {
         <!-- HERO SECTION -->
         <section class="relative overflow-hidden bg-gradient-to-b from-[#FAF4F0] via-[#FCF9F7] to-[#FCF9F7] pt-12 pb-20 px-4 sm:px-6">
           <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
             <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#F0E3DC] shadow-sm text-xs font-bold text-[#A97E3B]">
-                <i class="fa-solid fa-sparkles"></i> Perfumaria, Maquiagem & Cosméticos
+                <i class="fa-solid fa-sparkles" aria-hidden="true"></i> Perfumaria, Maquiagem &amp; Cosméticos
               </div>
               <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241A1B] leading-[1.12]">
                 O encanto da beleza com o carinho do atendimento <span class="italic text-[#A97E3B]">exclusivo</span>.
@@ -661,34 +716,22 @@ const A = {
               </p>
               <div class="flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start pt-2">
                 <a href="#/produtos" class="btn-gold">
-                  <i class="fa-solid fa-store"></i> Explorar Catálogo
+                  <i class="fa-solid fa-store" aria-hidden="true"></i> Explorar Catálogo
                 </a>
-                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Adorei o seu site e gostaria de tirar uma dúvida sobre seus produtos.')}" target="_blank" class="btn-secondary">
-                  <i class="fa-brands fa-whatsapp text-lg text-[#25D366]"></i> Falar com a Vivi
+                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Adorei o seu site e gostaria de tirar uma dúvida sobre seus produtos.')}" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                  <i class="fa-brands fa-whatsapp text-lg text-[#25D366]" aria-hidden="true"></i> Falar com a Vivi
                 </a>
               </div>
-              
-              <!-- Trust Indicators -->
               <div class="grid grid-cols-3 gap-4 pt-6 border-t border-[#F0E3DC]/80 max-w-lg mx-auto lg:mx-0 text-left">
-                <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">100%</p>
-                  <p class="text-[11px] text-[#826F70] font-medium">Originais & Lacrados</p>
-                </div>
-                <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">Rápido</p>
-                  <p class="text-[11px] text-[#826F70] font-medium">Pronta Entrega</p>
-                </div>
-                <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">Mimos 🎁</p>
-                  <p class="text-[11px] text-[#826F70] font-medium">Embalagens Especiais</p>
-                </div>
+                <div><p class="font-serif font-bold text-lg text-[#241A1B]">100%</p><p class="text-[11px] text-[#826F70] font-medium">Originais &amp; Lacrados</p></div>
+                <div><p class="font-serif font-bold text-lg text-[#241A1B]">Rápido</p><p class="text-[11px] text-[#826F70] font-medium">Pronta Entrega</p></div>
+                <div><p class="font-serif font-bold text-lg text-[#241A1B]">Mimos 🎁</p><p class="text-[11px] text-[#826F70] font-medium">Embalagens Especiais</p></div>
               </div>
             </div>
 
-            <!-- Hero Visual Badge Collage -->
             <div class="lg:col-span-5 flex justify-center relative">
               <div class="relative w-72 sm:w-84 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle">
-                <img src="${VIVI_LOGO}" alt="Vivi Boty Catálogo" class="w-full h-full object-cover">
+                <img src="${VIVI_LOGO}" alt="Vivi Boty — consultora de beleza" class="w-full h-full object-cover" loading="eager" fetchpriority="high">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 <div class="absolute bottom-6 left-6 right-6 text-white text-left">
                   <span class="badge-tag badge-star mb-2">Consultora Oficial</span>
@@ -697,7 +740,6 @@ const A = {
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
@@ -705,19 +747,19 @@ const A = {
         <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-truck-fast"></i></div>
+              <div class="w-12 h-12 rounded-xl bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></div>
               <div><h4 class="font-bold text-sm text-[#241A1B]">Pronta Entrega</h4><p class="text-xs text-[#826F70]">Envio ágil e cuidadoso</p></div>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#FCE7F3] text-[#9D174D] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift"></i></div>
+              <div class="w-12 h-12 rounded-xl bg-[#FCE7F3] text-[#9D174D] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-gift" aria-hidden="true"></i></div>
               <div><h4 class="font-bold text-sm text-[#241A1B]">Para Presentear</h4><p class="text-xs text-[#826F70]">Kits com sacolas lindas</p></div>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#DCFCE7] text-[#1D8A58] flex items-center justify-center text-xl shrink-0"><i class="fa-brands fa-whatsapp"></i></div>
+              <div class="w-12 h-12 rounded-xl bg-[#DCFCE7] text-[#1D8A58] flex items-center justify-center text-xl shrink-0"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></div>
               <div><h4 class="font-bold text-sm text-[#241A1B]">Sem Senhas</h4><p class="text-xs text-[#826F70]">Compra direto no chat</p></div>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-badge-check"></i></div>
+              <div class="w-12 h-12 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-badge-check" aria-hidden="true"></i></div>
               <div><h4 class="font-bold text-sm text-[#241A1B]">Garantia Real</h4><p class="text-xs text-[#826F70]">Marcas homologadas</p></div>
             </div>
           </div>
@@ -731,7 +773,7 @@ const A = {
               <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#241A1B] mt-1">Destaques Mais Desejados</h2>
             </div>
             <a href="#/produtos" class="text-sm font-bold text-[#A97E3B] hover:text-[#C69A55] flex items-center gap-1.5 transition-colors">
-              Ver tudo <i class="fa-solid fa-arrow-right"></i>
+              Ver tudo <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -739,239 +781,247 @@ const A = {
           </div>
         </section>
 
-        <!-- SPECIAL PROMOTIONS BANNER -->
         ${promos.length > 0 ? `
-          <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-            <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2] shadow-sm">
-              <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3">
-                  <span class="w-10 h-10 rounded-full bg-[#E53E3E] text-white flex items-center justify-center text-lg"><i class="fa-solid fa-fire"></i></span>
-                  <div>
-                    <h3 class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B]">Ofertas & Promoções Especiais</h3>
-                    <p class="text-xs sm:text-sm text-[#826F70]">Condições limitadas enquanto durarem os estoques</p>
-                  </div>
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+          <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2] shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-full bg-[#E53E3E] text-white flex items-center justify-center text-lg"><i class="fa-solid fa-fire" aria-hidden="true"></i></span>
+                <div>
+                  <h3 class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B]">Ofertas &amp; Promoções Especiais</h3>
+                  <p class="text-xs sm:text-sm text-[#826F70]">Condições limitadas enquanto durarem os estoques</p>
                 </div>
-                <a href="#/produtos?promo=true" class="btn-secondary text-xs sm:text-sm">Ver Todas</a>
               </div>
-              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                ${promos.map(p => this.renderCard(p)).join('')}
-              </div>
+              <a href="#/produtos?promo=true" class="btn-secondary text-xs sm:text-sm">Ver Todas</a>
             </div>
-          </section>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              ${promos.map(p => this.renderCard(p)).join('')}
+            </div>
+          </div>
+        </section>
         ` : ''}
-
       </div>
     `;
   },
+
 
   /* ====================== CATALOG VIEW ====================== */
   async viewCatalog() {
     await this.ensureProds();
 
-    // Check query params
+    // Reset destaque filter each time, then re-apply from URL
+    this.filt.destaque = false;
+
     const hash = this.route;
     if (hash.includes('?')) {
       const qParams = new URLSearchParams(hash.split('?')[1]);
-      if (qParams.has('marca')) this.filt.brand = decodeURIComponent(qParams.get('marca'));
-      if (qParams.has('categoria')) this.filt.cat = decodeURIComponent(qParams.get('categoria'));
-      if (qParams.has('promo')) this.filt.promo = true;
-      if (qParams.has('destaque')) this.filt.ready = false;
+      if (qParams.has('marca'))     this.filt.brand    = decodeURIComponent(qParams.get('marca'));
+      if (qParams.has('categoria')) this.filt.cat      = decodeURIComponent(qParams.get('categoria'));
+      if (qParams.has('promo'))     this.filt.promo    = true;
+      if (qParams.has('destaque'))  this.filt.destaque = true; // Fixed: was setting this.filt.ready instead
     }
 
     const filtered = this.getFilteredProds();
-
     const main = document.getElementById('main-content');
     main.innerHTML = `
       <div class="page-anim max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        
-        <!-- Header Title & Fast Search -->
+
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 class="text-3xl font-serif font-bold text-[#241A1B]">Catálogo de Produtos</h1>
-            <p class="text-xs sm:text-sm text-[#826F70] mt-0.5">${filtered.length} produtos disponíveis para você</p>
+            <p class="text-xs sm:text-sm text-[#826F70] mt-0.5">${filtered.length} produto${filtered.length !== 1 ? 's' : ''} disponível${filtered.length !== 1 ? 'is' : ''} para você</p>
           </div>
-
-          <!-- Search Bar -->
           <div class="relative w-full md:w-80">
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#AA999A]"></i>
-            <input type="text" id="catalog-search" placeholder="Buscar por perfume, hidratante..." 
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#AA999A]" aria-hidden="true"></i>
+            <input type="search" id="catalog-search" placeholder="Buscar por perfume, hidratante…"
                    value="${this.escape(this.filt.q)}"
-                   class="lux-input pl-11 pr-4 py-2.5 text-sm">
-            ${this.filt.q ? `
-              <button onclick="A.clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA999A] hover:text-[#241A1B] text-xs">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            ` : ''}
+                   class="lux-input pl-11 pr-4 py-2.5 text-sm"
+                   aria-label="Buscar produtos">
           </div>
         </div>
 
-        <!-- Filter Chips Row 1: Categories -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
-          <button onclick="A.setCategory('')" class="filter-chip ${!this.filt.cat && !this.filt.promo ? 'active' : ''}">
-            Todos
+        <!-- Filter chips: categories -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3" role="group" aria-label="Filtrar por categoria">
+          <button data-filter-cat="" class="filter-chip ${!this.filt.cat && !this.filt.promo && !this.filt.destaque ? 'active' : ''}">Todos</button>
+          <button data-filter-promo="1" class="filter-chip ${this.filt.promo ? 'active' : ''} text-[#E53E3E]">
+            <i class="fa-solid fa-tag" aria-hidden="true"></i> Promoções
           </button>
-          <button onclick="A.togglePromoFilter()" class="filter-chip ${this.filt.promo ? 'active' : ''} text-[#E53E3E]">
-            <i class="fa-solid fa-tag"></i> Promoções
+          <button data-filter-destaque="1" class="filter-chip ${this.filt.destaque ? 'active' : ''}">
+            <i class="fa-solid fa-sparkles" aria-hidden="true"></i> Destaques
           </button>
           ${CATS.map(c => `
-            <button onclick="A.setCategory('${c}')" class="filter-chip ${this.filt.cat === c ? 'active' : ''}">
-              ${c}
-            </button>
+            <button data-filter-cat="${this.escape(c)}" class="filter-chip ${this.filt.cat === c ? 'active' : ''}">${this.escape(c)}</button>
           `).join('')}
         </div>
 
-        <!-- Filter Chips Row 2: Brands & Gênero -->
+        <!-- Filter chips: brands + sort -->
         <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-[#F0E3DC]">
-          <div class="flex items-center gap-2 overflow-x-auto scrollbar-none">
+          <div class="flex items-center gap-2 overflow-x-auto scrollbar-none" role="group" aria-label="Filtrar por marca">
             <span class="text-xs font-bold text-[#AA999A] uppercase tracking-wider mr-1">Marcas:</span>
-            <button onclick="A.setBrand('')" class="filter-chip text-xs ${!this.filt.brand ? 'active' : ''}">Todas</button>
+            <button data-filter-brand="" class="filter-chip text-xs ${!this.filt.brand ? 'active' : ''}">Todas</button>
             ${BRANDS.map(b => `
-              <button onclick="A.setBrand('${b}')" class="filter-chip text-xs ${this.filt.brand === b ? 'active' : ''}">${b}</button>
+              <button data-filter-brand="${this.escape(b)}" class="filter-chip text-xs ${this.filt.brand === b ? 'active' : ''}">${this.escape(b)}</button>
             `).join('')}
           </div>
-
-          <!-- Sort Select -->
           <div class="flex items-center gap-2">
-            <span class="text-xs font-medium text-[#826F70]">Ordenar por:</span>
-            <select id="sort-selector" onchange="A.setSort(this.value)" class="lux-input py-1.5 px-3 text-xs w-auto bg-white">
-              <option value="relevancia" ${this.filt.sort === 'relevancia' ? 'selected' : ''}>Mais Relevantes</option>
+            <label for="sort-selector" class="text-xs font-medium text-[#826F70]">Ordenar por:</label>
+            <select id="sort-selector" class="lux-input py-1.5 px-3 text-xs w-auto bg-white" aria-label="Ordenação">
+              <option value="relevancia"  ${this.filt.sort === 'relevancia'  ? 'selected' : ''}>Mais Relevantes</option>
               <option value="menor_preco" ${this.filt.sort === 'menor_preco' ? 'selected' : ''}>Menor Preço</option>
               <option value="maior_preco" ${this.filt.sort === 'maior_preco' ? 'selected' : ''}>Maior Preço</option>
-              <option value="nome_asc" ${this.filt.sort === 'nome_asc' ? 'selected' : ''}>Nome (A-Z)</option>
+              <option value="nome_asc"    ${this.filt.sort === 'nome_asc'    ? 'selected' : ''}>Nome (A-Z)</option>
             </select>
           </div>
         </div>
 
-        <!-- Products Grid / Empty State -->
         ${filtered.length === 0 ? `
           <div class="text-center py-24 bg-white rounded-3xl border border-[#F0E3DC] p-8 max-w-lg mx-auto">
             <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl">
-              <i class="fa-solid fa-box-open"></i>
+              <i class="fa-solid fa-box-open" aria-hidden="true"></i>
             </div>
             <h3 class="font-serif font-bold text-xl text-[#241A1B] mb-2">Nenhum produto encontrado</h3>
             <p class="text-xs sm:text-sm text-[#826F70] mb-6">Tente remover alguns filtros ou buscar por outro termo.</p>
-            <button onclick="A.resetFilters()" class="btn-secondary text-xs">Limpar todos os filtros</button>
+            <button id="btn-reset-filters" class="btn-secondary text-xs">Limpar todos os filtros</button>
           </div>
         ` : `
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             ${filtered.map(p => this.renderCard(p)).join('')}
           </div>
         `}
-
       </div>
     `;
 
-    // Search input listener
-    let deb;
-    document.getElementById('catalog-search')?.addEventListener('input', e => {
-      clearTimeout(deb);
-      deb = setTimeout(() => {
-        this.filt.q = e.target.value;
-        this.viewCatalog();
-      }, 300);
+    // --- Search: remove old listener, add new one (fixes listener stacking bug) ---
+    const searchEl = document.getElementById('catalog-search');
+    if (searchEl) {
+      if (_searchHandler) searchEl.removeEventListener('input', _searchHandler);
+      _searchHandler = e => {
+        clearTimeout(_searchDebounce);
+        _searchDebounce = setTimeout(() => {
+          this.filt.q = e.target.value;
+          this.viewCatalog();
+        }, 300);
+      };
+      searchEl.addEventListener('input', _searchHandler);
+    }
+
+    // Sort select
+    document.getElementById('sort-selector')?.addEventListener('change', e => {
+      this.filt.sort = e.target.value;
+      this.viewCatalog();
+    });
+
+    // Reset filters button (empty state)
+    document.getElementById('btn-reset-filters')?.addEventListener('click', () => this.resetFilters());
+
+    // Filter chip delegation
+    document.querySelector('[role="group"][aria-label="Filtrar por categoria"]')?.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      if ('filterPromo' in btn.dataset)    { this.togglePromoFilter(); return; }
+      if ('filterDestaque' in btn.dataset) { this.toggleDestaqueFilter(); return; }
+      if ('filterCat' in btn.dataset)      { this.setCategory(btn.dataset.filterCat); return; }
+    });
+    document.querySelector('[role="group"][aria-label="Filtrar por marca"]')?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-filter-brand]');
+      if (btn) this.setBrand(btn.dataset.filterBrand);
     });
   },
 
   getFilteredProds() {
     let list = this.prods.filter(p => {
       if (!p.ativo) return false;
-      if (this.filt.q && !p.nome.toLowerCase().includes(this.filt.q.toLowerCase())) return false;
-      if (this.filt.cat && p.categoria !== this.filt.cat) return false;
-      if (this.filt.brand && p.marca !== this.filt.brand) return false;
-      if (this.filt.promo && !p.promocao) return false;
-      if (this.filt.genero && p.genero !== this.filt.genero) return false;
+      if (this.filt.q       && !p.nome.toLowerCase().includes(this.filt.q.toLowerCase())) return false;
+      if (this.filt.cat     && p.categoria !== this.filt.cat)   return false;
+      if (this.filt.brand   && p.marca !== this.filt.brand)     return false;
+      if (this.filt.promo   && !p.promocao)                     return false;
+      if (this.filt.destaque && !p.destaque)                    return false; // Fixed: destaque filter now works
+      if (this.filt.genero  && p.genero !== this.filt.genero)   return false;
       return true;
     });
-
     if (this.filt.sort === 'menor_preco') list.sort((a, b) => a.preco - b.preco);
     else if (this.filt.sort === 'maior_preco') list.sort((a, b) => b.preco - a.preco);
-    else if (this.filt.sort === 'nome_asc') list.sort((a, b) => a.nome.localeCompare(b.nome));
-
+    else if (this.filt.sort === 'nome_asc')    list.sort((a, b) => a.nome.localeCompare(b.nome));
     return list;
   },
 
-  setCategory(c) { this.filt.cat = c; this.filt.promo = false; this.viewCatalog(); },
-  setBrand(b) { this.filt.brand = b; this.viewCatalog(); },
-  togglePromoFilter() { this.filt.promo = !this.filt.promo; this.filt.cat = ''; this.viewCatalog(); },
-  setSort(s) { this.filt.sort = s; this.viewCatalog(); },
-  clearSearch() { this.filt.q = ''; this.viewCatalog(); },
-  resetFilters() { this.filt = { q: '', cat: '', brand: '', promo: false, ready: false, genero: '', sort: 'relevancia' }; this.viewCatalog(); },
+  setCategory(c)       { this.filt.cat = c; this.filt.promo = false; this.filt.destaque = false; this.viewCatalog(); },
+  setBrand(b)          { this.filt.brand = b; this.viewCatalog(); },
+  togglePromoFilter()  { this.filt.promo = !this.filt.promo; this.filt.cat = ''; this.filt.destaque = false; this.viewCatalog(); },
+  toggleDestaqueFilter() { this.filt.destaque = !this.filt.destaque; this.filt.cat = ''; this.filt.promo = false; this.viewCatalog(); },
+  setSort(s)           { this.filt.sort = s; this.viewCatalog(); },
+  clearSearch()        { this.filt.q = ''; this.viewCatalog(); },
+  resetFilters()       { this.filt = { q: '', cat: '', brand: '', promo: false, destaque: false, genero: '', sort: 'relevancia' }; this.viewCatalog(); },
 
-  /* ====================== PRODUCT CARD COMPONENT ====================== */
+  /* ====================== PRODUCT CARD ====================== */
+  // Uses data-action + data-id instead of inline onclick — fixes XSS from dynamic IDs
   renderCard(p) {
     const isFav = this.favs.includes(p.id);
+    const safeId = this.escape(String(p.id));
     const badges = [];
-    if (p.promocao) badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire"></i> Promo</span>');
-    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check"></i> Pronta Entrega</span>');
-    if (p.destaque) badges.push('<span class="badge-tag badge-star">Destaque</span>');
-    if (p.genero === 'Feminino') badges.push('<span class="badge-tag badge-fem">Fem</span>');
+    if (p.promocao)      badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire" aria-hidden="true"></i> Promo</span>');
+    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check" aria-hidden="true"></i> Pronta Entrega</span>');
+    if (p.destaque)      badges.push('<span class="badge-tag badge-star">Destaque</span>');
+    if (p.genero === 'Feminino')  badges.push('<span class="badge-tag badge-fem">Fem</span>');
     if (p.genero === 'Masculino') badges.push('<span class="badge-tag badge-masc">Masc</span>');
 
     return `
-      <div class="product-card group" data-id="${p.id}">
-        <!-- Image Box -->
-        <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${p.id}')">
-          ${p.imagem 
-            ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover" loading="lazy">` 
-            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`
+      <article class="product-card group" data-id="${safeId}">
+        <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer">
+          <button data-action="go-detail" data-id="${safeId}" class="absolute inset-0 w-full h-full z-0" aria-label="Ver detalhes de ${this.escape(p.nome)}"></button>
+          ${p.imagem
+            ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover pointer-events-none" loading="lazy">`
+            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA] pointer-events-none"><i class="fa-solid fa-sparkles text-3xl" aria-hidden="true"></i></div>`
           }
-          
-          <!-- Badges Overlay -->
           <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">
             ${badges.join('')}
           </div>
-
-          <!-- Favorite Button Overlay -->
-          <button onclick="event.stopPropagation(); A.toggleFav('${p.id}')" 
-                  class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-colors">
-            <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs"></i>
+          <button data-action="toggle-fav" data-id="${safeId}"
+                  class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-colors"
+                  aria-label="${isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}: ${this.escape(p.nome)}">
+            <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs" aria-hidden="true"></i>
           </button>
-
-          <!-- Quick Preview Pill Overlay (Hover desktop) -->
-          <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onclick="event.stopPropagation(); A.openQuickView('${p.id}')" 
-                    class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white transition-all flex items-center gap-1.5">
-              <i class="fa-solid fa-eye text-[11px]"></i> Espiar
+          <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+            <button data-action="quick-view" data-id="${safeId}"
+                    class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white transition-all flex items-center gap-1.5"
+                    aria-label="Visualização rápida de ${this.escape(p.nome)}">
+              <i class="fa-solid fa-eye text-[11px]" aria-hidden="true"></i> Espiar
             </button>
           </div>
         </div>
-
-        <!-- Product Details -->
         <div class="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
           <div>
             <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A]">${this.escape(p.marca || 'Boutique')}</span>
-            <h3 onclick="A.goToDetail('${p.id}')" class="font-semibold text-xs sm:text-sm text-[#241A1B] line-clamp-2 mt-0.5 cursor-pointer hover:text-[#A97E3B] transition-colors leading-snug">
-              ${this.escape(p.nome)}
+            <h3 class="font-semibold text-xs sm:text-sm text-[#241A1B] line-clamp-2 mt-0.5 leading-snug">
+              <button data-action="go-detail" data-id="${safeId}" class="hover:text-[#A97E3B] transition-colors text-left w-full">
+                ${this.escape(p.nome)}
+              </button>
             </h3>
           </div>
-
           <div class="mt-3 pt-3 border-t border-[#F0E3DC] flex items-center justify-between gap-2">
             <div>
               <span class="text-[10px] text-[#AA999A] block leading-none">Preço</span>
               <span class="font-serif font-bold text-sm sm:text-base text-[#241A1B]">${this.formatMoney(p.preco)}</span>
             </div>
-
             <div class="flex items-center gap-1">
-              <button onclick="event.stopPropagation(); A.addToCart('${p.id}')" 
-                      class="w-8 h-8 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center transition-colors" 
-                      title="Adicionar à sacola">
-                <i class="fa-solid fa-plus text-xs"></i>
+              <button data-action="add-cart" data-id="${safeId}"
+                      class="w-8 h-8 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center transition-colors"
+                      aria-label="Adicionar ${this.escape(p.nome)} à sacola">
+                <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
               </button>
-              <button onclick="event.stopPropagation(); A.orderWhatsAppDirect('${p.id}')" 
-                      class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors" 
-                      title="Pedir no WhatsApp">
-                <i class="fa-brands fa-whatsapp text-sm"></i>
+              <button data-action="wa-direct" data-id="${safeId}"
+                      class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors"
+                      aria-label="Pedir ${this.escape(p.nome)} no WhatsApp">
+                <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </article>
     `;
   },
 
-  goToDetail(id) {
-    location.hash = '#/produto/' + id;
-  },
+  goToDetail(id) { location.hash = '#/produto/' + encodeURIComponent(id); },
 
   /* ====================== DETAIL VIEW ====================== */
   async viewDetail(id) {
@@ -981,90 +1031,77 @@ const A = {
 
     if (!p) {
       main.innerHTML = `
-        <div class="page-anim text-center py-24">
-          <p class="text-[#826F70]">Produto não encontrado ou indisponível.</p>
-          <a href="#/produtos" class="btn-gold mt-4 inline-flex">Voltar ao Catálogo</a>
-        </div>
-      `;
+        <div class="page-anim text-center py-24 px-4">
+          <p class="text-[#826F70] mb-4">Produto não encontrado ou indisponível.</p>
+          <a href="#/produtos" class="btn-gold inline-flex"><i class="fa-solid fa-store" aria-hidden="true"></i> Voltar ao Catálogo</a>
+        </div>`;
       return;
     }
 
-    const isFav = this.favs.includes(p.id);
+    const isFav  = this.favs.includes(p.id);
+    const safeId = this.escape(String(p.id));
     const related = this.prods.filter(x => x.ativo && x.id !== p.id && (x.categoria === p.categoria || x.marca === p.marca)).slice(0, 4);
 
     main.innerHTML = `
       <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        
-        <!-- Breadcrumb navigation -->
-        <div class="flex items-center gap-2 text-xs text-[#826F70] mb-6">
+        <nav class="flex items-center gap-2 text-xs text-[#826F70] mb-6" aria-label="Breadcrumb">
           <a href="#/" class="hover:text-[#241A1B]">Início</a>
-          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]"></i>
+          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]" aria-hidden="true"></i>
           <a href="#/produtos" class="hover:text-[#241A1B]">Catálogo</a>
-          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]"></i>
-          <span class="text-[#241A1B] font-semibold truncate">${this.escape(p.nome)}</span>
-        </div>
+          <i class="fa-solid fa-chevron-right text-[9px] text-[#AA999A]" aria-hidden="true"></i>
+          <span class="text-[#241A1B] font-semibold truncate" aria-current="page">${this.escape(p.nome)}</span>
+        </nav>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 sm:p-10 border border-[#F0E3DC] shadow-sm mb-16">
-          
-          <!-- Product Image Showcase -->
           <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
-            ${p.imagem 
-              ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover">` 
-              : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`
+            ${p.imagem
+              ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover">`
+              : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl" aria-hidden="true"></i></div>`
             }
-            <button onclick="A.toggleFav('${p.id}')" 
-                    class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md text-[#241A1B] flex items-center justify-center transition-transform hover:scale-110">
-              <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base"></i>
+            <button data-action="toggle-fav" data-id="${safeId}"
+                    class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md text-[#241A1B] flex items-center justify-center transition-transform hover:scale-110"
+                    aria-label="${isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}: ${this.escape(p.nome)}">
+              <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base" aria-hidden="true"></i>
             </button>
           </div>
 
-          <!-- Product Buy Info -->
           <div class="md:col-span-7 flex flex-col justify-center space-y-5">
             <div class="space-y-2">
               <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs font-bold uppercase tracking-wider text-[#A97E3B] bg-[#FBF4E8] px-2.5 py-1 rounded-md">${this.escape(p.marca || 'Boutique')}</span>
                 ${p.promocao ? '<span class="badge-tag badge-promo">Em Oferta</span>' : ''}
                 ${p.pronta_entrega ? '<span class="badge-tag badge-ready">Pronta Entrega</span>' : ''}
-                ${p.genero ? `<span class="badge-tag badge-fem">${p.genero}</span>` : ''}
+                ${p.genero ? `<span class="badge-tag badge-fem">${this.escape(p.genero)}</span>` : ''}
               </div>
               <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#241A1B] leading-tight">${this.escape(p.nome)}</h1>
-              <p class="font-serif font-bold text-3xl text-[#241A1B] text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+              <p class="font-serif font-bold text-3xl text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
             </div>
 
             <div class="border-t border-b border-[#F0E3DC] py-4 text-sm text-[#826F70] leading-relaxed">
               <p>${this.escape(p.descricao || 'Produto original selecionado com carinho pela Vivi Boty. Entre em contato para saber sobre notas olfativas, combinações ou kits de presente.')}</p>
             </div>
 
-            <!-- Action buttons -->
             <div class="space-y-3 pt-2">
               <div class="flex flex-col sm:flex-row gap-3">
-                <button onclick="A.addToCart('${p.id}')" class="btn-gold flex-1 py-3.5">
-                  <i class="fa-solid fa-bag-shopping"></i> Adicionar à Sacola
+                <button data-action="add-cart" data-id="${safeId}" class="btn-gold flex-1 py-3.5">
+                  <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Adicionar à Sacola
                 </button>
-                <button onclick="A.orderWhatsAppDirect('${p.id}')" class="btn-whatsapp flex-1 py-3.5">
-                  <i class="fa-brands fa-whatsapp text-xl"></i> Comprar no WhatsApp
+                <button data-action="wa-direct" data-id="${safeId}" class="btn-whatsapp flex-1 py-3.5">
+                  <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i> Comprar no WhatsApp
                 </button>
               </div>
-              <button onclick="A.shareProduct('${p.id}')" class="w-full text-xs font-semibold text-[#826F70] hover:text-[#241A1B] py-2 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-share-nodes"></i> Compartilhar este produto com amigos
+              <button data-action="share" data-id="${safeId}" class="w-full text-xs font-semibold text-[#826F70] hover:text-[#241A1B] py-2 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Compartilhar este produto com amigos
               </button>
             </div>
 
-            <!-- Perks box -->
             <div class="grid grid-cols-2 gap-3 pt-4 text-xs text-[#826F70]">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-check-circle text-[#1D8A58]"></i> Produto 100% Original
-              </div>
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-gift text-[#C69A55]"></i> Opção para Presente
-              </div>
+              <div class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-[#1D8A58]" aria-hidden="true"></i> Produto 100% Original</div>
+              <div class="flex items-center gap-2"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> Opção para Presente</div>
             </div>
-
           </div>
-
         </div>
 
-        <!-- Related products -->
         ${related.length > 0 ? `
           <div class="mt-12">
             <h3 class="font-serif font-bold text-2xl text-[#241A1B] mb-6">Você Também Pode Gostar</h3>
@@ -1073,10 +1110,10 @@ const A = {
             </div>
           </div>
         ` : ''}
-
       </div>
     `;
   },
+
 
   /* ====================== CART LOGIC ====================== */
   toggleCart(open) {
@@ -1090,22 +1127,15 @@ const A = {
     const p = this.pmap[id];
     if (!p) return;
     const existing = this.cart.find(item => item.id === id);
-    if (existing) {
-      existing.q++;
-    } else {
-      this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.imagem, q: 1 });
-    }
+    if (existing) { existing.q++; }
+    else { this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.imagem, q: 1 }); }
     this.saveCart();
     this.showToast('Produto adicionado à sua sacola!', 'success');
   },
 
   updateCartQty(id, qty) {
-    if (qty <= 0) {
-      this.cart = this.cart.filter(i => i.id !== id);
-    } else {
-      const it = this.cart.find(i => i.id === id);
-      if (it) it.q = qty;
-    }
+    if (qty <= 0) { this.cart = this.cart.filter(i => i.id !== id); }
+    else { const it = this.cart.find(i => i.id === id); if (it) it.q = qty; }
     this.saveCart();
     this.renderCartDrawer();
   },
@@ -1126,49 +1156,45 @@ const A = {
 
   renderCartDrawer() {
     const container = document.getElementById('cart-items-container');
-    const totalEl = document.getElementById('cart-total-price');
+    const totalEl   = document.getElementById('cart-total-price');
     const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
-
-    totalEl.textContent = this.formatMoney(total);
+    if (totalEl) totalEl.textContent = this.formatMoney(total);
 
     if (this.cart.length === 0) {
       container.innerHTML = `
         <div class="text-center py-20 text-[#AA999A]">
           <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-4 text-2xl">
-            <i class="fa-solid fa-bag-shopping"></i>
+            <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
           </div>
           <p class="font-serif font-bold text-lg text-[#241A1B]">Sua sacola está vazia</p>
           <p class="text-xs text-[#826F70] mt-1">Navegue pelos produtos e escolha seus preferidos.</p>
-        </div>
-      `;
+        </div>`;
       return;
     }
 
     container.innerHTML = this.cart.map(item => `
       <div class="flex gap-3 py-3 border-b border-[#F0E3DC] items-center">
         <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#FAF0EB] shrink-0 border border-[#F0E3DC]">
-          ${item.img 
-            ? `<img src="${item.img}" alt="${this.escape(item.nome)}" class="w-full h-full object-cover">` 
-            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>`
+          ${item.img
+            ? `<img src="${item.img}" alt="${this.escape(item.nome)}" class="w-full h-full object-cover">`
+            : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles" aria-hidden="true"></i></div>`
           }
         </div>
         <div class="flex-1 min-w-0">
           <p class="font-semibold text-xs text-[#241A1B] truncate">${this.escape(item.nome)}</p>
           <p class="font-serif font-bold text-sm text-[#A97E3B] mt-0.5">${this.formatMoney(item.preco)}</p>
-          
           <div class="flex items-center gap-2 mt-2">
-            <button onclick="A.updateCartQty('${item.id}', ${item.q - 1})" 
-                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]">
-              -
-            </button>
-            <span class="text-xs font-bold text-[#241A1B] w-5 text-center">${item.q}</span>
-            <button onclick="A.updateCartQty('${item.id}', ${item.q + 1})" 
-                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]">
-              +
-            </button>
-            <button onclick="A.updateCartQty('${item.id}', 0)" 
-                    class="ml-auto text-[#AA999A] hover:text-[#E53E3E] text-xs transition-colors p-1" title="Remover item">
-              <i class="fa-solid fa-trash-can"></i>
+            <button onclick="A.updateCartQty(${JSON.stringify(item.id)}, ${item.q - 1})"
+                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]"
+                    aria-label="Diminuir quantidade">-</button>
+            <span class="text-xs font-bold text-[#241A1B] w-5 text-center" aria-live="polite">${item.q}</span>
+            <button onclick="A.updateCartQty(${JSON.stringify(item.id)}, ${item.q + 1})"
+                    class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs text-[#826F70]"
+                    aria-label="Aumentar quantidade">+</button>
+            <button onclick="A.updateCartQty(${JSON.stringify(item.id)}, 0)"
+                    class="ml-auto text-[#AA999A] hover:text-[#E53E3E] text-xs transition-colors p-1"
+                    aria-label="Remover ${this.escape(item.nome)} da sacola">
+              <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -1177,26 +1203,16 @@ const A = {
   },
 
   checkoutWhatsApp() {
-    if (this.cart.length === 0) {
-      this.showToast('Adicione produtos à sacola antes de finalizar!', 'error');
-      return;
-    }
-
+    if (this.cart.length === 0) { this.showToast('Adicione produtos à sacola antes de finalizar!', 'error'); return; }
     const isGift = document.getElementById('gift-checkbox')?.checked;
-    const lines = this.cart.map(i => `• ${i.q}x ${i.nome} (${this.formatMoney(i.preco * i.q)})`);
-    const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
-
-    let message = `Olá, Vivi! Gostaria de fazer o pedido dos seguintes produtos pelo site:\n\n`
+    const lines  = this.cart.map(i => `• ${i.q}x ${i.nome} (${this.formatMoney(i.preco * i.q)})`);
+    const total  = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
+    let msg = `Olá, Vivi! Gostaria de fazer o pedido dos seguintes produtos pelo site:\n\n`
       + lines.join('\n')
       + `\n\n💰 Total estimado: ${this.formatMoney(total)}`;
-
-    if (isGift) {
-      message += `\n🎁 *Observação:* Por favor, caprichar na embalagem para presente!`;
-    }
-
-    message += `\n\nPode me confirmar a disponibilidade e forma de entrega?`;
-
-    window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank');
+    if (isGift) msg += `\n🎁 *Observação:* Por favor, caprichar na embalagem para presente!`;
+    msg += `\n\nPode me confirmar a disponibilidade e forma de entrega?`;
+    window.open(`${WA_BASE}?text=${encodeURIComponent(msg)}`, '_blank');
   },
 
   orderWhatsAppDirect(id) {
@@ -1207,6 +1223,7 @@ const A = {
   },
 
   /* ====================== FAVORITES LOGIC ====================== */
+  // Fixed: only updates the card's heart icon instead of re-rendering the whole page
   toggleFav(id) {
     if (this.favs.includes(id)) {
       this.favs = this.favs.filter(x => x !== id);
@@ -1216,7 +1233,16 @@ const A = {
       this.showToast('Item salvo nos seus favoritos!', 'success');
     }
     this.saveFavs();
-    this.renderPage(); // refresh badges
+
+    // Update only the heart buttons for this product — no full page re-render
+    document.querySelectorAll(`[data-action="toggle-fav"][data-id="${CSS.escape(String(id))}"]`).forEach(btn => {
+      const isFav = this.favs.includes(id);
+      const icon  = btn.querySelector('i');
+      if (icon) {
+        icon.className = `${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs`;
+      }
+      btn.setAttribute('aria-label', `${isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}`);
+    });
   },
 
   updateFavUI() {
@@ -1227,18 +1253,17 @@ const A = {
   },
 
   showFavModal() {
-    const modal = document.getElementById('fav-overlay');
+    const modal     = document.getElementById('fav-overlay');
     const container = document.getElementById('fav-items-list');
     modal.classList.add('open');
 
     if (this.favs.length === 0) {
       container.innerHTML = `
         <div class="text-center py-12 text-[#AA999A]">
-          <i class="fa-regular fa-heart text-4xl mb-3 text-[#E8A7A1]"></i>
+          <i class="fa-regular fa-heart text-4xl mb-3 text-[#E8A7A1]" aria-hidden="true"></i>
           <p class="font-serif font-bold text-base text-[#241A1B]">Você ainda não tem favoritos</p>
           <p class="text-xs text-[#826F70] mt-1">Clique no coração de qualquer produto para salvar aqui.</p>
-        </div>
-      `;
+        </div>`;
       return;
     }
 
@@ -1249,7 +1274,7 @@ const A = {
         <div class="flex items-center justify-between p-3 rounded-2xl border border-[#F0E3DC] hover:border-[#C69A55] transition-colors">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0">
-              ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+              ${p.imagem ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover">` : ''}
             </div>
             <div>
               <p class="font-semibold text-xs text-[#241A1B] truncate max-w-[180px]">${this.escape(p.nome)}</p>
@@ -1257,57 +1282,52 @@ const A = {
             </div>
           </div>
           <div class="flex items-center gap-1.5">
-            <button onclick="A.addToCart('${p.id}'); A.closeFavModal();" class="btn-gold py-1.5 px-3 text-xs">
-              <i class="fa-solid fa-plus"></i> Sacola
+            <button onclick="A.addToCart(${JSON.stringify(p.id)}); A.closeFavModal();" class="btn-gold py-1.5 px-3 text-xs" aria-label="Adicionar ${this.escape(p.nome)} à sacola">
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Sacola
             </button>
-            <button onclick="A.toggleFav('${p.id}'); A.showFavModal();" class="text-[#AA999A] hover:text-[#E53E3E] p-1.5">
-              <i class="fa-solid fa-trash-can text-xs"></i>
+            <button onclick="A.toggleFav(${JSON.stringify(p.id)}); A.showFavModal();" class="text-[#AA999A] hover:text-[#E53E3E] p-1.5" aria-label="Remover ${this.escape(p.nome)} dos favoritos">
+              <i class="fa-solid fa-trash-can text-xs" aria-hidden="true"></i>
             </button>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
   },
 
-  closeFavModal() {
-    document.getElementById('fav-overlay').classList.remove('open');
-  },
+  closeFavModal()    { document.getElementById('fav-overlay').classList.remove('open'); },
 
   /* ====================== QUICK VIEW MODAL ====================== */
   openQuickView(id) {
     const p = this.pmap[id];
     if (!p) return;
+    const safeId = this.escape(String(p.id));
     const content = document.getElementById('quickview-content');
     content.innerHTML = `
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
         <div class="aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
-          ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+          ${p.imagem ? `<img src="${p.imagem}" alt="${this.escape(p.nome)}" class="w-full h-full object-cover">` : ''}
         </div>
         <div class="space-y-3">
           <span class="text-xs uppercase font-bold text-[#A97E3B]">${this.escape(p.marca || 'Boutique')}</span>
           <h2 class="font-serif font-bold text-xl text-[#241A1B]">${this.escape(p.nome)}</h2>
-          <p class="font-serif font-bold text-2xl text-[#241A1B] text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
+          <p class="font-serif font-bold text-2xl text-[#A97E3B]">${this.formatMoney(p.preco)}</p>
           <p class="text-xs text-[#826F70] leading-relaxed">${this.escape(p.descricao || 'Produto original com a qualidade garantida Vivi Boty.')}</p>
           <div class="pt-2 flex flex-col gap-2">
-            <button onclick="A.addToCart('${p.id}'); A.closeQuickView();" class="btn-gold w-full text-xs py-3">
-              <i class="fa-solid fa-bag-shopping"></i> Adicionar à Sacola
+            <button data-action="add-cart" data-id="${safeId}" onclick="A.closeQuickView()" class="btn-gold w-full text-xs py-3">
+              <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Adicionar à Sacola
             </button>
-            <button onclick="A.orderWhatsAppDirect('${p.id}'); A.closeQuickView();" class="btn-whatsapp w-full text-xs py-3">
-              <i class="fa-brands fa-whatsapp text-lg"></i> Pedir no WhatsApp
+            <button data-action="wa-direct" data-id="${safeId}" onclick="A.closeQuickView()" class="btn-whatsapp w-full text-xs py-3">
+              <i class="fa-brands fa-whatsapp text-lg" aria-hidden="true"></i> Pedir no WhatsApp
             </button>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
     document.getElementById('quickview-overlay').classList.add('open');
   },
 
-  closeQuickView() {
-    document.getElementById('quickview-overlay').classList.remove('open');
-  },
+  closeQuickView() { document.getElementById('quickview-overlay').classList.remove('open'); },
 
   shareProduct(id) {
-    const p = this.pmap[id];
+    const p   = this.pmap[id];
     const url = window.location.origin + window.location.pathname + '#/produto/' + id;
     if (navigator.share) {
       navigator.share({ title: p.nome, text: `Olha esse produto na Vivi Boty: ${p.nome}`, url });
@@ -1319,58 +1339,46 @@ const A = {
 
   /* ====================== ADMIN VIEWS ====================== */
   viewAdminLogin() {
-    if (this.user && this.isAdmin) {
-      location.hash = '#/admin/produtos';
-      return;
-    }
+    if (this.user && this.isAdmin) { location.hash = '#/admin/produtos'; return; }
     const main = document.getElementById('main-content');
     main.innerHTML = `
       <div class="page-anim min-h-[75vh] flex items-center justify-center px-4">
         <div class="bg-white rounded-3xl border border-[#F0E3DC] shadow-lg p-8 w-full max-w-sm text-center">
           <div class="w-14 h-14 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl">
-            <i class="fa-solid fa-lock"></i>
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
           </div>
           <h1 class="font-serif font-bold text-2xl text-[#241A1B]">Painel da Vivi</h1>
           <p class="text-xs text-[#826F70] mt-1 mb-6">Acesso exclusivo para gerenciamento de produtos</p>
-          
           <div class="space-y-4 text-left">
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">E-mail</label>
-              <input type="email" id="login-email" placeholder="seu@email.com" class="lux-input text-sm">
+              <label for="login-email" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">E-mail</label>
+              <input type="email" id="login-email" placeholder="seu@email.com" class="lux-input text-sm" autocomplete="email">
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Senha</label>
-              <input type="password" id="login-pass" placeholder="••••••••" class="lux-input text-sm">
+              <label for="login-pass" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Senha</label>
+              <input type="password" id="login-pass" placeholder="••••••••" class="lux-input text-sm" autocomplete="current-password">
             </div>
-            <div id="login-error" class="text-[#E53E3E] text-xs hidden"></div>
+            <div id="login-error" class="text-[#E53E3E] text-xs hidden" role="alert"></div>
             <button onclick="A.submitLogin()" class="btn-gold w-full py-3 text-sm font-bold">
               Entrar no Painel
             </button>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   },
 
   async submitLogin() {
     const email = document.getElementById('login-email').value.trim();
-    const pass = document.getElementById('login-pass').value;
-    const err = document.getElementById('login-error');
-    if (!email || !pass) {
-      err.textContent = 'Preencha seu e-mail e senha.';
-      err.classList.remove('hidden');
-      return;
-    }
+    const pass  = document.getElementById('login-pass').value;
+    const err   = document.getElementById('login-error');
+    if (!email || !pass) { err.textContent = 'Preencha seu e-mail e senha.'; err.classList.remove('hidden'); return; }
     err.classList.add('hidden');
     try {
       const { data, error } = await this.sb.auth.signInWithPassword({ email, password: pass });
       if (error) throw error;
       this.user = data.user;
       const admin = await this.chkAdmin();
-      if (!admin) {
-        await this.sb.auth.signOut();
-        throw new Error('Você não tem acesso de administrador.');
-      }
+      if (!admin) { await this.sb.auth.signOut(); throw new Error('Você não tem acesso de administrador.'); }
       this.isAdmin = true;
       this.showToast('Bem-vinda, Vivi!', 'success');
       location.hash = '#/admin/produtos';
@@ -1384,7 +1392,6 @@ const A = {
     if (!this.user || !this.isAdmin) { this.viewAdminLogin(); return; }
     await this.ensureProds();
     const main = document.getElementById('main-content');
-
     main.innerHTML = `
       <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -1394,119 +1401,107 @@ const A = {
           </div>
           <div class="flex items-center gap-2">
             <a href="#/admin/novo" class="btn-gold text-xs py-2.5 px-4">
-              <i class="fa-solid fa-plus"></i> Novo Produto
+              <i class="fa-solid fa-plus" aria-hidden="true"></i> Novo Produto
             </a>
-            <button onclick="A.logoutAdmin()" class="btn-secondary text-xs py-2 px-3 text-[#E53E3E]">
+            <button onclick="A.logoutAdmin()" class="btn-secondary text-xs py-2 px-3 text-[#E53E3E]" aria-label="Sair do painel">
               Sair
             </button>
           </div>
         </div>
-
         <div class="bg-white rounded-3xl border border-[#F0E3DC] overflow-hidden shadow-sm">
           <div class="divide-y divide-[#F0E3DC]">
             ${this.prods.map(p => `
               <div class="p-4 flex items-center justify-between gap-4 hover:bg-[#FAF4F0]/40 transition-colors">
                 <div class="flex items-center gap-3 min-w-0">
                   <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC]">
-                    ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : ''}
+                    ${p.imagem ? `<img src="${p.imagem}" alt="" class="w-full h-full object-cover">` : ''}
                   </div>
                   <div class="min-w-0">
                     <p class="font-semibold text-sm text-[#241A1B] truncate">${this.escape(p.nome)}</p>
                     <p class="text-xs text-[#826F70]">${this.escape(p.marca || '-')} • ${this.formatMoney(p.preco)}</p>
                   </div>
                 </div>
-
                 <div class="flex items-center gap-2 shrink-0">
-                  <button onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" 
-                          class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}">
+                  <button onclick="A.toggleProductActive(${JSON.stringify(p.id)}, ${!p.ativo})"
+                          class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}"
+                          aria-label="${p.ativo ? 'Pausar' : 'Ativar'} produto ${this.escape(p.nome)}">
                     ${p.ativo ? 'Ativo' : 'Pausado'}
                   </button>
-                  <a href="#/admin/editar/${p.id}" class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white transition-colors">
-                    <i class="fa-solid fa-pen text-xs"></i>
+                  <a href="#/admin/editar/${p.id}" class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white transition-colors" aria-label="Editar ${this.escape(p.nome)}">
+                    <i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>
                   </a>
                 </div>
               </div>
             `).join('')}
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   },
 
   async viewAdminForm(id) {
     if (!this.user || !this.isAdmin) { this.viewAdminLogin(); return; }
     let p = { nome: '', marca: '', categoria: '', preco: '', descricao: '', imagem: '', estoque: 1, ativo: true, destaque: false, promocao: false, pronta_entrega: true, genero: '' };
-    if (id) {
-      await this.ensureProds();
-      if (this.pmap[id]) p = this.pmap[id];
-    }
+    if (id) { await this.ensureProds(); if (this.pmap[id]) p = this.pmap[id]; }
 
     const main = document.getElementById('main-content');
     main.innerHTML = `
       <div class="page-anim max-w-2xl mx-auto px-4 sm:px-6 py-8">
         <a href="#/admin/produtos" class="inline-flex items-center gap-2 text-xs font-semibold text-[#826F70] hover:text-[#241A1B] mb-6">
-          <i class="fa-solid fa-arrow-left"></i> Voltar à lista
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar à lista
         </a>
-
         <div class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-6 sm:p-8 space-y-5">
           <h2 class="font-serif font-bold text-2xl text-[#241A1B]">${id ? 'Editar Produto' : 'Cadastrar Novo Produto'}</h2>
-          
+
           <div>
-            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Nome do Produto *</label>
+            <label for="form-name" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Nome do Produto *</label>
             <input type="text" id="form-name" value="${this.escape(p.nome)}" placeholder="Ex: Elysee Succès Eau de Parfum" class="lux-input text-sm">
           </div>
-
           <div class="grid grid-cols-3 gap-3">
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Marca</label>
+              <label for="form-brand" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Marca</label>
               <select id="form-brand" class="lux-input text-xs bg-white">
                 <option value="">Selecione</option>
                 ${BRANDS.map(b => `<option value="${b}" ${p.marca === b ? 'selected' : ''}>${b}</option>`).join('')}
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Categoria</label>
+              <label for="form-cat" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Categoria</label>
               <select id="form-cat" class="lux-input text-xs bg-white">
                 <option value="">Selecione</option>
                 ${CATS.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${c}</option>`).join('')}
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Gênero</label>
+              <label for="form-gen" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Gênero</label>
               <select id="form-gen" class="lux-input text-xs bg-white">
                 <option value="">Nenhum</option>
                 ${GENEROS.filter(Boolean).map(g => `<option value="${g}" ${p.genero === g ? 'selected' : ''}>${g}</option>`).join('')}
               </select>
             </div>
           </div>
-
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Preço (R$) *</label>
+              <label for="form-price" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Preço (R$) *</label>
               <input type="number" step="0.01" id="form-price" value="${p.preco}" placeholder="189.90" class="lux-input text-sm">
             </div>
             <div>
-              <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Estoque</label>
+              <label for="form-stock" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Estoque</label>
               <input type="number" id="form-stock" value="${p.estoque}" class="lux-input text-sm">
             </div>
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Descrição</label>
+            <label for="form-desc" class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Descrição</label>
             <textarea id="form-desc" rows="3" class="lux-input text-sm" placeholder="Detalhes olfativos, modo de usar...">${this.escape(p.descricao || '')}</textarea>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-[#241A1B] uppercase mb-1">Imagem do Produto</label>
             <div class="flex items-center gap-4">
               <div id="img-preview" class="w-20 h-20 rounded-2xl bg-[#FAF0EB] border border-[#F0E3DC] overflow-hidden flex items-center justify-center shrink-0">
-                ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-image text-xl text-[#AA999A]"></i>'}
+                ${p.imagem ? `<img src="${p.imagem}" class="w-full h-full object-cover" alt="">` : '<i class="fa-solid fa-image text-xl text-[#AA999A]" aria-hidden="true"></i>'}
               </div>
-              <input type="file" id="form-file" accept="image/*" class="text-xs">
+              <input type="file" id="form-file" accept="image/*" class="text-xs" aria-label="Escolher imagem do produto">
             </div>
           </div>
-
-          <!-- Flags -->
           <div class="grid grid-cols-2 gap-4 pt-3 border-t border-[#F0E3DC]">
             <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
               <span class="text-xs font-semibold text-[#241A1B]">Produto Ativo</span>
@@ -1525,48 +1520,53 @@ const A = {
               <label class="tog"><input type="checkbox" id="form-ready" ${p.pronta_entrega ? 'checked' : ''}><span class="tog-slider"></span></label>
             </label>
           </div>
-
-          <div id="form-error" class="text-xs text-[#E53E3E] hidden"></div>
-
-          <button onclick="A.saveProduct('${id || ''}')" class="btn-gold w-full py-3.5 text-sm font-bold">
+          <div id="form-error" class="text-xs text-[#E53E3E] hidden" role="alert"></div>
+          <button id="btn-save-product" onclick="A.saveProduct(${JSON.stringify(id || '')})" class="btn-gold w-full py-3.5 text-sm font-bold">
             ${id ? 'Salvar Alterações' : 'Cadastrar Produto'}
           </button>
         </div>
-      </div>
-    `;
+      </div>`;
 
     document.getElementById('form-file')?.addEventListener('change', e => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = ev => {
-          document.getElementById('img-preview').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover">`;
+          document.getElementById('img-preview').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover" alt="">`;
         };
         reader.readAsDataURL(file);
       }
     });
   },
 
+  // Fixed: save button shows loading/disabled state during async save
   async saveProduct(id) {
-    const err = document.getElementById('form-error');
-    const nome = document.getElementById('form-name').value.trim();
-    const preco = parseFloat(document.getElementById('form-price').value) || 0;
+    const err       = document.getElementById('form-error');
+    const saveBtn   = document.getElementById('btn-save-product');
+    const nome      = document.getElementById('form-name').value.trim();
+    const preco     = parseFloat(document.getElementById('form-price').value) || 0;
 
-    if (!nome) { err.textContent = 'O nome do produto é obrigatório.'; err.classList.remove('hidden'); return; }
-    if (preco <= 0) { err.textContent = 'Informe um preço válido.'; err.classList.remove('hidden'); return; }
+    if (!nome)     { err.textContent = 'O nome do produto é obrigatório.'; err.classList.remove('hidden'); return; }
+    if (preco <= 0){ err.textContent = 'Informe um preço válido.'; err.classList.remove('hidden'); return; }
     err.classList.add('hidden');
+
+    // Loading state
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fa-solid fa-circle-notch spin" aria-hidden="true"></i> Salvando…';
+    }
 
     const data = {
       nome,
-      marca: document.getElementById('form-brand').value,
-      categoria: document.getElementById('form-cat').value,
-      genero: document.getElementById('form-gen').value,
+      marca:         document.getElementById('form-brand').value,
+      categoria:     document.getElementById('form-cat').value,
+      genero:        document.getElementById('form-gen').value,
       preco,
-      descricao: document.getElementById('form-desc').value.trim(),
-      estoque: parseInt(document.getElementById('form-stock').value) || 0,
-      ativo: document.getElementById('form-active').checked,
-      destaque: document.getElementById('form-feat').checked,
-      promocao: document.getElementById('form-promo').checked,
+      descricao:     document.getElementById('form-desc').value.trim(),
+      estoque:       parseInt(document.getElementById('form-stock').value) || 0,
+      ativo:         document.getElementById('form-active').checked,
+      destaque:      document.getElementById('form-feat').checked,
+      promocao:      document.getElementById('form-promo').checked,
       pronta_entrega: document.getElementById('form-ready').checked,
       data_atualizacao: new Date().toISOString()
     };
@@ -1575,7 +1575,7 @@ const A = {
     if (fileInput.files.length > 0) {
       const file = fileInput.files[0];
       try {
-        const ext = file.name.split('.').pop();
+        const ext  = file.name.split('.').pop();
         const path = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
         const { error: uploadError } = await this.sb.storage.from('products').upload(path, file);
         if (uploadError) throw uploadError;
@@ -1584,6 +1584,7 @@ const A = {
       } catch (e) {
         err.textContent = 'Erro ao fazer upload da foto: ' + e.message;
         err.classList.remove('hidden');
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = id ? 'Salvar Alterações' : 'Cadastrar Produto'; }
         return;
       }
     }
@@ -1603,6 +1604,7 @@ const A = {
     } catch (e) {
       err.textContent = 'Erro ao salvar no banco: ' + e.message;
       err.classList.remove('hidden');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = id ? 'Salvar Alterações' : 'Cadastrar Produto'; }
     }
   },
 
@@ -1613,14 +1615,12 @@ const A = {
       if (p) p.ativo = ativo;
       this.showToast(`Produto ${ativo ? 'ativado' : 'pausado'}!`, 'success');
       this.viewAdminProducts();
-    } catch (e) {
-      this.showToast('Erro ao atualizar status', 'error');
-    }
+    } catch (e) { this.showToast('Erro ao atualizar status', 'error'); }
   },
 
   async logoutAdmin() {
     if (this.sb) await this.sb.auth.signOut();
-    this.user = null;
+    this.user    = null;
     this.isAdmin = false;
     this.showToast('Desconectada com segurança');
     location.hash = '#/';
@@ -1631,10 +1631,11 @@ const A = {
     return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   },
 
+  // Safe HTML escape — no XSS risk
   escape(str) {
-    if (!str) return '';
+    if (str === null || str === undefined) return '';
     const div = document.createElement('div');
-    div.textContent = str;
+    div.textContent = String(str);
     return div.innerHTML;
   },
 
@@ -1643,17 +1644,14 @@ const A = {
     if (!c) return;
     const t = document.createElement('div');
     const isSuccess = type === 'success';
-    const isError = type === 'error';
-
+    const isError   = type === 'error';
     t.className = `lux-toast flex items-center gap-2.5 px-4 py-3 rounded-2xl text-xs font-bold shadow-xl border pointer-events-auto ${
-      isSuccess ? 'bg-[#1D8A58] text-white border-[#156640]' : 
-      isError ? 'bg-[#E53E3E] text-white border-[#B91C1C]' : 
-      'bg-[#241A1B] text-white border-white/10'
+      isSuccess ? 'bg-[#1D8A58] text-white border-[#156640]' :
+      isError   ? 'bg-[#E53E3E] text-white border-[#B91C1C]' :
+                  'bg-[#241A1B] text-white border-white/10'
     }`;
-    t.innerHTML = `
-      <i class="fa-solid ${isSuccess ? 'fa-check-circle' : isError ? 'fa-triangle-exclamation' : 'fa-bell'}"></i>
-      <span>${msg}</span>
-    `;
+    t.setAttribute('role', 'status');
+    t.innerHTML = `<i class="fa-solid ${isSuccess ? 'fa-check-circle' : isError ? 'fa-triangle-exclamation' : 'fa-bell'}" aria-hidden="true"></i><span>${msg}</span>`;
     c.appendChild(t);
     setTimeout(() => t.remove(), 3000);
   }
