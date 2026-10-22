@@ -29,14 +29,23 @@ Inclui painel administrativo restrito (`/admin`) para cadastro, edição, pausa,
 
 ---
 
+## ⚡ Funcionalidades & Fluxo de Conversão
+
+- 🔍 **Busca Rápida no Hero:** Campo de pesquisa instantâneo integrado ao cabeçalho para localização direta de perfumes, cosméticos e marcas.
+- 🎁 **Kits de Presentes:** Seção temática dedicada a kits prontos e combos promocionais para ocasiões especiais.
+- ⭐ **Depoimentos & Prova Social:** Avaliações e relatos de clientes reais fortalecendo a credibilidade e conversão da marca.
+- 💳 **Seletor de Pagamento:** Escolha facilitada de modalidade (PIX, Cartão, Dinheiro) já anexada na mensagem de pedido.
+- 🛒 **Sacola Click-to-Chat:** Montagem rápida de pedidos sem cadastro ou checkout burocrático, com envio formatado para o WhatsApp da lojista.
+- 📱 **Catálogo Responsivo & Roteamento Real:** URLs amigáveis (`/produtos`, `/produto/:id`) com meta tags Open Graph para compartilhamento rico em redes sociais.
+
+---
+
 ## ⚡ Fluxo de Compra e Conversão
 
 1. O cliente acessa a vitrine através de links no Instagram, WhatsApp ou busca orgânica.
-2. Filtra produtos por categoria, marca, gênero, ofertas, destaque ou pronta-entrega.
-3. Adiciona itens à sacola ou solicita o produto diretamente pelo WhatsApp.
-4. A lojista recebe a mensagem com itens e valores pré-formatados para fechamento imediato da venda e entrega.
-
-Suporte a rotas reais (`/produtos`, `/produto/:id`) permitindo compartilhamento de produtos específicos com meta tags completas.
+2. Utiliza a busca rápida ou filtra produtos por categoria, marca, gênero, ofertas, kits ou pronta-entrega.
+3. Adiciona itens à sacola, seleciona a forma de pagamento e clica para enviar o pedido.
+4. A lojista recebe a mensagem no WhatsApp com a lista de itens, valores e método de pagamento pré-formatados para fechamento imediato da venda e entrega.
 
 ---
 
