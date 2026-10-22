@@ -22,5 +22,5 @@
   --color-warm-900: #2A1E1F;
 
   --font-display: 'Playfair Display', serif;
-  /* --font-body: 'Lato' removed — site uses Plus Jakarta Sans; Lato is never loaded */
+  --font-body: 'Lato', sans-serif;
 }
