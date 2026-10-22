@@ -28,6 +28,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://wa.me">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -381,13 +383,18 @@ h1, h2, h3, h4, .font-serif {
     </div>
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
     <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
-      <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
-        <input type="checkbox" id="gift-checkbox" class="mt-0.5 rounded text-[#C69A55] focus:ring-[#C69A55]">
-        <span class="text-xs">
-          <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> É para presente?</span>
-          <span class="block text-[#826F70] mt-0.5">Avisamos a Vivi para caprichar na embalagem.</span>
-        </span>
-      </label>
+      <div class="space-y-2">
+        <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
+          <input type="checkbox" id="gift-checkbox" class="mt-0.5 rounded text-[#C69A55] focus:ring-[#C69A55]">
+          <span class="text-xs">
+            <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> É para presente?</span>
+            <span class="block text-[#826F70] mt-0.5">Avisamos a Vivi para caprichar na embalagem especial.</span>
+          </span>
+        </label>
+        <div>
+          <input type="text" id="client-name-input" placeholder="Seu nome (opcional, para agilizar no WhatsApp)" class="lux-input text-xs py-2 px-3" maxlength="60">
+        </div>
+      </div>
       <div>
         <div class="flex justify-between items-baseline mb-3">
           <span class="text-sm font-semibold text-[#826F70]">Total estimado:</span>
@@ -444,11 +451,13 @@ h1, h2, h3, h4, .font-serif {
     <a href="/produtos" data-link class="nav-link flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
       <i class="fa-solid fa-magnifying-glass text-lg" aria-hidden="true"></i> Catálogo
     </a>
-    <button type="button" onclick="A.showFavModal()" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+    <button type="button" onclick="A.showFavModal()" class="relative flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
       <i class="fa-regular fa-heart text-lg" aria-hidden="true"></i> Desejos
+      <span id="mobile-fav-badge" class="absolute -top-1 right-2 w-4 h-4 bg-[#E8A7A1] text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
     </button>
-    <button type="button" onclick="A.toggleCart(true)" class="flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-bag-shopping text-lg" aria-hidden="true"></i> Sacola
+    <button type="button" onclick="A.toggleCart(true)" class="relative flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
+      <i class="fa-solid fa-bag-shopping text-lg text-[#C69A55]" aria-hidden="true"></i> Sacola
+      <span id="mobile-cart-badge" class="absolute -top-1 right-2 w-4 h-4 bg-[#C69A55] text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
     </button>
   </nav>
 
@@ -899,7 +908,14 @@ const A = {
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 class="text-3xl font-serif font-bold">Catálogo de produtos</h1>
-            <p class="text-xs sm:text-sm text-[#826F70] mt-0.5">${filtered.length} ${filtered.length === 1 ? 'produto encontrado' : 'produtos encontrados'}</p>
+            <div class="flex items-center gap-3 mt-1">
+              <p class="text-xs sm:text-sm text-[#826F70]">${filtered.length} ${filtered.length === 1 ? 'produto encontrado' : 'produtos encontrados'}</p>
+              ${(f.q || f.cat || f.brand || f.genero || f.promo || f.destaque || f.ready) ? `
+                <button type="button" onclick="A.navigate('/produtos')" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#F0DDD3] transition-colors">
+                  <i class="fa-solid fa-xmark text-[10px]"></i> Limpar filtros
+                </button>
+              ` : ''}
+            </div>
           </div>
           <div class="relative w-full md:w-80">
             <label for="catalog-search" class="sr-only">Buscar produtos</label>
@@ -992,9 +1008,9 @@ const A = {
     const id = this.safeId(p.id);
     const isFav = this.favs.includes(id);
     const badges = [];
-    if (p.promocao) badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire" aria-hidden="true"></i> Promo</span>');
-    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check" aria-hidden="true"></i> Pronta entrega</span>');
-    if (p.destaque) badges.push('<span class="badge-tag badge-star">Destaque</span>');
+    if (p.promocao) badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire text-[9px]" aria-hidden="true"></i> Promoção</span>');
+    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check text-[9px]" aria-hidden="true"></i> Pronta entrega</span>');
+    if (p.destaque) badges.push('<span class="badge-tag badge-star"><i class="fa-solid fa-sparkles text-[9px]" aria-hidden="true"></i> Destaque</span>');
     if (p.genero === 'Feminino') badges.push('<span class="badge-tag badge-fem">Fem</span>');
     if (p.genero === 'Masculino') badges.push('<span class="badge-tag badge-masc">Masc</span>');
     if (p.genero === 'Unissex') badges.push('<span class="badge-tag badge-uni">Uni</span>');
@@ -1003,14 +1019,14 @@ const A = {
       <article class="product-card group">
         <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${id}')">
           ${p.imagem
-            ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">`
+            ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.display='none'">`
             : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
           <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">${badges.join('')}</div>
-          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
             <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs" aria-hidden="true"></i>
           </button>
           <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <button type="button" onclick="event.stopPropagation(); A.openQuickView('${id}')" class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white flex items-center gap-1.5">
+            <button type="button" onclick="event.stopPropagation(); A.openQuickView('${id}')" class="bg-white/95 text-[#241A1B] text-xs font-bold py-1.5 px-3 rounded-full shadow-md hover:bg-[#241A1B] hover:text-white flex items-center gap-1.5 transition-colors">
               <i class="fa-solid fa-eye text-[11px]" aria-hidden="true"></i> Espiar
             </button>
           </div>
@@ -1019,7 +1035,7 @@ const A = {
           <div>
             <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A]">${this.escape(p.marca || 'Boutique')}</span>
             <h3 class="font-semibold text-xs sm:text-sm mt-0.5 leading-snug">
-              <a href="/produto/${id}" data-link class="hover:text-[#A97E3B] line-clamp-2">${this.escape(p.nome)}</a>
+              <a href="/produto/${id}" data-link class="hover:text-[#A97E3B] line-clamp-2 transition-colors">${this.escape(p.nome)}</a>
             </h3>
           </div>
           <div class="mt-3 pt-3 border-t border-[#F0E3DC] flex items-center justify-between gap-2">
@@ -1027,12 +1043,13 @@ const A = {
               <span class="text-[10px] text-[#AA999A] block leading-none">Preço</span>
               <span class="font-serif font-bold text-sm sm:text-base">${this.formatMoney(p.preco)}</span>
             </div>
-            <div class="flex items-center gap-1">
-              <button type="button" onclick="A.addToCart('${id}')" class="w-8 h-8 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center" title="Adicionar à sacola" aria-label="Adicionar à sacola">
-                <i class="fa-solid fa-plus text-xs" aria-hidden="true"></i>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="event.stopPropagation(); A.addToCart('${id}')" class="h-8 px-2.5 rounded-full bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white transition-all flex items-center gap-1 text-xs font-bold" title="Adicionar à sacola" aria-label="Adicionar à sacola">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span class="hidden sm:inline text-[11px]">Sacola</span>
               </button>
-              <button type="button" onclick="A.orderWhatsAppDirect('${id}')" class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir no WhatsApp">
-                <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i>
+              <button type="button" onclick="event.stopPropagation(); A.orderWhatsAppDirect('${id}')" class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white transition-all flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir no WhatsApp">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
               </button>
             </div>
           </div>
@@ -1074,7 +1091,7 @@ const A = {
         </nav>
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 sm:p-10 border border-[#F0E3DC] shadow-sm mb-16">
           <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
-            ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`}
+            ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover" fetchpriority="high" decoding="async">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`}
             <button type="button" onclick="A.toggleFav('${id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
               <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base" aria-hidden="true"></i>
             </button>
@@ -1172,6 +1189,11 @@ const A = {
     if (counter) counter.textContent = totalQty;
     const drawerCount = document.getElementById('cart-drawer-count');
     if (drawerCount) drawerCount.textContent = `${totalQty} ${totalQty === 1 ? 'item' : 'itens'}`;
+    const mobileBadge = document.getElementById('mobile-cart-badge');
+    if (mobileBadge) {
+      mobileBadge.textContent = totalQty;
+      mobileBadge.classList.toggle('hidden', totalQty === 0);
+    }
   },
 
   renderCartDrawer() {
@@ -1218,20 +1240,24 @@ const A = {
       return;
     }
     const isGift = document.getElementById('gift-checkbox')?.checked;
-    const lines = this.cart.map(i => `• ${i.q}x ${i.nome} (${this.formatMoney(i.preco * i.q)})`);
+    const clientName = document.getElementById('client-name-input')?.value.trim();
+    const totalQty = this.cart.reduce((sum, item) => sum + item.q, 0);
     const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
-    let message = `Olá, Vivi! Gostaria de fazer o pedido dos seguintes produtos pelo site:\n\n`
-      + lines.join('\n')
-      + `\n\nTotal estimado: ${this.formatMoney(total)}`;
-    if (isGift) message += `\nObservação: por favor, caprichar na embalagem para presente.`;
-    message += `\n\nPode me confirmar a disponibilidade e a forma de entrega?`;
+    let message = clientName ? `Olá, Vivi! Aqui é ${clientName}.\n` : `Olá, Vivi!\n`;
+    message += `Gostaria de fazer o pedido da minha sacola no site (${totalQty} ${totalQty === 1 ? 'item' : 'itens'}):\n\n`;
+    message += this.cart.map(i => `✨ ${i.q}x *${i.nome}* — ${this.formatMoney(i.preco * i.q)}`).join('\n');
+    message += `\n\n💰 *Total estimado:* ${this.formatMoney(total)}`;
+    if (isGift) {
+      message += `\n🎁 *Para presente:* Sim, favor caprichar na embalagem!`;
+    }
+    message += `\n\nPode me confirmar a disponibilidade e como combinamos a entrega? Muito obrigada! 💕`;
     window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
   },
 
   orderWhatsAppDirect(id) {
     const p = this.pmap[this.safeId(id)];
     if (!p) return;
-    const text = `Olá, Vivi! Tenho interesse no produto ${p.nome} no valor de ${this.formatMoney(p.preco)}. Pode me passar mais detalhes e a disponibilidade?`;
+    const text = `Olá, Vivi! Tenho interesse no produto *${p.nome}* (${this.formatMoney(p.preco)}) da marca ${p.marca || 'Boutique'}.\n\nPode me passar mais detalhes e a disponibilidade para pronta entrega?`;
     window.open(`${WA_BASE}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   },
 
@@ -1252,9 +1278,15 @@ const A = {
 
   updateFavUI() {
     const badge = document.getElementById('fav-badge');
-    if (!badge) return;
-    badge.textContent = this.favs.length;
-    badge.classList.toggle('hidden', this.favs.length === 0);
+    if (badge) {
+      badge.textContent = this.favs.length;
+      badge.classList.toggle('hidden', this.favs.length === 0);
+    }
+    const mobileBadge = document.getElementById('mobile-fav-badge');
+    if (mobileBadge) {
+      mobileBadge.textContent = this.favs.length;
+      mobileBadge.classList.toggle('hidden', this.favs.length === 0);
+    }
   },
 
   showFavModal() {
@@ -1429,8 +1461,8 @@ const A = {
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <button type="button" onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}">${p.ativo ? 'Ativo' : 'Pausado'}</button>
-                <a href="/admin/editar/${p.id}" data-link class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white" aria-label="Editar"><i class="fa-solid fa-pen text-xs"></i></a>
-                <button type="button" onclick="A.deleteProduct('${p.id}')" class="w-8 h-8 rounded-lg bg-red-50 text-[#E53E3E] flex items-center justify-center hover:bg-[#E53E3E] hover:text-white" aria-label="Excluir"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                <a href="/admin/editar/${p.id}" data-link class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white transition-colors" title="Editar produto" aria-label="Editar"><i class="fa-solid fa-pen text-xs"></i></a>
+                <button type="button" onclick="A.deleteProduct('${p.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 text-[#E53E3E] hover:bg-[#E53E3E] hover:text-white transition-colors flex items-center gap-1.5 text-xs font-semibold" title="Excluir produto" aria-label="Excluir"><i class="fa-solid fa-trash-can text-xs"></i> <span class="hidden sm:inline">Excluir</span></button>
               </div>
             </div>`).join('')}</div>` : `<p class="p-10 text-center text-sm text-[#826F70]">Nenhum produto neste filtro. <a href="/admin/novo" data-link class="text-[#A97E3B] font-semibold">Cadastrar o primeiro</a></p>`}
         </div>
@@ -1499,7 +1531,14 @@ const A = {
               </div>`).join('')}
           </div>
           <div id="form-error" class="text-xs text-[#E53E3E] hidden" role="alert"></div>
-          <button type="submit" id="save-btn" class="btn-gold w-full py-3.5 text-sm font-bold">${id ? 'Salvar alterações' : 'Cadastrar produto'}</button>
+          <div class="pt-2 flex flex-col sm:flex-row gap-3">
+            <button type="submit" id="save-btn" class="btn-gold flex-1 py-3.5 text-sm font-bold">${id ? 'Salvar alterações' : 'Cadastrar produto'}</button>
+            ${id ? `
+              <button type="button" onclick="A.deleteProduct('${this.safeId(id)}')" class="py-3.5 px-5 text-sm font-semibold text-[#E53E3E] bg-[#FEE2E2]/70 hover:bg-[#FEE2E2] rounded-xl transition-colors flex items-center justify-center gap-2 border border-[#FECACA]">
+                <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Excluir produto
+              </button>
+            ` : ''}
+          </div>
         </form>
       </div>`;
     document.getElementById('form-file')?.addEventListener('change', e => {
@@ -1602,17 +1641,20 @@ const A = {
   },
 
   async deleteProduct(id) {
+    id = this.safeId(id);
     const p = this.pmap[id];
-    if (!confirm(`Excluir "${p?.nome || 'este produto'}"? Essa ação não pode ser desfeita.`)) return;
+    const name = p?.nome || 'este produto';
+    if (!confirm(`Tem certeza que deseja excluir "${name}"?\nEssa ação não poderá ser desfeita.`)) return;
     try {
       const { error } = await this.sb.from('products').delete().eq('id', id);
       if (error) throw error;
-      this.prods = this.prods.filter(x => x.id !== id);
+      this.prods = this.prods.filter(x => String(x.id) !== id);
       delete this.pmap[id];
-      this.showToast('Produto excluído', 'success');
-      this.viewAdminProducts();
-    } catch {
-      this.showToast('Não foi possível excluir', 'error');
+      this.lastFetch = 0;
+      this.showToast('Produto excluído com sucesso', 'success');
+      this.navigate('/admin/produtos');
+    } catch (e) {
+      this.showToast('Não foi possível excluir: ' + (e?.message || 'erro de permissão'), 'error');
     }
   },
 
