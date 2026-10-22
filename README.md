@@ -1,57 +1,69 @@
-# Vivi Boty
+# 🛍️ Vivi Boty — Vitrine Digital & Catálogo E-commerce
 
-Vitrine digital de perfumes, cosméticos e presentes com pedido direto pelo WhatsApp.
+[![Status](https://img.shields.io/badge/Status-Ativo-brightgreen?style=flat-square)]()
+[![Stack](https://img.shields.io/badge/Stack-HTML5%20%7C%20TailwindCSS%20%7C%20VanillaJS-blue?style=flat-square)]()
+[![Backend](https://img.shields.io/badge/Backend-Supabase%20%7C%20RLS-3ECF8E?logo=supabase&style=flat-square)]()
+[![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&style=flat-square)](https://vivicarvalhoboty.com.br/)
+[![Licença](https://img.shields.io/badge/Licen%C3%A7a-MIT-violet?style=flat-square)]()
 
-**Site:** [vivicarvalhoboty.com.br](https://vivicarvalhoboty.com.br/)
+Vitrine digital moderna de perfumes, cosméticos e presentes com funil de vendas zero-friction e fechamento de pedidos direto pelo WhatsApp.
 
-## O que é
+🌐 **Site Oficial:** [vivicarvalhoboty.com.br](https://vivicarvalhoboty.com.br/)
 
-Catálogo para a loja da Vivi: o cliente vê produtos, preços e promoções, monta a sacola e envia um orçamento pronto no WhatsApp. Sem checkout online e sem cadastro do comprador.
+---
 
-O painel em `/admin` deixa a administradora cadastrar, pausar, destacar e excluir produtos, com foto no Supabase Storage.
+## 🧭 O que é
 
-## Stack
+Solução de comércio eletrônico focada em conversão para pequenos negócios: o cliente visualiza produtos com fotos em alta definição, preços dinâmicos e promoções, monta a sacola e envia o pedido formatado com um clique diretamente para o WhatsApp da lojista, sem atritos de checkout longo ou cadastros complexos.
 
-- HTML, CSS e JavaScript (SPA sem build)
-- Tailwind CSS via CDN + estilos próprios
-- Supabase (Postgres, Auth, Storage, RLS)
-- Vercel (domínio, rewrites e middleware de Open Graph)
+Inclui painel administrativo restrito (`/admin`) para cadastro, edição, pausa, destaque e exclusão de produtos com gerenciamento de mídia via Supabase Storage.
 
-## Fluxo do cliente
+---
 
-1. Abre o site pelo Instagram, WhatsApp ou busca.
-2. Filtra por categoria, marca, gênero, promoção, destaque ou pronta entrega.
-3. Adiciona à sacola ou pede o item no WhatsApp.
-4. A Vivi confirma disponibilidade, entrega e fecha a venda.
+## 🛠️ Stack Tecnológica
 
-Rotas reais (`/produtos`, `/produto/:id`) permitem compartilhar um produto com preview no WhatsApp. URLs antigas com `#/` são redirecionadas automaticamente.
+- **Frontend:** HTML5 Semântico, CSS3 e JavaScript Vanilla moderno (SPA de altíssimo desempenho sem etapa de build pesada).
+- **Estilização:** Tailwind CSS (via CDN) com design system personalizado e tipografia refinada (Plus Jakarta Sans & Playfair Display).
+- **Backend & Dados:** Supabase (PostgreSQL, Auth com RLS rigoroso e Supabase Storage).
+- **Infraestrutura & SEO:** Vercel (gerenciamento de domínio, rewrites de rotas SPA e middleware de Open Graph para previews dinâmicos no WhatsApp e redes sociais).
 
-## Painel
+---
 
-- Login só com e-mail/senha (não há cadastro no frontend)
-- CRUD de produtos, upload de imagem (até 5 MB) e selos de destaque/promoção/pronta entrega
-- Pausar um item tira ele da vitrine sem apagar o cadastro
+## ⚡ Fluxo de Compra e Conversão
 
-## Configuração
+1. O cliente acessa a vitrine através de links no Instagram, WhatsApp ou busca orgânica.
+2. Filtra produtos por categoria, marca, gênero, ofertas, destaque ou pronta-entrega.
+3. Adiciona itens à sacola ou solicita o produto diretamente pelo WhatsApp.
+4. A lojista recebe a mensagem com itens e valores pré-formatados para fechamento imediato da venda e entrega.
 
-As credenciais públicas ficam no `index.html`:
+Suporte a rotas reais (`/produtos`, `/produto/:id`) permitindo compartilhamento de produtos específicos com meta tags completas.
 
-```js
-const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
-const SUPABASE_ANON_KEY = 'SUA-ANON-KEY';
-```
+---
 
-A anon key é pública por desenho. Leitura e escrita são controladas por RLS no Supabase, não por esconder a chave.
+## 🔒 Painel Administrativo (`/admin`)
 
-## Local
+- Autenticação restrita via Supabase Auth (e-mail/senha criptografados).
+- Gestão completa (CRUD) de produtos com upload otimizado de fotos.
+- Etiquetas promocionais: Destaque, Promoção e Pronta Entrega.
+- Opção de pausar produto temporariamente sem exclusão do banco de dados.
+
+---
+
+## 🚀 Como Executar Localmente
 
 ```bash
+# Clone o repositório
 git clone https://github.com/Murilo-Rogerio/Vivi-Boty.git
+
+# Acesse o diretório
 cd Vivi-Boty
+
+# Inicie um servidor local (ex.: npx serve ou Live Server)
+npx serve .
 ```
 
-Abra `index.html` com um servidor estático (Live Server ou `npx serve`) para as rotas `/produtos` e `/admin` funcionarem. Abrir o arquivo como `file://` quebra a navegação por caminho.
+---
 
-## Licença
+## 📄 Licença
 
-MIT
+Distribuído sob a licença MIT.
