@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Crawl-delay: 10
 
 Sitemap: https://vivicarvalhoboty.com.br/sitemap.xml
