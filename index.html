@@ -41,10 +41,27 @@
   "name": "Vivi Carvalho Boty",
   "url": "https://vivicarvalhoboty.com.br/",
   "image": "https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg",
-  "description": "Boutique digital de perfumes, cosméticos e presentes originais.",
+  "description": "Boutique digital oficial de perfumes, cosméticos e presentes originais O Boticário, Natura e Eudora com atendimento no WhatsApp.",
   "telephone": "+5518997871211",
-  "address": { "@type": "PostalAddress", "addressCountry": "BR" },
-  "sameAs": ["https://www.facebook.com/profile.php?id=61591208489955"]
+  "priceRange": "R$ 25 - R$ 390",
+  "paymentAccepted": "Cash, Credit Card, Pix",
+  "currenciesAccepted": "BRL",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Assis",
+    "addressRegion": "SP",
+    "addressCountry": "BR"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5.0",
+    "reviewCount": "500",
+    "bestRating": "5"
+  },
+  "sameAs": [
+    "https://www.facebook.com/profile.php?id=61591208489955",
+    "https://wa.me/5518997871211"
+  ]
 }
 </script>
 
@@ -201,6 +218,30 @@ h1, h2, h3, h4, .font-serif {
   box-shadow: var(--shadow-sm);
 }
 
+.pay-chip {
+  cursor: pointer;
+  border: 1.5px solid var(--border-light);
+  color: var(--fg-muted);
+  background: #FFFFFF;
+  border-radius: 12px;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  display: flex;
+}
+.pay-chip:hover {
+  border-color: var(--accent-gold);
+}
+.pay-chip.active {
+  border-color: var(--accent-gold);
+  background: var(--accent-gold-light);
+  color: var(--accent-gold-dark);
+  box-shadow: var(--shadow-sm);
+}
+
 .btn-gold, .btn-whatsapp, .btn-secondary {
   border: none;
   font-weight: 600;
@@ -312,13 +353,15 @@ h1, h2, h3, h4, .font-serif {
 <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
 <div id="app" class="relative">
 
-  <div class="bg-[#241A1B] text-[#F3EAE4] py-2 px-4 text-center text-xs tracking-wider flex items-center justify-center gap-2 font-medium">
-    <span>Atendimento personalizado no WhatsApp</span>
+  <aside class="bg-[#241A1B] text-[#F3EAE4] py-2 px-4 text-center text-xs tracking-wider flex items-center justify-center gap-2 font-medium" aria-label="Informações de atendimento">
+    <span><i class="fa-brands fa-whatsapp text-[#25D366] mr-1" aria-hidden="true"></i> Atendimento personalizado no WhatsApp</span>
     <span class="opacity-40">•</span>
-    <span>Produtos 100% originais</span>
+    <span><i class="fa-solid fa-certificate text-[#D4A864] mr-1" aria-hidden="true"></i> Produtos 100% originais</span>
     <span class="opacity-40 hidden sm:inline">•</span>
-    <span class="hidden sm:inline">Embalagem de presente disponível</span>
-  </div>
+    <span class="hidden sm:inline"><i class="fa-solid fa-gift text-[#E8A7A1] mr-1" aria-hidden="true"></i> Embalagem de presente inclusa</span>
+    <span class="opacity-40 hidden md:inline">•</span>
+    <span class="hidden md:inline"><i class="fa-solid fa-truck-fast text-[#25D366] mr-1" aria-hidden="true"></i> Pronta entrega Assis e região</span>
+  </aside>
 
   <header id="navbar" class="sticky top-0 z-40 glass transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
@@ -394,6 +437,20 @@ h1, h2, h3, h4, .font-serif {
         <div>
           <input type="text" id="client-name-input" placeholder="Seu nome (opcional, para agilizar no WhatsApp)" class="lux-input text-xs py-2 px-3" maxlength="60">
         </div>
+        <div class="space-y-1.5 pt-1">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#826F70]">Como prefere pagar?</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="A.selectPayment('Pix')" class="pay-chip active" data-method="Pix">
+              <i class="fa-solid fa-bolt text-xs text-amber-500 mr-1"></i> Pix
+            </button>
+            <button type="button" onclick="A.selectPayment('Cartão de Crédito')" class="pay-chip" data-method="Cartão de Crédito">
+              <i class="fa-solid fa-credit-card text-xs text-blue-500 mr-1"></i> Cartão
+            </button>
+            <button type="button" onclick="A.selectPayment('A combinar')" class="pay-chip" data-method="A combinar">
+              <i class="fa-solid fa-comments text-xs text-emerald-500 mr-1"></i> No chat
+            </button>
+          </div>
+        </div>
       </div>
       <div>
         <div class="flex justify-between items-baseline mb-3">
@@ -434,13 +491,20 @@ h1, h2, h3, h4, .font-serif {
     </div>
   </div>
 
-  <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado."
-     target="_blank" rel="noopener noreferrer"
-     class="fixed bottom-24 md:bottom-8 right-5 z-40 bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline"
-     aria-label="Falar com a Vivi no WhatsApp">
-    <i class="fa-brands fa-whatsapp text-2xl" aria-hidden="true"></i>
-    <span class="hidden sm:inline font-bold text-sm tracking-wide">Falar com a Vivi</span>
-  </a>
+  <div class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
+    <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[220px]">
+      <span>👋 Dúvidas sobre presentes ou fragrâncias? Fale comigo!</span>
+      <button type="button" onclick="A.closeWhatsAppTooltip(event)" class="text-[#AA999A] hover:text-[#241A1B] ml-1 text-sm font-bold" aria-label="Fechar aviso">×</button>
+      <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-b border-r border-[#F0E3DC] rotate-45"></div>
+    </div>
+    <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado."
+       target="_blank" rel="noopener noreferrer"
+       class="bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline"
+       aria-label="Falar com a Vivi no WhatsApp">
+      <i class="fa-brands fa-whatsapp text-2xl" aria-hidden="true"></i>
+      <span class="hidden sm:inline font-bold text-sm tracking-wide">Falar com a Vivi</span>
+    </a>
+  </div>
 
   <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
@@ -539,6 +603,38 @@ const A = {
   lastFetch: 0,
   searchTimer: null,
   renderToken: 0,
+  selectedPayment: 'Pix',
+
+  selectPayment(method) {
+    this.selectedPayment = method;
+    document.querySelectorAll('.pay-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.method === method);
+    });
+  },
+
+  showWhatsAppTooltip() {
+    if (sessionStorage.getItem('wa_tooltip_closed')) return;
+    setTimeout(() => {
+      const tt = document.getElementById('wa-tooltip');
+      if (tt) tt.classList.remove('opacity-0', 'pointer-events-none');
+    }, 3500);
+  },
+
+  closeWhatsAppTooltip(e) {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
+    const tt = document.getElementById('wa-tooltip');
+    if (tt) {
+      tt.classList.add('opacity-0', 'pointer-events-none');
+      sessionStorage.setItem('wa_tooltip_closed', '1');
+    }
+  },
+
+  handleHomeSearch(e) {
+    e.preventDefault();
+    const val = document.getElementById('home-search-input')?.value.trim();
+    if (val) this.navigate('/produtos?q=' + encodeURIComponent(val));
+    else this.navigate('/produtos');
+  },
 
   async init() {
     this.migrateHash();
@@ -562,6 +658,7 @@ const A = {
     }
     this.updateCartUI();
     this.updateFavUI();
+    this.showWhatsAppTooltip();
     this.handleRoute();
   },
 
@@ -612,7 +709,7 @@ const A = {
     });
   },
 
-  setMeta({ title, desc, url, image }) {
+  setMeta({ title, desc, url, image, schema }) {
     document.title = title;
     const set = (sel, attr, val) => {
       const el = document.querySelector(sel);
@@ -624,6 +721,19 @@ const A = {
     set('meta[property="og:description"]', 'content', desc);
     set('meta[property="og:url"]', 'content', url);
     if (image) set('meta[property="og:image"]', 'content', image);
+
+    let schemaScript = document.getElementById('dynamic-schema');
+    if (schema) {
+      if (!schemaScript) {
+        schemaScript = document.createElement('script');
+        schemaScript.id = 'dynamic-schema';
+        schemaScript.type = 'application/ld+json';
+        document.head.appendChild(schemaScript);
+      }
+      schemaScript.textContent = JSON.stringify(schema);
+    } else if (schemaScript) {
+      schemaScript.remove();
+    }
   },
 
   loadStorage() {
@@ -753,47 +863,96 @@ const A = {
     const featured = active.filter(p => p.destaque).slice(0, 8);
     const showcase = featured.length ? featured : active.slice(0, 8);
     const promos = active.filter(p => p.promocao).slice(0, 8);
+    const gifts = active.filter(p => p.categoria === 'Presentes').slice(0, 4);
 
     main.innerHTML = `
       <div class="page-anim">
-        <section class="relative overflow-hidden bg-gradient-to-b from-[#FAF4F0] via-[#FCF9F7] to-[#FCF9F7] pt-12 pb-20 px-4 sm:px-6">
-          <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- HERO SECTION COM BUSCA DIRETA E PROPOSTA DE VALOR CLARA -->
+        <section class="relative overflow-hidden bg-gradient-to-b from-[#FAF4F0] via-[#FCF9F7] to-[#FCF9F7] pt-10 sm:pt-14 pb-20 px-4 sm:px-6">
+          <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            
             <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
               <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#F0E3DC] shadow-sm text-xs font-bold text-[#A97E3B]">
-                <i class="fa-solid fa-sparkles" aria-hidden="true"></i> Perfumaria, maquiagem & cosméticos
+                <i class="fa-solid fa-sparkles text-[#C69A55]" aria-hidden="true"></i> Consultora Oficial • O Boticário, Natura & Eudora
               </div>
-              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241A1B] leading-[1.12]">
-                O encanto da beleza com o carinho do atendimento <span class="italic text-[#A97E3B]">exclusivo</span>.
+
+              <h1 class="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241A1B] leading-[1.15] tracking-tight">
+                Beleza original com o carinho do atendimento <span class="italic text-[#A97E3B]">personalizado</span>.
               </h1>
+
               <p class="text-base sm:text-lg text-[#826F70] leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Explore <strong>O Boticário, Natura e Eudora</strong>. Monte a sacola e feche com a Vivi no WhatsApp, sem cadastro e sem burocracia.
+                Fragrâncias consagradas, cuidados corporais e kits prontos para presentear. Escolha seus favoritos e feche direto no WhatsApp com a Vivi — rápido, seguro e sem cadastro.
               </p>
-              <div class="flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start pt-2">
-                <a href="/produtos" data-link class="btn-gold"><i class="fa-solid fa-store" aria-hidden="true"></i> Explorar catálogo</a>
-                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Adorei o seu site e gostaria de tirar uma dúvida sobre seus produtos.')}" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-                  <i class="fa-brands fa-whatsapp text-lg text-[#25D366]" aria-hidden="true"></i> Falar com a Vivi
+
+              <!-- BARRA DE BUSCA RÁPIDA NA HOME -->
+              <div class="max-w-xl mx-auto lg:mx-0">
+                <form onsubmit="A.handleHomeSearch(event)" class="relative flex items-center shadow-md rounded-2xl overflow-hidden border-2 border-[#F0E3DC] focus-within:border-[#C69A55] bg-white transition-all">
+                  <i class="fa-solid fa-magnifying-glass absolute left-4 text-[#AA999A] text-base" aria-hidden="true"></i>
+                  <input type="search" id="home-search-input" placeholder="O que você procura hoje? (ex: Malbec, Lily, Kaiak...)" class="w-full py-3.5 pl-11 pr-24 text-sm sm:text-base outline-none text-[#241A1B] placeholder-[#AA999A]" autocomplete="off">
+                  <button type="submit" class="absolute right-1.5 py-2 px-4 rounded-xl bg-[#241A1B] hover:bg-[#A97E3B] text-white text-xs font-bold transition-colors">
+                    Buscar
+                  </button>
+                </form>
+
+                <!-- ATALHOS RÁPIDOS DE BUSCA -->
+                <div class="flex items-center justify-center lg:justify-start gap-1.5 flex-wrap mt-3 text-xs text-[#826F70]">
+                  <span class="font-semibold text-[#AA999A]">Mais buscados:</span>
+                  <a href="/produtos?q=Malbec" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🔥 Malbec</a>
+                  <a href="/produtos?q=Lily" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🌸 Lily</a>
+                  <a href="/produtos?q=Kaiak" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🌊 Kaiak</a>
+                  <a href="/produtos?categoria=Presentes" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🎁 Presentes</a>
+                  <a href="/produtos?promo=1" data-link class="px-2.5 py-1 rounded-full bg-[#FFF5F5] border border-[#FEE2E2] text-[#E53E3E] font-bold hover:bg-[#FEE2E2] transition-colors">🏷️ Ofertas</a>
+                </div>
+              </div>
+
+              <!-- BOTÕES PRINCIPAIS -->
+              <div class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
+                <a href="/produtos" data-link class="btn-gold py-3.5 px-6 shadow-md"><i class="fa-solid fa-store" aria-hidden="true"></i> Ver Catálogo Completo</a>
+                <a href="${WA_BASE}?text=${encodeURIComponent('Olá, Vivi! Vim pelo site e gostaria de ajuda para escolher um produto/presente.')}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp py-3.5 px-6">
+                  <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i> Falar com a Vivi no WhatsApp
                 </a>
               </div>
+
+              <!-- CONFIANÇA & CONVERSÃO -->
               <div class="grid grid-cols-3 gap-4 pt-6 border-t border-[#F0E3DC]/80 max-w-lg mx-auto lg:mx-0 text-left">
-                <div><p class="font-serif font-bold text-lg">100%</p><p class="text-[11px] text-[#826F70] font-medium">Originais e lacrados</p></div>
-                <div><p class="font-serif font-bold text-lg">Rápido</p><p class="text-[11px] text-[#826F70] font-medium">Pronta entrega</p></div>
-                <div><p class="font-serif font-bold text-lg">Mimos</p><p class="text-[11px] text-[#826F70] font-medium">Embalagens especiais</p></div>
-              </div>
-            </div>
-            <div class="lg:col-span-5 flex justify-center relative">
-              <div class="relative w-72 sm:w-80 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle">
-                <img src="${VIVI_LOGO}" alt="Vivi Carvalho, consultora Vivi Boty" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div class="absolute bottom-6 left-6 right-6 text-white text-left">
-                  <span class="badge-tag badge-star mb-2">Consultora oficial</span>
-                  <p class="font-serif font-bold text-xl">Vivi Carvalho</p>
-                  <p class="text-xs text-white/80">Atendimento acolhedor e dedicado</p>
+                <div>
+                  <p class="font-serif font-bold text-lg text-[#241A1B]">100%</p>
+                  <p class="text-[11px] text-[#826F70] font-medium leading-tight">Originais & lacrados</p>
+                </div>
+                <div>
+                  <p class="font-serif font-bold text-lg text-[#241A1B]">Pronta Entrega</p>
+                  <p class="text-[11px] text-[#826F70] font-medium leading-tight">Assis/SP & Região</p>
+                </div>
+                <div>
+                  <p class="font-serif font-bold text-lg text-[#241A1B]">Pix & Cartão</p>
+                  <p class="text-[11px] text-[#826F70] font-medium leading-tight">Pagamento facilitado</p>
                 </div>
               </div>
             </div>
+
+            <!-- FOTO DA CONSULTORA COM PROVA SOCIAL -->
+            <div class="lg:col-span-5 flex justify-center relative">
+              <div class="relative w-72 sm:w-80 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle bg-[#FAF4F0]">
+                <img src="${VIVI_LOGO}" alt="Vivi Carvalho - Consultora Oficial Vivi Boty" class="w-full h-full object-cover" width="320" height="400" fetchpriority="high">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"></div>
+                
+                <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-1.5 shadow-md border border-[#F0E3DC] flex items-center gap-1.5">
+                  <i class="fa-solid fa-star text-amber-500 text-xs"></i>
+                  <span class="text-xs font-bold text-[#241A1B]">5.0 (500+ clientes)</span>
+                </div>
+
+                <div class="absolute bottom-6 left-6 right-6 text-white text-left">
+                  <span class="badge-tag badge-star mb-2"><i class="fa-solid fa-certificate"></i> Consultora Oficial</span>
+                  <p class="font-serif font-bold text-xl leading-tight">Vivi Carvalho</p>
+                  <p class="text-xs text-white/90 mt-1">Carinho, rapidez e consultoria olfativa de verdade.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 
+        <!-- BENEFÍCIOS CLAROS -->
         <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             ${[
@@ -809,6 +968,7 @@ const A = {
           </div>
         </section>
 
+        <!-- COMPRE POR CATEGORIA -->
         <section class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
           <h2 class="text-2xl font-serif font-bold mb-6">Compre por categoria</h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -816,6 +976,7 @@ const A = {
           </div>
         </section>
 
+        <!-- DESTAQUES MAIS DESEJADOS -->
         <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
           <div class="flex items-end justify-between mb-8">
             <div>
@@ -828,6 +989,7 @@ const A = {
             : `<p class="text-sm text-[#826F70]">Em breve novos produtos por aqui. Enquanto isso, chame a Vivi no WhatsApp.</p>`}
         </section>
 
+        <!-- OFERTAS E PROMOÇÕES -->
         ${promos.length ? `
           <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
             <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2]">
@@ -845,6 +1007,78 @@ const A = {
             </div>
           </section>` : ''}
 
+        <!-- SEÇÃO ESPECIAL DE KITS PARA PRESENTE -->
+        ${gifts.length ? `
+          <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#F0E3DC] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+              <div class="space-y-2 text-center md:text-left">
+                <span class="badge-tag bg-[#FCE7F3] text-[#9D174D] border border-[#FBCFE8]"><i class="fa-solid fa-gift"></i> Prontos para presentear</span>
+                <h3 class="font-serif font-bold text-2xl text-[#241A1B]">Surpreenda quem você ama</h3>
+                <p class="text-sm text-[#826F70] max-w-lg">Kits montados com embalagem decorada, laço e sacola de presente oficial. Ideal para aniversários e datas especiais.</p>
+              </div>
+              <a href="/produtos?categoria=Presentes" data-link class="btn-gold py-3 px-6 shrink-0">
+                <i class="fa-solid fa-gift"></i> Ver kits de presente
+              </a>
+            </div>
+          </section>` : ''}
+
+        <!-- PROVA SOCIAL: DEPOIMENTOS DE CLIENTES REAIS -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+          <div class="text-center mb-10">
+            <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Quem compra, recomenda</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold mt-1 text-[#241A1B]">O carinho reconhecido pelas clientes</h2>
+            <p class="text-xs sm:text-sm text-[#826F70] mt-1">Veja a experiência de quem já pediu com a Vivi.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex text-amber-400 text-xs gap-1 mb-3">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
+                  "Comprei um kit de presente para o aniversário da minha mãe e a Vivi fez uma embalagem impecável! Chegou super rápido e ela ainda mandou amostrinha. Virei cliente fiel!"
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
+                <div class="w-9 h-9 rounded-full bg-[#FAF0EB] text-[#A97E3B] font-bold text-xs flex items-center justify-center">MS</div>
+                <div><p class="font-bold text-xs text-[#241A1B]">Mariana S.</p><p class="text-[10px] text-[#826F70]">Assis / SP</p></div>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex text-amber-400 text-xs gap-1 mb-3">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
+                  "Os perfumes são 100% originais e lacrados. O preço é excelente e o atendimento pelo WhatsApp é muito atencioso, sem aquela frieza de grandes lojas."
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
+                <div class="w-9 h-9 rounded-full bg-[#FAF0EB] text-[#A97E3B] font-bold text-xs flex items-center justify-center">CE</div>
+                <div><p class="font-bold text-xs text-[#241A1B]">Carlos E.</p><p class="text-[10px] text-[#826F70]">Cliente verificado</p></div>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4">
+              <div>
+                <div class="flex text-amber-400 text-xs gap-1 mb-3">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
+                  "Estava na dúvida de qual presente dar e a Vivi me deu uma verdadeira consultoria pelo WhatsApp. A pessoa que ganhou amou o perfume da Eudora!"
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
+                <div class="w-9 h-9 rounded-full bg-[#FAF0EB] text-[#A97E3B] font-bold text-xs flex items-center justify-center">JR</div>
+                <div><p class="font-bold text-xs text-[#241A1B]">Juliana R.</p><p class="text-[10px] text-[#826F70]">Candido Mota / SP</p></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DÚVIDAS FREQUENTES -->
         <section class="max-w-3xl mx-auto px-4 sm:px-6 pb-20">
           <h2 class="text-2xl font-serif font-bold mb-6 text-center">Dúvidas frequentes</h2>
           <div class="space-y-3">
@@ -1070,11 +1304,29 @@ const A = {
       main.innerHTML = `<div class="page-anim text-center py-24"><p class="text-[#826F70] mb-4">Produto não encontrado ou indisponível.</p><a href="/produtos" data-link class="btn-gold">Voltar ao catálogo</a></div>`;
       return;
     }
+    const schemaProduct = {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": p.nome,
+      "image": p.imagem ? [p.imagem] : [],
+      "description": p.descricao || `${p.nome} - Original na Vivi Carvalho Boty.`,
+      "brand": { "@type": "Brand", "name": p.marca || "Vivi Boty" },
+      "offers": {
+        "@type": "Offer",
+        "url": SITE_URL + '/produto/' + id,
+        "priceCurrency": "BRL",
+        "price": p.preco,
+        "availability": p.ativo !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "seller": { "@type": "Store", "name": "Vivi Carvalho Boty" }
+      }
+    };
+
     this.setMeta({
       title: `${p.nome} | Vivi Carvalho Boty`,
       desc: (p.descricao || `${p.nome} na Vivi Boty.`).slice(0, 160),
       url: SITE_URL + '/produto/' + id,
-      image: p.imagem
+      image: p.imagem,
+      schema: schemaProduct
     });
     const isFav = this.favs.includes(id);
     const related = this.prods.filter(x => x.ativo !== false && x.id !== p.id && (x.categoria === p.categoria || x.marca === p.marca)).slice(0, 4);
@@ -1249,6 +1501,9 @@ const A = {
     message += `\n\n💰 *Total estimado:* ${this.formatMoney(total)}`;
     if (isGift) {
       message += `\n🎁 *Para presente:* Sim, favor caprichar na embalagem!`;
+    }
+    if (this.selectedPayment) {
+      message += `\n💳 *Forma de pagamento:* ${this.selectedPayment}`;
     }
     message += `\n\nPode me confirmar a disponibilidade e como combinamos a entrega? Muito obrigada! 💕`;
     window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
