@@ -458,7 +458,6 @@ h1, h2, h3, h4, .font-serif {
         <p class="text-[11px] text-[#826F70] leading-tight mt-0.5">Sem valor mínimo • Levamos até você com todo carinho</p>
       </div>
     </div>
-    </div>
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
     <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
       <div class="space-y-2">
@@ -711,7 +710,7 @@ h1, h2, h3, h4, .font-serif {
 </noscript>
 
 <script>
-const SITE_URL = 'https://vivicarvalhoboty.com.br';
+const SITE_URL = typeof window !== 'undefined' && window.location && window.location.origin ? window.location.origin : 'https://www.vivicarvalhoboty.com.br';
 const VIVI_LOGO = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg';
 const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
@@ -2191,18 +2190,33 @@ const A = {
   },
 
   async shareProduct(id) {
-    const p = this.pmap[this.safeId(id)];
+    id = this.safeId(id);
+    const p = this.pmap[id];
     if (!p) return;
     this.trackEvent('share', p.id, p.nome);
-    const url = SITE_URL + '/produto/' + p.id;
+    const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : SITE_URL;
+    const url = `${origin}/produto/${encodeURIComponent(p.id)}`;
+    const shareData = {
+      title: `${p.nome} | Vivi Boty`,
+      text: `Olha este produto na Vivi Carvalho Boty: ${p.nome}`,
+      url: url
+    };
     try {
-      if (navigator.share) await navigator.share({ title: p.nome, text: `Olha este produto na Vivi Boty: ${p.nome}`, url });
-      else {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
         await navigator.clipboard.writeText(url);
-        this.showToast('Link copiado', 'success');
+        this.showToast('Link do produto copiado!', 'success');
       }
     } catch (e) {
-      if (e?.name !== 'AbortError') this.showToast('Não foi possível compartilhar', 'error');
+      if (e && e.name !== 'AbortError') {
+        try {
+          await navigator.clipboard.writeText(url);
+          this.showToast('Link copiado com sucesso!', 'success');
+        } catch {
+          this.showToast('Copie o link: ' + url, 'info');
+        }
+      }
     }
   },
 

@@ -16,11 +16,17 @@ function esc(value) {
 
 export default async function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
-  if (!BOT_UA.test(ua)) return;
-
   const url = new URL(request.url);
+
+  // Se for um usuário humano (Brave, Chrome, Safari, etc.), serve o index.html da SPA com status 200
+  if (!BOT_UA.test(ua)) {
+    return fetch(new URL('/index.html', request.url));
+  }
+
   const productId = url.pathname.split('/').filter(Boolean).pop();
-  if (!productId) return;
+  if (!productId || productId === 'produto') {
+    return fetch(new URL('/index.html', request.url));
+  }
 
   let product = null;
   try {
@@ -46,7 +52,7 @@ export default async function middleware(request) {
     : 'Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes';
   const desc = (product?.descricao || 'Perfumes, cosméticos e presentes originais com atendimento humanizado pelo WhatsApp.').slice(0, 160);
   const image = product?.imagem || FALLBACK_IMAGE;
-  const canonical = `https://vivicarvalhoboty.com.br/produto/${encodeURIComponent(productId)}`;
+  const canonical = `https://www.vivicarvalhoboty.com.br/produto/${encodeURIComponent(productId)}`;
 
   const html = `<!DOCTYPE html><html lang="pt-BR"><head>
 <meta charset="UTF-8">
@@ -62,7 +68,7 @@ export default async function middleware(request) {
 <meta name="twitter:card" content="summary_large_image">
 <meta http-equiv="refresh" content="0;url=${esc(canonical)}">
 </head><body>
-<p>Redirecionando para <a href="${esc(canonical)}">${esc(product?.nome || 'Vivi Boty')}</a>…</p>
+<p>Redirecionando para <a href="${esc(canonical)}">${esc(product?.nome || 'Vivi Boty')}</a>...</p>
 </body></html>`;
 
   return new Response(html, {
