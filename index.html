@@ -626,7 +626,7 @@ h1, h2, h3, h4, .font-serif {
     <i class="fa-solid fa-arrow-up text-sm" aria-hidden="true"></i>
   </button>
 
-<div class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
+<div id="wa-widget-container" class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
     <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[220px]">
       <span>👋 Dúvidas sobre presentes ou fragrâncias? Fale comigo!</span>
       <button type="button" onclick="A.closeWhatsAppTooltip(event)" class="text-[#AA999A] hover:text-[#241A1B] ml-1 text-sm font-bold" aria-label="Fechar aviso">×</button>
@@ -860,8 +860,10 @@ const A = {
   },
 
   showWhatsAppTooltip() {
+    if (location.pathname.startsWith('/admin') || (this.path && this.path.startsWith('/admin'))) return;
     if (sessionStorage.getItem('wa_tooltip_closed')) return;
     setTimeout(() => {
+      if (location.pathname.startsWith('/admin') || (this.path && this.path.startsWith('/admin'))) return;
       const tt = document.getElementById('wa-tooltip');
       if (tt) tt.classList.remove('opacity-0', 'pointer-events-none');
     }, 3500);
@@ -1096,14 +1098,21 @@ const A = {
     main.innerHTML = this.loadingHtml();
     const path = this.path;
 
-    // Ocultar botão flutuante 'Falar com a Vivi' em todas as páginas do painel admin
+        // Ocultar widget completo do WhatsApp (botão flutuante + balão tooltip) em todas as telas do admin
+    const waWidget = document.getElementById('wa-widget-container');
     const waFloat = document.getElementById('wa-floating');
-    if (waFloat) {
-      if (path.startsWith('/admin')) {
-        waFloat.classList.add('hidden');
-      } else {
-        waFloat.classList.remove('hidden');
+    const waTooltip = document.getElementById('wa-tooltip');
+    if (path.startsWith('/admin')) {
+      if (waWidget) waWidget.classList.add('hidden');
+      if (waFloat) waFloat.classList.add('hidden');
+      if (waTooltip) {
+        waTooltip.classList.add('opacity-0', 'pointer-events-none', 'hidden');
+        waTooltip.classList.remove('opacity-100');
       }
+    } else {
+      if (waWidget) waWidget.classList.remove('hidden');
+      if (waFloat) waFloat.classList.remove('hidden');
+      if (waTooltip) waTooltip.classList.remove('hidden');
     }
 
     if (path === '/' || path === '/home') { await this.viewHome(); }
