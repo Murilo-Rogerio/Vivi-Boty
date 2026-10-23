@@ -297,6 +297,7 @@ h1, h2, h3, h4, .font-serif {
 }
 .drawer-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
 #image-modal.open #image-modal-dialog { transform: scale(1); opacity: 1; }
+#testimonial-modal.open #testimonial-modal-dialog { transform: scale(1); opacity: 1; }
 .drawer-panel {
   transform: translateX(100%);
   visibility: hidden;
@@ -517,6 +518,75 @@ h1, h2, h3, h4, .font-serif {
     </div>
   </div>
 
+  <!-- Modal para Adicionar Novo Depoimento / Avaliação -->
+  <div id="testimonial-modal" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" onclick="A.closeTestimonialModal()" role="dialog" aria-modal="true" aria-labelledby="testimonial-modal-title">
+    <div id="testimonial-modal-dialog" class="bg-white rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] flex flex-col relative transition-all duration-300 scale-95 opacity-0" onclick="event.stopPropagation()">
+      <div class="px-6 py-5 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center text-lg shadow-sm">
+            <i class="fa-solid fa-star text-amber-400"></i>
+          </div>
+          <div>
+            <h3 id="testimonial-modal-title" class="font-serif font-bold text-lg text-[#241A1B]">Deixar meu depoimento</h3>
+            <p class="text-xs text-[#826F70]">Compartilhe sua experiência de compra com a Vivi!</p>
+          </div>
+        </div>
+        <button type="button" onclick="A.closeTestimonialModal()" class="w-9 h-9 rounded-full bg-white border border-[#F0E3DC] text-[#826F70] hover:text-[#241A1B] hover:border-[#241A1B] flex items-center justify-center transition-colors" aria-label="Fechar formulário">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form onsubmit="event.preventDefault(); A.submitTestimonial();" class="p-6 space-y-4">
+        <!-- Avaliação por estrelas interativa -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#241A1B] mb-2">Sua nota:</label>
+          <div class="flex items-center gap-2" id="star-rating-container">
+            <button type="button" onclick="A.setTestimonialRating(1)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="1" aria-label="1 estrela"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(2)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="2" aria-label="2 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(3)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="3" aria-label="3 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(4)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="4" aria-label="4 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(5)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="5" aria-label="5 estrelas"><i class="fa-solid fa-star"></i></button>
+            <span id="star-rating-label" class="text-xs font-semibold text-[#A97E3B] ml-2">Excelente (5/5)</span>
+          </div>
+          <input type="hidden" id="testimonial-rating" value="5">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase mb-1" for="testimonial-name">Seu Nome *</label>
+            <input type="text" id="testimonial-name" required placeholder="Ex: Mariana Silva" maxlength="80" class="lux-input text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase mb-1" for="testimonial-city">Cidade / Bairro</label>
+            <input type="text" id="testimonial-city" placeholder="Ex: Assis / SP" maxlength="60" class="lux-input text-xs">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase mb-1" for="testimonial-product">Produto ou kit que você comprou</label>
+          <input type="text" id="testimonial-product" placeholder="Ex: Kit Floratta Red, Malbec, Creme Tododia..." maxlength="100" class="lux-input text-xs">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase mb-1" for="testimonial-comment">Seu comentário / Avaliação *</label>
+          <textarea id="testimonial-comment" required rows="4" placeholder="Conte o que achou do atendimento, da entrega, da embalagem de presente ou do perfume..." maxlength="600" class="lux-input text-xs leading-relaxed"></textarea>
+          <span class="text-[10px] text-[#826F70] mt-1 block">Seu depoimento aparecerá na vitrine da loja após o envio.</span>
+        </div>
+
+        <div id="testimonial-error" class="text-xs text-[#E53E3E] hidden" role="alert"></div>
+
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
+          <button type="submit" id="testimonial-submit-btn" class="btn-gold flex-1 py-3.5 text-xs font-bold shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Publicar depoimento
+          </button>
+          <button type="button" onclick="A.closeTestimonialModal()" class="btn-secondary py-3.5 px-5 text-xs">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
     <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[220px]">
       <span>👋 Dúvidas sobre presentes ou fragrâncias? Fale comigo!</span>
@@ -621,6 +691,8 @@ const A = {
   isAdmin: false,
   prods: [],
   pmap: {},
+  testimonials: [],
+  testimonialsLoaded: false,
   cart: [],
   favs: [],
   path: '/',
@@ -761,6 +833,7 @@ const A = {
       this.closeQuickView();
       this.closeFavModal();
       this.closeImageModal();
+      this.closeTestimonialModal();
     });
   },
 
@@ -933,7 +1006,8 @@ const A = {
       desc: 'Boutique digital de perfumes, cosméticos e presentes originais com atendimento pelo WhatsApp.',
       url: SITE_URL + '/'
     });
-    const ok = await this.ensureProds();
+    await Promise.all([this.ensureProds(), this.ensureTestimonials()]);
+    const ok = this.prodsLoaded;
     const main = document.getElementById('main-content');
     if (!ok && !this.prods.length) { main.innerHTML = this.errorHtml(); return; }
 
@@ -1102,57 +1176,25 @@ const A = {
 
         <!-- PROVA SOCIAL: DEPOIMENTOS DE CLIENTES REAIS -->
         <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-          <div class="text-center mb-10">
-            <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Quem compra, recomenda</span>
-            <h2 class="text-2xl sm:text-3xl font-serif font-bold mt-1 text-[#241A1B]">O carinho reconhecido pelas clientes</h2>
-            <p class="text-xs sm:text-sm text-[#826F70] mt-1">Veja a experiência de quem já pediu com a Vivi.</p>
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Quem compra, recomenda</span>
+              <h2 class="text-2xl sm:text-3xl font-serif font-bold mt-1 text-[#241A1B]">O carinho reconhecido pelas clientes</h2>
+              <p class="text-xs sm:text-sm text-[#826F70] mt-1">Veja a experiência de quem já pediu com a Vivi.</p>
+            </div>
+            <button type="button" onclick="A.openTestimonialModal()" class="btn-gold text-xs py-3 px-5 self-start sm:self-auto flex items-center gap-2 shadow-md shrink-0 hover:scale-[1.02] transition-transform">
+              <i class="fa-solid fa-pen-to-square"></i> Deixar meu depoimento
+            </button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex text-amber-400 text-xs gap-1 mb-3">
-                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
-                  "Comprei um kit de presente para o aniversário da minha mãe e a Vivi fez uma embalagem impecável! Chegou super rápido e ela ainda mandou amostrinha. Virei cliente fiel!"
-                </p>
-              </div>
-              <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
-                <div class="w-9 h-9 rounded-full bg-[#FAF0EB] text-[#A97E3B] font-bold text-xs flex items-center justify-center">MS</div>
-                <div><p class="font-bold text-xs text-[#241A1B]">Mariana S.</p><p class="text-[10px] text-[#826F70]">Assis / SP</p></div>
-              </div>
-            </div>
+          <div id="testimonials-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            ${this.renderTestimonialsCards()}
+          </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex text-amber-400 text-xs gap-1 mb-3">
-                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
-                  "Os perfumes são 100% originais e lacrados. O preço é excelente e o atendimento pelo WhatsApp é muito atencioso, sem aquela frieza de grandes lojas."
-                </p>
-              </div>
-              <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
-                <div class="w-9 h-9 rounded-full bg-[#FAF0EB] text-[#A97E3B] font-bold text-xs flex items-center justify-center">CE</div>
-                <div><p class="font-bold text-xs text-[#241A1B]">Carlos E.</p><p class="text-[10px] text-[#826F70]">Cliente verificado</p></div>
-              </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex text-amber-400 text-xs gap-1 mb-3">
-                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
-                  "Estava na dúvida de qual presente dar e a Vivi me deu uma verdadeira consultoria pelo WhatsApp. A pessoa que ganhou amou o perfume da Eudora!"
-                </p>
-              </div>
-              <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
-                <div class="w-9 h-9 rounded-full bg-[#FAF0EB] text-[#A97E3B] font-bold text-xs flex items-center justify-center">JR</div>
-                <div><p class="font-bold text-xs text-[#241A1B]">Juliana R.</p><p class="text-[10px] text-[#826F70]">Candido Mota / SP</p></div>
-              </div>
-            </div>
+          <div class="mt-8 text-center">
+            <button type="button" onclick="A.openTestimonialModal()" class="inline-flex items-center gap-2 text-xs font-semibold text-[#826F70] hover:text-[#A97E3B] py-2.5 px-5 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] transition-all shadow-sm">
+              <i class="fa-solid fa-star text-amber-400"></i> Já comprou com a Vivi? Clique aqui para deixar sua avaliação!
+            </button>
           </div>
         </section>
 
@@ -1471,7 +1513,7 @@ const A = {
   },
 
   anyDialogOpen() {
-    return ['cart-drawer', 'quickview-overlay', 'fav-overlay', 'image-modal']
+    return ['cart-drawer', 'quickview-overlay', 'fav-overlay', 'image-modal', 'testimonial-modal']
       .some(id => document.getElementById(id)?.classList.contains('open'));
   },
 
@@ -1722,6 +1764,179 @@ const A = {
     }
     const name = document.getElementById('form-name')?.value?.trim() || 'Visualização da Imagem';
     this.openImageModal(img.src, name);
+  },
+
+  async ensureTestimonials() {
+    if (this.testimonialsLoaded) return this.testimonials;
+    try {
+      const { data, error } = await this.sb.from('testimonials').select('*').order('data_criacao', { ascending: false });
+      if (!error && data && data.length) {
+        this.testimonials = data;
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar depoimentos:', e);
+    }
+    this.testimonialsLoaded = true;
+    return this.testimonials;
+  },
+
+  renderTestimonialsCards() {
+    const list = this.testimonials && this.testimonials.length ? this.testimonials : [];
+    return list.map(t => {
+      const initials = (t.nome || 'Cliente')
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join('');
+      const starsCount = Math.max(1, Math.min(5, t.estrelas || 5));
+      const starsHtml = '<i class="fa-solid fa-star"></i>'.repeat(starsCount) + '<i class="fa-regular fa-star text-gray-300"></i>'.repeat(5 - starsCount);
+
+      return `
+        <div class="bg-white p-6 sm:p-7 rounded-3xl border border-[#F0E3DC] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <div class="flex text-amber-400 text-xs gap-1">
+                ${starsHtml}
+              </div>
+              ${t.produto_mencionado ? `
+                <span class="text-[10px] font-semibold text-[#A97E3B] bg-[#FBF4E8] px-2.5 py-0.5 rounded-full border border-[#F0E3DC] truncate max-w-[140px]" title="${this.escape(t.produto_mencionado)}">
+                  <i class="fa-solid fa-bag-shopping text-[9px] mr-1"></i>${this.escape(t.produto_mencionado)}
+                </span>
+              ` : ''}
+            </div>
+            <p class="text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic">
+              "${this.escape(t.comentario)}"
+            </p>
+          </div>
+          <div class="flex items-center gap-3 pt-3 border-t border-[#F0E3DC]/60">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#FAF0EB] to-[#F5E6DC] text-[#A97E3B] font-bold text-xs flex items-center justify-center shrink-0 border border-[#F0E3DC]">
+              ${initials || 'VB'}
+            </div>
+            <div class="min-w-0">
+              <p class="font-bold text-xs text-[#241A1B] truncate">${this.escape(t.nome)}</p>
+              <p class="text-[10px] text-[#826F70] truncate">${this.escape(t.cidade || 'Cliente verificada')}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  setTestimonialRating(n) {
+    const hidden = document.getElementById('testimonial-rating');
+    if (hidden) hidden.value = n;
+    const label = document.getElementById('star-rating-label');
+    const labels = {
+      1: 'Muito ruim (1/5)',
+      2: 'Ruim (2/5)',
+      3: 'Bom (3/5)',
+      4: 'Muito bom (4/5)',
+      5: 'Excelente (5/5)'
+    };
+    if (label) label.textContent = labels[n] || `${n}/5`;
+
+    const btns = document.querySelectorAll('#star-rating-container .star-btn');
+    btns.forEach(btn => {
+      const s = parseInt(btn.getAttribute('data-star'), 10);
+      const icon = btn.querySelector('i');
+      if (icon) {
+        if (s <= n) {
+          icon.className = 'fa-solid fa-star';
+          btn.classList.add('text-amber-400');
+          btn.classList.remove('text-gray-300');
+        } else {
+          icon.className = 'fa-regular fa-star';
+          btn.classList.remove('text-amber-400');
+          btn.classList.add('text-gray-300');
+        }
+      }
+    });
+  },
+
+  openTestimonialModal() {
+    this.setTestimonialRating(5);
+    const err = document.getElementById('testimonial-error');
+    if (err) err.classList.add('hidden');
+    this.setDialogOpen(['testimonial-modal'], true);
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeTestimonialModal() {
+    this.setDialogOpen(['testimonial-modal'], false);
+    if (!this.anyDialogOpen()) document.body.style.overflow = '';
+  },
+
+  async submitTestimonial() {
+    const nomeEl = document.getElementById('testimonial-name');
+    const cidadeEl = document.getElementById('testimonial-city');
+    const ratingEl = document.getElementById('testimonial-rating');
+    const prodEl = document.getElementById('testimonial-product');
+    const commEl = document.getElementById('testimonial-comment');
+    const btn = document.getElementById('testimonial-submit-btn');
+    const err = document.getElementById('testimonial-error');
+
+    const nome = nomeEl?.value?.trim() || '';
+    const cidade = cidadeEl?.value?.trim() || 'Cliente';
+    const estrelas = parseInt(ratingEl?.value, 10) || 5;
+    const produto_mencionado = prodEl?.value?.trim() || '';
+    const comentario = commEl?.value?.trim() || '';
+
+    if (!nome) {
+      if (err) { err.textContent = 'Por favor, informe seu nome.'; err.classList.remove('hidden'); }
+      nomeEl?.focus();
+      return;
+    }
+    if (!comentario) {
+      if (err) { err.textContent = 'Por favor, escreva seu comentário.'; err.classList.remove('hidden'); }
+      commEl?.focus();
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando...';
+    }
+
+    const newTestimonial = {
+      nome,
+      cidade,
+      estrelas,
+      produto_mencionado,
+      comentario,
+      aprovado: true,
+      data_criacao: new Date().toISOString()
+    };
+
+    try {
+      const { data, error } = await this.sb.from('testimonials').insert(newTestimonial).select().single();
+      if (error) throw error;
+      if (data) {
+        this.testimonials.unshift(data);
+      } else {
+        this.testimonials.unshift(newTestimonial);
+      }
+    } catch (e) {
+      console.warn('Erro ao salvar no banco, gravando localmente:', e);
+      this.testimonials.unshift(newTestimonial);
+    }
+
+    this.closeTestimonialModal();
+    this.showToast('Depoimento publicado com sucesso! Obrigado pelo carinho! ❤️', 'success');
+
+    if (nomeEl) nomeEl.value = '';
+    if (cidadeEl) cidadeEl.value = '';
+    if (prodEl) prodEl.value = '';
+    if (commEl) commEl.value = '';
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar depoimento';
+    }
+
+    const container = document.getElementById('testimonials-container');
+    if (container) {
+      container.innerHTML = this.renderTestimonialsCards();
+    }
   },
 
   async shareProduct(id) {
