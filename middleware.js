@@ -14,13 +14,19 @@ function esc(value) {
     .replace(/'/g, '&#39;');
 }
 
+function formatBRL(v) {
+  const n = Number(v || 0);
+  return 'R$ ' + n.toFixed(2).replace('.', ',');
+}
+
 export default async function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
   const url = new URL(request.url);
-  const productId = url.pathname.split('/').filter(Boolean).pop();
+  const rawId = url.pathname.split('/').filter(Boolean).pop() || '';
+  const productId = rawId.replace(/[^a-zA-Z0-9_-]/g, '');
 
-  // Se for um usuário humano (Brave, Chrome, Safari, etc.) que acessou /produto/:id diretamente,
-  // redireciona com 302 para a raiz com ?p=:id onde a SPA abre o modal instantaneamente sem 404
+  // Se for um usuário humano que acessou /produto/:id diretamente,
+  // redireciona com 302 para a raiz com ?p=:id onde a SPA abre o produto sem 404
   if (!BOT_UA.test(ua)) {
     if (productId && productId !== 'produto') {
       return Response.redirect(new URL(`/?p=${encodeURIComponent(productId)}`, request.url), 302);
@@ -35,7 +41,7 @@ export default async function middleware(request) {
   let product = null;
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(productId)}&select=nome,descricao,imagem,preco,marca,ativo`,
+      `${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(productId)}&ativo=eq.true&select=nome,descricao,imagem,preco,marca,ativo,destaque,promocao`,
       {
         headers: {
           apikey: SUPABASE_ANON_KEY,
@@ -51,11 +57,15 @@ export default async function middleware(request) {
     product = null;
   }
 
+  const priceNum = Number(product?.preco || 0);
+  const hasPromo = Boolean(product && priceNum > 0 && (product.destaque || product.promocao));
+  const origPrice = hasPromo ? (Math.ceil(priceNum / 0.8) - 0.10) : priceNum;
+
   const title = product?.nome
-    ? `${product.nome} | Vivi Carvalho Boty`
+    ? `${product.nome}${priceNum > 0 ? ` — ${hasPromo ? `De ${formatBRL(origPrice)} por ` : ''}${formatBRL(priceNum)}` : ''} | Vivi Carvalho Boty`
     : 'Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes';
   const desc = (product?.descricao || 'Perfumes, cosméticos e presentes originais com atendimento humanizado pelo WhatsApp.').slice(0, 160);
-  const image = product?.imagem || FALLBACK_IMAGE;
+  const image = (product?.imagem && /^https?:\/\//i.test(product.imagem)) ? product.imagem : FALLBACK_IMAGE;
   const canonical = `https://www.vivicarvalhoboty.com.br/?p=${encodeURIComponent(productId)}`;
 
   const html = `<!DOCTYPE html><html lang="pt-BR"><head>
@@ -67,7 +77,7 @@ export default async function middleware(request) {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(image)}">
 <meta property="og:url" content="${esc(canonical)}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="product">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
 <meta http-equiv="refresh" content="0;url=${esc(canonical)}">
