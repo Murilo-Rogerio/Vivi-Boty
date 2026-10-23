@@ -423,20 +423,20 @@ h1, h2, h3, h4, .font-serif {
         </a>
       </nav>
 
-      <div class="flex items-center gap-3">
-        <button type="button" onclick="A.showFavModal()" class="relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] flex items-center justify-center transition-all" aria-label="Favoritos">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" onclick="A.showFavModal()" class="hidden md:flex relative w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] bg-white text-[#241A1B] hover:text-[#C69A55] items-center justify-center transition-all" aria-label="Favoritos">
           <i class="fa-regular fa-heart text-base" aria-hidden="true"></i>
           <span id="fav-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-[#E8A7A1] text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
         </button>
 
-        <button type="button" id="cart-open-btn" onclick="A.toggleCart(true)" class="relative flex items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm" aria-label="Abrir sacola" aria-controls="cart-drawer">
+        <button type="button" id="cart-open-btn" onclick="A.toggleCart(true)" class="hidden md:flex relative items-center gap-2.5 px-4 h-10 rounded-full bg-[#241A1B] hover:bg-[#3D2C2E] text-white font-semibold text-xs tracking-wide transition-all shadow-sm" aria-label="Abrir sacola" aria-controls="cart-drawer">
           <i class="fa-solid fa-bag-shopping text-sm text-[#D4A864]" aria-hidden="true"></i>
           <span class="hidden sm:inline">Sacola</span>
           <span id="cart-counter" class="bg-[#C69A55] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
         </button>
 
-        <a href="#/admin" data-link class="w-10 h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel administrativo">
-          <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+        <a href="#/admin" data-link class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-[#F0E3DC] hover:border-[#241A1B] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-all" aria-label="Painel administrativo">
+          <i class="fa-solid fa-lock text-[11px] sm:text-xs" aria-hidden="true"></i>
         </a>
       </div>
     </div>
@@ -446,84 +446,105 @@ h1, h2, h3, h4, .font-serif {
 
   <div id="cart-overlay" class="drawer-overlay fixed inset-0 z-50" onclick="A.toggleCart(false)"></div>
   <aside id="cart-drawer" class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-50 shadow-2xl flex flex-col border-l border-[#F0E3DC]" role="dialog" aria-modal="true" aria-labelledby="cart-title">
-    <div class="p-6 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]">
+    <div class="px-5 py-3.5 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]/80 shrink-0">
       <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-full bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center">
+        <div class="w-8 h-8 rounded-full bg-[#FBF4E8] text-[#A97E3B] flex items-center justify-center text-xs">
           <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
         </div>
         <div>
-          <h3 id="cart-title" class="font-serif font-bold text-lg text-[#241A1B] leading-none">Minha Sacola</h3>
-          <span id="cart-drawer-count" class="text-xs text-[#826F70]">0 itens</span>
+          <h3 id="cart-title" class="font-serif font-bold text-base text-[#241A1B] leading-none">Minha Sacola</h3>
+          <span id="cart-drawer-count" class="text-[11px] text-[#826F70]">0 itens</span>
         </div>
       </div>
-      <button type="button" onclick="A.toggleCart(false)" class="w-9 h-9 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center" aria-label="Fechar sacola">
+      <button type="button" onclick="A.toggleCart(false)" class="w-8 h-8 rounded-full bg-white hover:bg-[#F0E3DC] text-[#826F70] flex items-center justify-center transition-colors" aria-label="Fechar sacola">
         <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
       </button>
     </div>
-            <!-- BENEFÍCIO: ENTREGA GRÁTIS EM TODA ASSIS/SP -->
-    <div id="cart-delivery-badge" class="px-5 py-2.5 bg-gradient-to-r from-emerald-50 via-[#F0FDF4] to-[#FAF4F0] border-b border-[#F0E3DC] flex items-center gap-3 text-xs">
-      <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#1D8A58] flex items-center justify-center shrink-0">
-        <i class="fa-solid fa-truck-fast text-xs" aria-hidden="true"></i>
-      </div>
-      <div class="min-w-0 flex-1">
-        <p class="font-bold text-[#1D8A58] leading-tight flex items-center gap-1.5">
-          <span>Entrega Grátis em toda Assis/SP</span>
-          <span class="text-[10px] px-1.5 py-0.5 bg-emerald-200/80 text-emerald-900 rounded font-semibold uppercase">Cortesia</span>
-        </p>
-        <p class="text-[11px] text-[#826F70] leading-tight mt-0.5">Sem valor mínimo • Levamos até você com todo carinho</p>
-      </div>
-    </div>
-    <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-    <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
-      <div class="space-y-2">
-        <label class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
-          <input type="checkbox" id="gift-checkbox" class="mt-0.5 rounded text-[#C69A55] focus:ring-[#C69A55]">
-          <span class="text-xs">
-            <span class="font-bold text-[#241A1B] flex items-center gap-1.5"><i class="fa-solid fa-gift text-[#C69A55]" aria-hidden="true"></i> É para presente?</span>
-            <span class="block text-[#826F70] mt-0.5">Avisamos a Vivi para caprichar na embalagem especial.</span>
-          </span>
-        </label>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <input type="text" id="client-name-input" placeholder="Seu nome (opcional)" class="lux-input text-xs py-2 px-3" maxlength="60">
-          <input type="text" id="client-bairro-input" placeholder="Bairro para entrega (opcional)" class="lux-input text-xs py-2 px-3" maxlength="60">
+
+    <!-- ÁREA ROLÁVEL COM OS PRODUTOS E AS OPÇÕES DE ENTREGA/PRESENTE -->
+    <div id="cart-scroll-area" class="flex-1 overflow-y-auto overscroll-contain">
+      <!-- BENEFÍCIO: ENTREGA GRÁTIS EM TODA ASSIS/SP -->
+      <div id="cart-delivery-badge" class="px-4 py-2 bg-gradient-to-r from-emerald-50 via-[#F0FDF4] to-[#FAF4F0] border-b border-[#F0E3DC] flex items-center gap-2.5 text-xs">
+        <div class="w-7 h-7 rounded-full bg-emerald-100 text-[#1D8A58] flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-truck-fast text-[11px]" aria-hidden="true"></i>
         </div>
-        <div class="space-y-1.5 pt-1">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-[#826F70]">Como prefere pagar?</span>
+        <div class="min-w-0 flex-1">
+          <p class="font-bold text-[#1D8A58] text-[11px] leading-tight flex items-center gap-1.5">
+            <span>Entrega Grátis em toda Assis/SP</span>
+            <span class="text-[9px] px-1.5 py-0.5 bg-emerald-200/80 text-emerald-900 rounded font-semibold uppercase">Cortesia</span>
+          </p>
+          <p class="text-[10px] text-[#826F70] leading-tight mt-0.5">Sem valor mínimo • Levamos até você com todo carinho</p>
+        </div>
+      </div>
+
+      <!-- Lista de Itens da Sacola -->
+      <div id="cart-items-container" class="p-4 sm:p-5 space-y-3"></div>
+
+      <!-- Dados de Entrega e Opções: rolam naturalmente sob os produtos sem cobri-los -->
+      <div id="cart-customization-section" class="px-4 sm:px-5 pb-5 pt-2 space-y-3 border-t border-[#F0E3DC]/70">
+        <!-- É para presente? -->
+        <label class="flex items-center justify-between p-3 rounded-xl bg-[#FAF6F3]/70 border border-[#F0E3DC] cursor-pointer hover:border-[#C69A55] transition-colors">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-7 h-7 rounded-lg bg-[#FCE7F3] text-[#9D174D] flex items-center justify-center shrink-0 text-xs">
+              <i class="fa-solid fa-gift" aria-hidden="true"></i>
+            </span>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-[#241A1B] block leading-tight">É para presente?</span>
+              <span class="text-[11px] text-[#826F70] block leading-tight mt-0.5">Avisamos a Vivi para caprichar na embalagem especial.</span>
+            </div>
+          </div>
+          <input type="checkbox" id="gift-checkbox" class="w-4 h-4 rounded text-[#C69A55] focus:ring-[#C69A55] border-[#DBC3B7] cursor-pointer">
+        </label>
+
+        <!-- Nome e Bairro para Entrega -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#826F70]">Dados para entrega (opcional)</span>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="client-name-input" placeholder="Seu nome" class="lux-input text-xs py-2 px-3 rounded-xl" maxlength="60">
+            <input type="text" id="client-bairro-input" placeholder="Seu bairro" class="lux-input text-xs py-2 px-3 rounded-xl" maxlength="60">
+          </div>
+        </div>
+
+        <!-- Forma de Pagamento -->
+        <div class="space-y-1.5 pt-0.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#826F70]">Como prefere pagar?</span>
           <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="A.selectPayment('Pix')" class="pay-chip active" data-method="Pix">
+            <button type="button" onclick="A.selectPayment('Pix')" class="pay-chip active py-1.5 px-2 text-xs rounded-xl" data-method="Pix">
               <i class="fa-solid fa-bolt text-xs text-amber-500 mr-1"></i> Pix
             </button>
-            <button type="button" onclick="A.selectPayment('Cartão de Crédito')" class="pay-chip" data-method="Cartão de Crédito">
+            <button type="button" onclick="A.selectPayment('Cartão de Crédito')" class="pay-chip py-1.5 px-2 text-xs rounded-xl" data-method="Cartão de Crédito">
               <i class="fa-solid fa-credit-card text-xs text-blue-500 mr-1"></i> Cartão
             </button>
-            <button type="button" onclick="A.selectPayment('A combinar')" class="pay-chip" data-method="A combinar">
+            <button type="button" onclick="A.selectPayment('A combinar')" class="pay-chip py-1.5 px-2 text-xs rounded-xl" data-method="A combinar">
               <i class="fa-solid fa-comments text-xs text-emerald-500 mr-1"></i> No chat
             </button>
           </div>
         </div>
       </div>
-      <div>
-        <div id="cart-savings-box" class="hidden mb-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-between text-xs">
-          <span class="font-semibold text-[#1D8A58] flex items-center gap-1.5">
-            <i class="fa-solid fa-tags" aria-hidden="true"></i> Economia nas ofertas:
-          </span>
-          <span id="cart-savings-value" class="font-bold text-[#1D8A58]">- R$ 0,00</span>
-        </div>
-        <div class="flex justify-between items-baseline mb-3">
-          <span class="text-sm font-semibold text-[#826F70]">Total com desconto:</span>
-          <div class="text-right">
-            <span id="cart-original-total" class="text-xs text-[#AA999A] price-strike mr-1.5 hidden">R$ 0,00</span>
-            <span id="cart-total-price" class="font-serif font-bold text-2xl text-[#1D8A58]">R$ 0,00</span>
-          </div>
-        </div>
-        <button type="button" id="checkout-btn" onclick="A.checkoutWhatsApp()" class="btn-whatsapp w-full py-3.5 text-base shadow-lg">
-          <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
-          <span>Finalizar pedido no WhatsApp</span>
-        </button>
-        <button type="button" onclick="A.clearCart()" class="w-full text-center text-xs font-semibold text-[#826F70] hover:text-[#E53E3E] mt-3 py-1">
-          Esvaziar sacola
-        </button>
+    </div>
+
+    <!-- RODAPÉ FIXO MINIMALISTA: TOTAL + BOTÃO WHATSAPP -->
+    <div id="cart-footer-container" class="p-3.5 sm:p-4 border-t border-[#F0E3DC] bg-[#FCF9F7] shrink-0 space-y-2">
+      <div id="cart-savings-box" class="hidden mb-1.5 p-2 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-between text-xs">
+        <span class="font-semibold text-[#1D8A58] flex items-center gap-1 text-[11px]">
+          <i class="fa-solid fa-tags" aria-hidden="true"></i> Economia nas ofertas:
+        </span>
+        <span id="cart-savings-value" class="font-bold text-[#1D8A58] text-xs">- R$ 0,00</span>
       </div>
+      <div class="flex justify-between items-baseline">
+        <span class="text-xs font-semibold text-[#826F70]">Total com desconto:</span>
+        <div class="text-right">
+          <span id="cart-original-total" class="text-xs text-[#AA999A] price-strike mr-1.5 hidden">R$ 0,00</span>
+          <span id="cart-total-price" class="font-serif font-bold text-xl text-[#1D8A58]">R$ 0,00</span>
+        </div>
+      </div>
+      <button type="button" id="checkout-btn" onclick="A.checkoutWhatsApp()" class="btn-whatsapp w-full py-2.5 text-sm font-semibold rounded-xl shadow-md">
+        <i class="fa-brands fa-whatsapp text-lg" aria-hidden="true"></i>
+        <span>Finalizar pedido no WhatsApp</span>
+      </button>
+      <button type="button" onclick="A.clearCart()" class="w-full text-center text-[11px] font-medium text-[#826F70] hover:text-[#E53E3E] transition-colors py-0.5">
+        Esvaziar sacola
+      </button>
     </div>
   </aside>
 
@@ -664,42 +685,47 @@ h1, h2, h3, h4, .font-serif {
   </div>
 
     <!-- BOTÃO FLUTUANTE VOLTAR AO TOPO -->
-  <button id="back-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo da página" class="fixed bottom-24 md:bottom-8 left-5 z-40 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-lg text-[#A97E3B] hover:text-[#C69A55] hover:border-[#DBC3B7] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center opacity-0 pointer-events-none translate-y-4">
-    <i class="fa-solid fa-arrow-up text-sm" aria-hidden="true"></i>
+  <button id="back-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo da página" class="fixed bottom-16 md:bottom-8 left-4 z-40 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-md text-[#A97E3B] hover:text-[#C69A55] hover:border-[#DBC3B7] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center opacity-0 pointer-events-none translate-y-4">
+    <i class="fa-solid fa-arrow-up text-xs" aria-hidden="true"></i>
   </button>
 
-<div id="wa-widget-container" class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
-    <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[220px]">
+  <div id="wa-widget-container" class="fixed bottom-16 md:bottom-8 right-4 md:right-6 z-40 flex flex-col items-end gap-2">
+    <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-3.5 py-2 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[210px]">
       <span>👋 Dúvidas sobre presentes ou fragrâncias? Fale comigo!</span>
       <button type="button" onclick="A.closeWhatsAppTooltip(event)" class="text-[#AA999A] hover:text-[#241A1B] ml-1 text-sm font-bold" aria-label="Fechar aviso">×</button>
-      <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-b border-r border-[#F0E3DC] rotate-45"></div>
+      <div class="absolute -bottom-1.5 right-5 w-3 h-3 bg-white border-b border-r border-[#F0E3DC] rotate-45"></div>
     </div>
     <a id="wa-floating" href="https://wa.me/5518997871211?text=Ol%C3%A1%2C%20Vivi!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado."
        onclick="A.trackEvent('wa', 'floating', 'Atendimento WhatsApp')"
        target="_blank" rel="noopener noreferrer"
-       class="bg-[#25D366] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2.5 shadow-xl wa-glow hover:scale-105 transition-transform no-underline"
+       class="bg-[#25D366] text-white w-11 h-11 sm:w-auto sm:h-auto sm:px-5 sm:py-3.5 rounded-full flex items-center justify-center sm:justify-start gap-2.5 shadow-md wa-glow hover:scale-105 transition-transform no-underline"
        aria-label="Falar com a Vivi no WhatsApp">
-      <i class="fa-brands fa-whatsapp text-2xl" aria-hidden="true"></i>
+      <i class="fa-brands fa-whatsapp text-xl sm:text-2xl" aria-hidden="true"></i>
       <span class="hidden sm:inline font-bold text-sm tracking-wide">Falar com a Vivi</span>
     </a>
   </div>
 
   <div id="toast-container" class="fixed top-24 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
-  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0E3DC] md:hidden px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex justify-around items-center" aria-label="Navegação móvel">
-    <a href="#/" data-link class="nav-link flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-house text-lg" aria-hidden="true"></i> Início
+  <!-- NAVEGAÇÃO INFERIOR MÓVEL MINIMALISTA E COMPACTA -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/92 backdrop-blur-lg border-t border-[#F0E3DC]/80 md:hidden px-3 py-1.5 pb-[max(0.35rem,env(safe-area-inset-bottom))] flex justify-around items-center shadow-[0_-2px_12px_rgba(36,26,27,0.04)]" aria-label="Navegação móvel">
+    <a href="#/" data-link class="nav-link flex flex-col items-center py-1 px-3 text-[10px] font-medium text-[#826F70] hover:text-[#A97E3B] transition-colors">
+      <i class="fa-solid fa-house text-sm" aria-hidden="true"></i>
+      <span class="mt-0.5 leading-none">Início</span>
     </a>
-    <a href="#/produtos" data-link class="nav-link flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-magnifying-glass text-lg" aria-hidden="true"></i> Catálogo
+    <a href="#/produtos" data-link class="nav-link flex flex-col items-center py-1 px-3 text-[10px] font-medium text-[#826F70] hover:text-[#A97E3B] transition-colors">
+      <i class="fa-solid fa-magnifying-glass text-sm" aria-hidden="true"></i>
+      <span class="mt-0.5 leading-none">Catálogo</span>
     </a>
-    <button type="button" onclick="A.showFavModal()" class="relative flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-regular fa-heart text-lg" aria-hidden="true"></i> Desejos
-      <span id="mobile-fav-badge" class="absolute -top-1 right-2 w-4 h-4 bg-[#E8A7A1] text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+    <button type="button" onclick="A.showFavModal()" class="relative flex flex-col items-center py-1 px-3 text-[10px] font-medium text-[#826F70] hover:text-[#A97E3B] transition-colors" aria-label="Ver desejos">
+      <i class="fa-regular fa-heart text-sm" aria-hidden="true"></i>
+      <span class="mt-0.5 leading-none">Desejos</span>
+      <span id="mobile-fav-badge" class="absolute top-0 right-2 min-w-[14px] h-[14px] px-1 bg-[#E8A7A1] text-white text-[8px] font-bold rounded-full flex items-center justify-center hidden leading-none">0</span>
     </button>
-    <button type="button" onclick="A.toggleCart(true)" class="relative flex flex-col items-center gap-1 text-[11px] font-semibold text-[#826F70] hover:text-[#C69A55]">
-      <i class="fa-solid fa-bag-shopping text-lg text-[#C69A55]" aria-hidden="true"></i> Sacola
-      <span id="mobile-cart-badge" class="absolute -top-1 right-2 w-4 h-4 bg-[#C69A55] text-white text-[9px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+    <button type="button" id="mobile-cart-btn" onclick="A.toggleCart(true)" class="relative flex flex-col items-center py-1 px-3 text-[10px] font-medium text-[#826F70] hover:text-[#A97E3B] transition-colors" aria-label="Abrir sacola">
+      <i class="fa-solid fa-bag-shopping text-sm text-[#A97E3B]" aria-hidden="true"></i>
+      <span class="mt-0.5 leading-none font-semibold text-[#241A1B]">Sacola</span>
+      <span id="mobile-cart-badge" class="absolute top-0 right-2 min-w-[14px] h-[14px] px-1 bg-[#C69A55] text-white text-[8px] font-bold rounded-full flex items-center justify-center hidden leading-none shadow-xs">0</span>
     </button>
   </nav>
 
@@ -1985,6 +2011,8 @@ const A = {
     this.showToast(addQ > 1 ? `${addQ} unidades adicionadas à sacola` : 'Produto adicionado à sacola', 'success');
     const btn = document.getElementById('cart-open-btn');
     if (btn) { btn.classList.remove('bag-pulse'); void btn.offsetWidth; btn.classList.add('bag-pulse'); }
+    const mBtn = document.getElementById('mobile-cart-btn');
+    if (mBtn) { mBtn.classList.remove('bag-pulse'); void mBtn.offsetWidth; mBtn.classList.add('bag-pulse'); }
   },
 
   updateCartQty(id, qty) {
@@ -2053,15 +2081,19 @@ const A = {
     this.updateCartUI();
     // Badge de Cortesia de Entrega Grátis em Assis/SP
     const delivBadge = document.getElementById('cart-delivery-badge');
-    if (delivBadge) {
-      delivBadge.classList.toggle('hidden', this.cart.length === 0);
-    }
+    const hasItems = this.cart.length > 0;
+    const customSection = document.getElementById('cart-customization-section');
+    const footerContainer = document.getElementById('cart-footer-container');
+    if (delivBadge) delivBadge.classList.toggle('hidden', !hasItems);
+    if (customSection) customSection.classList.toggle('hidden', !hasItems);
+    if (footerContainer) footerContainer.classList.toggle('hidden', !hasItems);
 
-    if (!this.cart.length) {
-      container.innerHTML = `<div class="text-center py-20 text-[#AA999A]">
-        <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-bag-shopping"></i></div>
-        <p class="font-serif font-bold text-lg text-[#241A1B]">Sua sacola está vazia</p>
-        <p class="text-xs text-[#826F70] mt-1">Escolha seus produtos preferidos no catálogo.</p>
+    if (!hasItems) {
+      container.innerHTML = `<div class="text-center py-16 px-4 text-[#AA999A]">
+        <div class="w-14 h-14 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-bag-shopping"></i></div>
+        <p class="font-serif font-bold text-base text-[#241A1B]">Sua sacola está vazia</p>
+        <p class="text-xs text-[#826F70] mt-1 mb-4">Escolha seus produtos preferidos no catálogo.</p>
+        <button type="button" onclick="A.toggleCart(false);A.navigate('/produtos')" class="btn-gold py-2 px-5 text-xs">Explorar catálogo</button>
       </div>`;
       return;
     }
