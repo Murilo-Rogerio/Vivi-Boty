@@ -426,14 +426,19 @@ h1, h2, h3, h4, .font-serif {
         <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
       </button>
     </div>
-        <!-- BARRA DE PROGRESSO DE FRETE GRÁTIS / MIMO ESPECIAL (ASSIS/SP) -->
-    <div id="cart-free-shipping-banner" class="px-6 py-3 bg-[#FAF4F0] border-b border-[#F0E3DC] text-xs">
-      <div id="cart-free-shipping-text" class="flex items-center justify-between mb-1.5 font-semibold text-[#826F70]">
-        <span>Carregando benefícios...</span>
+            <!-- BENEFÍCIO: ENTREGA GRÁTIS EM TODA ASSIS/SP -->
+    <div id="cart-delivery-badge" class="px-5 py-2.5 bg-gradient-to-r from-emerald-50 via-[#F0FDF4] to-[#FAF4F0] border-b border-[#F0E3DC] flex items-center gap-3 text-xs">
+      <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#1D8A58] flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-truck-fast text-xs" aria-hidden="true"></i>
       </div>
-      <div class="w-full h-2 bg-[#EFE3DB] rounded-full overflow-hidden">
-        <div id="cart-free-shipping-bar" class="h-full bg-gradient-to-r from-[#C69A55] to-[#1D8A58] rounded-full transition-all duration-500" style="width: 0%;"></div>
+      <div class="min-w-0 flex-1">
+        <p class="font-bold text-[#1D8A58] leading-tight flex items-center gap-1.5">
+          <span>Entrega Grátis em toda Assis/SP</span>
+          <span class="text-[10px] px-1.5 py-0.5 bg-emerald-200/80 text-emerald-900 rounded font-semibold uppercase">Cortesia</span>
+        </p>
+        <p class="text-[11px] text-[#826F70] leading-tight mt-0.5">Sem valor mínimo • Levamos até você com todo carinho</p>
       </div>
+    </div>
     </div>
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
     <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
@@ -1707,29 +1712,10 @@ const A = {
     totalEl.textContent = this.formatMoney(total);
     if (checkout) checkout.disabled = this.cart.length === 0;
     this.updateCartUI();
-
-    // Atualizar Barra de Progresso de Frete Grátis / Mimo (Assis/SP)
-    const fsBanner = document.getElementById('cart-free-shipping-banner');
-    const fsText = document.getElementById('cart-free-shipping-text');
-    const fsBar = document.getElementById('cart-free-shipping-bar');
-    if (fsBanner && fsText && fsBar) {
-      if (!this.cart.length) {
-        fsBanner.classList.add('hidden');
-      } else {
-        fsBanner.classList.remove('hidden');
-        const threshold = 150.0;
-        if (total >= threshold) {
-          fsText.innerHTML = `<span class="text-[#1D8A58] font-bold flex items-center gap-1.5"><i class="fa-solid fa-gift"></i> Parabéns! Você garantiu Entrega Grátis em Assis/SP! 🎉</span>`;
-          fsBar.style.width = '100%';
-          fsBar.className = 'h-full bg-[#1D8A58] rounded-full transition-all duration-500';
-        } else {
-          const diff = threshold - total;
-          const pct = Math.min(100, Math.round((total / threshold) * 100));
-          fsText.innerHTML = `<span>Faltam <strong>${this.formatMoney(diff)}</strong> para <strong>Entrega Grátis</strong> em Assis! 🎁</span><span class="text-[#A97E3B] font-bold">${pct}%</span>`;
-          fsBar.style.width = `${pct}%`;
-          fsBar.className = 'h-full bg-gradient-to-r from-[#C69A55] to-[#A97E3B] rounded-full transition-all duration-500';
-        }
-      }
+    // Badge de Cortesia de Entrega Grátis em Assis/SP
+    const delivBadge = document.getElementById('cart-delivery-badge');
+    if (delivBadge) {
+      delivBadge.classList.toggle('hidden', this.cart.length === 0);
     }
 
     if (!this.cart.length) {
