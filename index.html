@@ -1743,17 +1743,16 @@ const A = {
     const isFav = this.favs.includes(id);
     const inBag = this.cart.some(item => String(item.id) === id);
     const pr = this.getPricing(p, forcePromo);
-    const badges = [];
+    
+    // Apenas UM badge discreto no canto superior da foto para nunca tampar o produto
+    let photoBadge = '';
     if (pr.hasDiscount) {
-      badges.push(`<span class="badge-tag badge-promo"><i class="fa-solid fa-fire text-[9px]" aria-hidden="true"></i> -${pr.discountPct}% OFF</span>`);
+      photoBadge = `<span class="badge-tag badge-promo text-[10px] font-bold px-2 py-0.5 shadow-sm"><i class="fa-solid fa-fire text-[8px]" aria-hidden="true"></i> -${pr.discountPct}%</span>`;
     } else if (p.promocao) {
-      badges.push('<span class="badge-tag badge-promo"><i class="fa-solid fa-fire text-[9px]" aria-hidden="true"></i> Promoção</span>');
+      photoBadge = '<span class="badge-tag badge-promo text-[10px] font-bold px-2 py-0.5 shadow-sm">Oferta</span>';
+    } else if (p.destaque) {
+      photoBadge = '<span class="badge-tag badge-star text-[10px] font-bold px-2 py-0.5 shadow-sm"><i class="fa-solid fa-sparkles text-[8px]" aria-hidden="true"></i> Destaque</span>';
     }
-    if (p.destaque) badges.push('<span class="badge-tag badge-star"><i class="fa-solid fa-sparkles text-[9px]" aria-hidden="true"></i> Destaque</span>');
-    if (p.pronta_entrega) badges.push('<span class="badge-tag badge-ready"><i class="fa-solid fa-check text-[9px]" aria-hidden="true"></i> Pronta entrega</span>');
-    if (p.genero === 'Feminino') badges.push('<span class="badge-tag badge-fem">Fem</span>');
-    if (p.genero === 'Masculino') badges.push('<span class="badge-tag badge-masc">Masc</span>');
-    if (p.genero === 'Unissex') badges.push('<span class="badge-tag badge-uni">Uni</span>');
     const safeImg = this.safeUrl(p.imagem);
     const lowStock = p.estoque > 0 && p.estoque <= 3;
 
@@ -1763,9 +1762,8 @@ const A = {
           ${safeImg
             ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Crect%20fill%3D%22%23FAF4F0%22%20width%3D%22400%22%20height%3D%22400%22%2F%3E%3Cpath%20d%3D%22M200%20140c-16.5%200-30%2013.5-30%2030v10h-10c-11%200-20%209-20%2020v60c0%2011%209%2020%2020%2020h80c11%200%2020-9%2020-20v-60c0-11-9-20-20-20h-10v-10c0-16.5-13.5-30-30-30zm-15%2030c0-8.3%206.7-15%2015-15s15%206.7%2015%2015v10h-30v-10zm-15%2030h60c5.5%200%2010%204.5%2010%2010v60c0%205.5-4.5%2010-10%2010h-60c-5.5%200-10-4.5-10-10v-60c0-5.5%204.5-10%2010-10z%22%20fill%3D%22%23C69A55%22%20opacity%3D%220.5%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22310%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%23AA999A%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3EVivi%20Boty%3C%2Ftext%3E%3C%2Fsvg%3E';">`
             : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
-          <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">${badges.join('')}</div>
-          ${lowStock ? `<div class="absolute bottom-2.5 left-2.5 sm:group-hover:opacity-0 transition-opacity pointer-events-none"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#241A1B]/85 text-[#FBF4E8] backdrop-blur-sm flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-400 text-[9px]"></i> Últimas ${p.estoque} un.</span></div>` : ''}
-          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+          ${photoBadge ? `<div class="absolute top-2 left-2 pointer-events-none z-10">${photoBadge}</div>` : ''}
+          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
             <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs" aria-hidden="true"></i>
           </button>
           <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1774,12 +1772,18 @@ const A = {
             </button>
           </div>
         </div>
-        <div class="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
+        <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
           <div>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A]">${this.escape(p.marca || 'Boutique')}</span>
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A] truncate">
+                ${this.escape(p.marca || 'Boutique')}${p.genero ? ` • ${this.escape(p.genero)}` : ''}
+              </span>
+              ${p.pronta_entrega ? '<span class="text-[9px] font-semibold text-[#1D8A58] flex items-center gap-1 shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-[#1D8A58]"></span> Pronta entrega</span>' : ''}
+            </div>
             <h3 class="font-semibold text-xs sm:text-sm mt-0.5 leading-snug">
               <a href="#/produto/${id}" data-link class="hover:text-[#A97E3B] line-clamp-2 transition-colors">${this.escape(p.nome)}</a>
             </h3>
+            ${lowStock ? `<p class="text-[10px] font-bold text-amber-700 flex items-center gap-1 mt-1 leading-none"><i class="fa-solid fa-bolt text-amber-500 text-[8px]"></i> Restam apenas ${p.estoque} un.</p>` : ''}
           </div>
           <div class="mt-3 pt-3 border-t border-[#F0E3DC] flex items-end justify-between gap-2">
             <div class="min-w-0">
