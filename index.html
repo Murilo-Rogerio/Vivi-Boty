@@ -327,8 +327,8 @@ h1, h2, h3, h4, .font-serif {
 @keyframes fadeToastOut { to { transform: translateY(-10px); opacity: 0; } }
 
 .tog { position: relative; width: 44px; height: 24px; cursor: pointer; display: inline-block; flex-shrink: 0; }
-.tog input { opacity: 0; width: 0; height: 0; position: absolute; }
-.tog-slider { position: absolute; inset: 0; background: #D6C7C0; border-radius: 24px; transition: 0.3s; }
+.tog input { opacity: 0; width: 100%; height: 100%; position: absolute; inset: 0; margin: 0; cursor: pointer; z-index: 2; }
+.tog-slider { position: absolute; inset: 0; background: #D6C7C0; border-radius: 24px; transition: 0.3s; pointer-events: none; }
 .tog-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #FFF; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
 .tog input:checked + .tog-slider { background: var(--accent-gold); }
 .tog input:checked + .tog-slider::before { transform: translateX(20px); }
@@ -1798,6 +1798,12 @@ const A = {
     const estoque = parseInt(stockInput.value, 10) || 0;
     const ativo = activeInput ? activeInput.checked : false;
 
+    if (ativo && preco <= 0) {
+      this.showToast('Para ativar na loja, informe um preço maior que R$ 0.', 'error');
+      priceInput.focus();
+      return;
+    }
+
     try {
       const { error } = await this.sb.from('products').update({
         preco,
@@ -2370,19 +2376,25 @@ const A = {
               <select id="form-gen" class="lux-input text-xs bg-white"><option value="">Nenhum</option>${GENEROS.map(g => `<option value="${g}" ${p.genero === g ? 'selected' : ''}>${g}</option>`).join('')}</select>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold uppercase mb-1" for="form-price">Preço (R$) *</label>
-              <input type="number" step="0.01" min="0.01" id="form-price" required value="${p.preco}" class="lux-input text-sm">
+              <label class="block text-xs font-bold uppercase mb-1 flex items-center justify-between" for="form-price">
+                <span>Preço (R$)</span>
+                <span class="text-[10px] font-normal text-[#826F70] lowercase">(obrigatório se ativo na loja)</span>
+              </label>
+              <input type="number" step="0.01" min="0" id="form-price" value="${p.preco !== undefined && p.preco !== null ? p.preco : 0}" class="lux-input text-sm" placeholder="0.00">
             </div>
             <div>
-              <label class="block text-xs font-bold uppercase mb-1" for="form-stock">Estoque</label>
-              <input type="number" min="0" id="form-stock" value="${p.estoque}" class="lux-input text-sm">
+              <label class="block text-xs font-bold uppercase mb-1 flex items-center justify-between" for="form-stock">
+                <span>Estoque</span>
+                <span class="text-[10px] font-normal text-[#826F70] lowercase">0 = sob encomenda / esgotado</span>
+              </label>
+              <input type="number" min="0" id="form-stock" value="${p.estoque !== undefined && p.estoque !== null ? p.estoque : 0}" class="lux-input text-sm" placeholder="0">
             </div>
           </div>
           <div>
             <label class="block text-xs font-bold uppercase mb-1" for="form-desc">Descrição</label>
-            <textarea id="form-desc" rows="3" class="lux-input text-sm" maxlength="2000">${this.escape(p.descricao || '')}</textarea>
+            <textarea id="form-desc" rows="3" class="lux-input text-sm" maxlength="2000" placeholder="Descrição do produto, notas olfativas, modo de uso...">${this.escape(p.descricao || '')}</textarea>
           </div>
           <div>
             <label class="block text-xs font-bold uppercase mb-1" for="form-file">Imagem (JPG, PNG ou WEBP, até 5 MB)</label>
@@ -2393,12 +2405,23 @@ const A = {
               <input type="file" id="form-file" accept="image/jpeg,image/png,image/webp,image/gif">
             </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#F0E3DC]">
-            ${[['form-active','Produto visível na loja', p.ativo],['form-feat','Destaque na home', p.destaque],['form-promo','Em promoção', p.promocao],['form-ready','Pronta entrega', p.pronta_entrega]].map(([fid,label,on]) => `
-              <div class="flex items-center justify-between p-3 rounded-xl bg-[#FAF4F0]/60">
-                <span class="text-xs font-semibold">${label}</span>
-                <span class="tog"><input type="checkbox" id="${fid}" ${on ? 'checked' : ''}><span class="tog-slider"></span></span>
-              </div>`).join('')}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#F0E3DC]">
+            ${[
+              ['form-active','Produto visível na loja', p.ativo, 'Aparece no catálogo para os clientes'],
+              ['form-feat','Destaque na página inicial', p.destaque, 'Exibe na seção de produtos em destaque'],
+              ['form-promo','Em promoção / Oferta', p.promocao, 'Adiciona selo promocional e destaque'],
+              ['form-ready','Pronta entrega', p.pronta_entrega, 'Indica envio ou retirada imediata']
+            ].map(([fid,label,on,hint]) => `
+              <label for="${fid}" class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF4F0]/80 hover:bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer transition-all select-none group">
+                <div class="pr-3">
+                  <span class="text-xs font-bold text-[#241A1B] group-hover:text-[#A97E3B] transition-colors block">${label}</span>
+                  <span class="text-[10px] text-[#826F70] block leading-tight mt-0.5">${hint}</span>
+                </div>
+                <div class="tog">
+                  <input type="checkbox" id="${fid}" ${on ? 'checked' : ''}>
+                  <span class="tog-slider"></span>
+                </div>
+              </label>`).join('')}
           </div>
           <div id="form-error" class="text-xs text-[#E53E3E] hidden" role="alert"></div>
           <div class="pt-2 flex flex-col sm:flex-row gap-3">
@@ -2430,8 +2453,23 @@ const A = {
     const btn = document.getElementById('save-btn');
     const nome = document.getElementById('form-name').value.trim();
     const preco = parseFloat(document.getElementById('form-price').value) || 0;
-    if (!nome) { err.textContent = 'O nome é obrigatório.'; err.classList.remove('hidden'); return; }
-    if (preco <= 0) { err.textContent = 'Informe um preço válido.'; err.classList.remove('hidden'); return; }
+    const ativo = document.getElementById('form-active').checked;
+
+    if (!nome) {
+      err.textContent = 'O nome do produto é obrigatório.';
+      err.classList.remove('hidden');
+      return;
+    }
+    if (preco < 0) {
+      err.textContent = 'O preço não pode ser negativo.';
+      err.classList.remove('hidden');
+      return;
+    }
+    if (ativo && preco <= 0) {
+      err.textContent = 'Para deixar o produto visível na loja (ativo), informe um preço maior que zero.';
+      err.classList.remove('hidden');
+      return;
+    }
     err.classList.add('hidden');
     btn.disabled = true;
     btn.textContent = 'Salvando…';
@@ -2444,7 +2482,7 @@ const A = {
       preco,
       descricao: document.getElementById('form-desc').value.trim(),
       estoque: parseInt(document.getElementById('form-stock').value, 10) || 0,
-      ativo: document.getElementById('form-active').checked,
+      ativo,
       destaque: document.getElementById('form-feat').checked,
       promocao: document.getElementById('form-promo').checked,
       pronta_entrega: document.getElementById('form-ready').checked,
@@ -2458,7 +2496,7 @@ const A = {
         err.textContent = 'Imagem inválida. Use JPG, PNG ou WEBP de até 5 MB.';
         err.classList.remove('hidden');
         btn.disabled = false;
-        btn.textContent = 'Salvar';
+        btn.textContent = id ? 'Salvar alterações' : 'Cadastrar produto';
         return;
       }
       try {
@@ -2468,10 +2506,10 @@ const A = {
         if (uploadError) throw uploadError;
         data.imagem = this.sb.storage.from('products').getPublicUrl(path).data.publicUrl;
       } catch (e) {
-        err.textContent = 'Erro no upload: ' + e.message;
+        err.textContent = 'Erro no upload da imagem: ' + e.message;
         err.classList.remove('hidden');
         btn.disabled = false;
-        btn.textContent = 'Salvar';
+        btn.textContent = id ? 'Salvar alterações' : 'Cadastrar produto';
         return;
       }
     }
@@ -2480,28 +2518,41 @@ const A = {
       if (id) {
         const { error } = await this.sb.from('products').update(data).eq('id', id);
         if (error) throw error;
-        this.showToast('Produto atualizado', 'success');
+        if (this.pmap[id]) {
+          Object.assign(this.pmap[id], data);
+        }
+        this.showToast('Produto atualizado com sucesso!', 'success');
       } else {
-        const { error } = await this.sb.from('products').insert(data);
+        const { data: newProd, error } = await this.sb.from('products').insert(data).select().single();
         if (error) throw error;
-        this.showToast('Produto cadastrado', 'success');
+        if (newProd) {
+          this.prods.unshift(newProd);
+          this.pmap[newProd.id] = newProd;
+        }
+        this.showToast('Produto cadastrado com sucesso!', 'success');
       }
       this.lastFetch = 0;
       this.prodsLoaded = false;
       this.navigate('/admin/produtos');
     } catch (e) {
-      err.textContent = 'Erro ao salvar: ' + e.message;
+      err.textContent = 'Erro ao salvar: ' + (e.message || 'tente novamente');
       err.classList.remove('hidden');
       btn.disabled = false;
-      btn.textContent = 'Salvar';
+      btn.textContent = id ? 'Salvar alterações' : 'Cadastrar produto';
     }
   },
 
   async toggleProductActive(id, ativo) {
+    const p = this.pmap[id];
+    if (ativo && p && (!p.preco || p.preco <= 0)) {
+      this.showToast('Defina um preço maior que R$ 0 antes de ativar na loja.', 'error');
+      this.adminState.quickEditId = id;
+      this.viewAdminProducts();
+      return;
+    }
     try {
-      const { error } = await this.sb.from('products').update({ ativo }).eq('id', id);
+      const { error } = await this.sb.from('products').update({ ativo, data_atualizacao: new Date().toISOString() }).eq('id', id);
       if (error) throw error;
-      const p = this.pmap[id];
       if (p) p.ativo = ativo;
       this.showToast(ativo ? 'Produto visível na loja' : 'Produto pausado', 'success');
       this.viewAdminProducts();
