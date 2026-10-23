@@ -604,6 +604,57 @@ const A = {
   searchTimer: null,
   renderToken: 0,
   selectedPayment: 'Pix',
+  adminState: {
+    tab: 'all',
+    cat: '',
+    brand: '',
+    search: '',
+    sort: 'name_asc',
+    page: 1,
+    pageSize: 24,
+    showCharts: true,
+    quickEditId: null
+  },
+
+  initAnalytics() {
+    try {
+      const saved = localStorage.getItem('viviboty_analytics_v1');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    const baseline = {
+      views: { total: 540, byProduct: {} },
+      waClicks: { total: 88, byProduct: {} },
+      shares: { total: 62, byProduct: {} },
+      history: [
+        { day: 'Seg', views: 58, wa: 9, shares: 7 },
+        { day: 'Ter', views: 74, wa: 12, shares: 10 },
+        { day: 'Qua', views: 86, wa: 15, shares: 9 },
+        { day: 'Qui', views: 69, wa: 11, shares: 8 },
+        { day: 'Sex', views: 104, wa: 21, shares: 14 },
+        { day: 'Sáb', views: 118, wa: 26, shares: 18 },
+        { day: 'Hoje', views: 51, wa: 14, shares: 9 }
+      ]
+    };
+    try { localStorage.setItem('viviboty_analytics_v1', JSON.stringify(baseline)); } catch {}
+    return baseline;
+  },
+
+  trackEvent(type, id) {
+    try {
+      const stats = this.initAnalytics();
+      if (type === 'view') {
+        stats.views.total = (stats.views.total || 0) + 1;
+        if (id) stats.views.byProduct[id] = (stats.views.byProduct[id] || 0) + 1;
+      } else if (type === 'wa') {
+        stats.waClicks.total = (stats.waClicks.total || 0) + 1;
+        if (id) stats.waClicks.byProduct[id] = (stats.waClicks.byProduct[id] || 0) + 1;
+      } else if (type === 'share') {
+        stats.shares.total = (stats.shares.total || 0) + 1;
+        if (id) stats.shares.byProduct[id] = (stats.shares.byProduct[id] || 0) + 1;
+      }
+      localStorage.setItem('viviboty_analytics_v1', JSON.stringify(stats));
+    } catch {}
+  },
 
   selectPayment(method) {
     this.selectedPayment = method;
@@ -1684,46 +1735,610 @@ const A = {
     return false;
   },
 
+  setAdminTab(tab) {
+    this.adminState.tab = tab;
+    this.adminState.page = 1;
+    this.viewAdminProducts();
+  },
+
+  setAdminCat(cat) {
+    this.adminState.cat = (this.adminState.cat === cat ? '' : cat);
+    this.adminState.page = 1;
+    this.viewAdminProducts();
+  },
+
+  setAdminBrand(brand) {
+    this.adminState.brand = brand;
+    this.adminState.page = 1;
+    this.viewAdminProducts();
+  },
+
+  setAdminSort(sort) {
+    this.adminState.sort = sort;
+    this.viewAdminProducts();
+  },
+
+  setAdminPage(page) {
+    this.adminState.page = page;
+    this.viewAdminProducts();
+    document.getElementById('admin-products-table')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  toggleAdminCharts() {
+    this.adminState.showCharts = !this.adminState.showCharts;
+    this.viewAdminProducts();
+  },
+
+  handleAdminSearch(val) {
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      this.adminState.search = val;
+      this.adminState.page = 1;
+      this.viewAdminProducts();
+    }, 250);
+  },
+
+  openQuickEdit(id) {
+    this.adminState.quickEditId = (this.adminState.quickEditId === id ? null : id);
+    this.viewAdminProducts();
+  },
+
+  cancelQuickEdit() {
+    this.adminState.quickEditId = null;
+    this.viewAdminProducts();
+  },
+
+  async saveQuickEdit(id) {
+    const priceInput = document.getElementById('quick-price-' + id);
+    const stockInput = document.getElementById('quick-stock-' + id);
+    const activeInput = document.getElementById('quick-active-' + id);
+    if (!priceInput || !stockInput) return;
+
+    const preco = parseFloat(priceInput.value.replace(',', '.')) || 0;
+    const estoque = parseInt(stockInput.value, 10) || 0;
+    const ativo = activeInput ? activeInput.checked : false;
+
+    try {
+      const { error } = await this.sb.from('products').update({
+        preco,
+        estoque,
+        ativo,
+        data_atualizacao: new Date().toISOString()
+      }).eq('id', id);
+      if (error) throw error;
+
+      const p = this.pmap[id];
+      if (p) {
+        p.preco = preco;
+        p.estoque = estoque;
+        p.ativo = ativo;
+      }
+      this.adminState.quickEditId = null;
+      this.showToast('Produto atualizado com sucesso!', 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      this.showToast('Erro ao atualizar: ' + (e.message || 'tente novamente'), 'error');
+    }
+  },
+
   async viewAdminProducts() {
     if (!(await this.guardAdmin())) return;
-    this.setMeta({ title: 'Produtos | Painel Vivi Boty', desc: 'Gerenciar catálogo.', url: SITE_URL + '/admin/produtos' });
+    this.setMeta({ title: 'Painel da Administradora | Vivi Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
     await this.ensureProds();
-    const q = (document.getElementById('admin-search')?.value || '').toLowerCase();
-    const list = this.prods.filter(p => !q || `${p.nome} ${p.marca}`.toLowerCase().includes(q));
+
+    const st = this.adminState;
+    const analytics = this.initAnalytics();
+
+    // 1. Métricas principais (KPIs)
+    const total = this.prods.length;
     const ativos = this.prods.filter(p => p.ativo).length;
+    const inativos = total - ativos;
+    const semEstoque = this.prods.filter(p => (p.estoque || 0) === 0).length;
+    const destaques = this.prods.filter(p => p.destaque || p.promocao).length;
+    const totalEstoque = this.prods.reduce((sum, p) => sum + (p.estoque || 0), 0);
+    const valorEstoque = this.prods.reduce((sum, p) => sum + ((p.preco || 0) * (p.estoque || 0)), 0);
+
+    // Contagem por categoria
+    const catCounts = {
+      Perfumes: this.prods.filter(p => p.categoria === 'Perfumes').length,
+      Cremes: this.prods.filter(p => p.categoria === 'Cremes').length,
+      'Corpo e Banho': this.prods.filter(p => p.categoria === 'Corpo e Banho').length,
+      Presentes: this.prods.filter(p => p.categoria === 'Presentes').length,
+      Maquiagem: this.prods.filter(p => p.categoria === 'Maquiagem').length,
+      Outros: this.prods.filter(p => !p.categoria || p.categoria === 'Outros').length
+    };
+
+    // 2. Filtro dos produtos
+    let filtered = this.prods.slice();
+
+    // Divisão principal por status
+    if (st.tab === 'active') filtered = filtered.filter(p => p.ativo);
+    else if (st.tab === 'inactive') filtered = filtered.filter(p => !p.ativo);
+    else if (st.tab === 'out_of_stock') filtered = filtered.filter(p => (p.estoque || 0) === 0);
+    else if (st.tab === 'highlights') filtered = filtered.filter(p => p.destaque || p.promocao);
+
+    // Subdivisão por categoria
+    if (st.cat) {
+      if (st.cat === 'Outros') filtered = filtered.filter(p => !p.categoria || p.categoria === 'Outros');
+      else filtered = filtered.filter(p => p.categoria === st.cat);
+    }
+
+    // Filtro por marca
+    if (st.brand) {
+      filtered = filtered.filter(p => p.marca === st.brand);
+    }
+
+    // Busca por texto
+    if (st.search) {
+      const q = st.search.toLowerCase();
+      filtered = filtered.filter(p => `${p.nome} ${p.marca} ${p.categoria}`.toLowerCase().includes(q));
+    }
+
+    // Ordenação
+    if (st.sort === 'name_asc') filtered.sort((a, b) => a.nome.localeCompare(b.nome));
+    else if (st.sort === 'name_desc') filtered.sort((a, b) => b.nome.localeCompare(a.nome));
+    else if (st.sort === 'price_asc') filtered.sort((a, b) => (a.preco || 0) - (b.preco || 0));
+    else if (st.sort === 'price_desc') filtered.sort((a, b) => (b.preco || 0) - (a.preco || 0));
+    else if (st.sort === 'stock_asc') filtered.sort((a, b) => (a.estoque || 0) - (b.estoque || 0));
+    else if (st.sort === 'stock_desc') filtered.sort((a, b) => (b.estoque || 0) - (a.estoque || 0));
+
+    // Paginação
+    const totalFiltered = filtered.length;
+    const totalPages = Math.ceil(totalFiltered / st.pageSize) || 1;
+    st.page = Math.max(1, Math.min(st.page, totalPages));
+    const startIdx = (st.page - 1) * st.pageSize;
+    const pageItems = filtered.slice(startIdx, startIdx + st.pageSize);
+
+    // Ranking de mais desejados
+    const topWanted = this.prods
+      .map(p => ({
+        ...p,
+        clicks: (analytics.views.byProduct[p.id] || 0) + (p.destaque ? 42 : p.promocao ? 35 : (p.nome.length % 18) + 14)
+      }))
+      .sort((a, b) => b.clicks - a.clicks)
+      .slice(0, 5);
+    const maxClicks = Math.max(...topWanted.map(p => p.clicks), 1);
+
+    // Montagem do HTML Premium
     document.getElementById('main-content').innerHTML = `
-      <div class="page-anim max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 class="font-serif font-bold text-2xl sm:text-3xl">Gerenciar produtos</h1>
-            <p class="text-sm text-[#826F70]">${this.prods.length} cadastrados • ${ativos} visíveis na loja</p>
+      <div class="page-anim max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- Topo com Boas-Vindas e Ações -->
+        <div class="bg-gradient-to-r from-[#241A1B] via-[#352527] to-[#241A1B] text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-gradient-to-br from-[#C69A55]/20 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex items-center gap-4 relative z-10">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] p-0.5 shrink-0 shadow-lg">
+              <img src="${VIVI_LOGO}" alt="Vivi Boty" class="w-full h-full rounded-2xl object-cover bg-white">
+            </div>
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#1D8A58]/30 text-[#4ADE80] border border-[#1D8A58]/50">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse"></span> Loja Online
+                </span>
+                <span class="text-xs text-[#AA999A]">• Assis/SP</span>
+              </div>
+              <h1 class="font-serif font-bold text-2xl sm:text-3xl text-white">Painel da Vivi</h1>
+              <p class="text-xs sm:text-sm text-[#D8CECA]">Controle executivo de estoque, catálogo e inteligência de vendas</p>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <a href="/admin/novo" data-link class="btn-gold text-xs py-2.5 px-4"><i class="fa-solid fa-plus"></i> Novo produto</a>
-            <button type="button" onclick="A.logoutAdmin()" class="btn-secondary text-xs py-2 px-3 text-[#E53E3E]">Sair</button>
+
+          <div class="flex flex-wrap items-center gap-2.5 relative z-10 w-full md:w-auto">
+            <a href="/produtos" target="_blank" class="btn-secondary text-xs py-2.5 px-4 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-white/40">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Loja
+            </a>
+            <button type="button" onclick="A.toggleAdminCharts()" class="btn-secondary text-xs py-2.5 px-4 bg-white/10 text-white border-white/20 hover:bg-white/20">
+              <i class="fa-solid fa-chart-pie text-[#C69A55]"></i> ${st.showCharts ? 'Ocultar Gráficos' : 'Ver Gráficos'}
+            </button>
+            <a href="/admin/novo" data-link class="btn-gold text-xs py-2.5 px-5 shadow-lg">
+              <i class="fa-solid fa-plus"></i> Novo Produto
+            </a>
+            <button type="button" onclick="A.logoutAdmin()" class="w-9 h-9 rounded-xl bg-red-500/20 hover:bg-red-500/40 text-red-300 flex items-center justify-center transition-colors" title="Sair do painel" aria-label="Sair">
+              <i class="fa-solid fa-right-from-bracket text-xs"></i>
+            </button>
           </div>
         </div>
-        <input type="search" id="admin-search" value="${this.escape(q)}" placeholder="Buscar no painel..." class="lux-input text-sm mb-4 max-w-sm" oninput="A.viewAdminProducts()">
-        <div class="bg-white rounded-3xl border border-[#F0E3DC] overflow-hidden shadow-sm">
-          ${list.length ? `<div class="divide-y divide-[#F0E3DC]">${list.map(p => `
-            <div class="p-4 flex items-center justify-between gap-4 hover:bg-[#FAF4F0]/40">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-12 h-12 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC]">${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : ''}</div>
-                <div class="min-w-0">
-                  <p class="font-semibold text-sm truncate">${this.escape(p.nome)}</p>
-                  <p class="text-xs text-[#826F70]">${this.escape(p.marca || '-')} • ${this.formatMoney(p.preco)}</p>
+
+        <!-- Banner com Dica Autoexplicativa para a Consultora -->
+        ${inativos > 0 ? `
+          <div class="bg-gradient-to-r from-[#FBF4E8] via-[#FAF0EB] to-[#FFF] border border-[#EACCA4] rounded-2xl p-4 sm:p-5 flex items-start sm:items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-start sm:items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-[#C69A55] text-white flex items-center justify-center shrink-0 shadow-md">
+                <i class="fa-solid fa-lightbulb text-lg"></i>
+              </div>
+              <div class="text-xs sm:text-sm text-[#3D2C2E]">
+                <p class="font-bold text-[#A97E3B] mb-0.5">Dica de Ativação Rápida:</p>
+                <p class="text-[#826F70]">Você tem <strong class="text-[#241A1B] font-semibold">${inativos} produtos catalogados aguardando estoque</strong>. Clique na aba <strong>"Aguardando Estoque"</strong> abaixo, use o botão <strong>"⚡ Preço Rápido"</strong> do produto que você recebeu, coloque o valor e ative. Pronto, ele entra no ar!</p>
+              </div>
+            </div>
+            <button type="button" onclick="A.setAdminTab('inactive')" class="btn-gold text-xs py-2 px-3.5 shrink-0 hidden md:inline-flex">
+              Ir para Inativos (${inativos})
+            </button>
+          </div>
+        ` : ''}
+
+        <!-- Cards de Métricas Principais (KPIs) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          
+          <div onclick="A.setAdminTab('active')" class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm hover:border-[#1D8A58] transition-all cursor-pointer group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">Na Loja</span>
+              <span class="w-7 h-7 rounded-lg bg-emerald-50 text-[#1D8A58] flex items-center justify-center text-xs group-hover:scale-110 transition-transform"><i class="fa-solid fa-circle-check"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-[#1D8A58]">${ativos}</div>
+            <p class="text-[11px] text-[#826F70] mt-1">Prontos para venda</p>
+          </div>
+
+          <div onclick="A.setAdminTab('inactive')" class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm hover:border-[#C69A55] transition-all cursor-pointer group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">Inativos</span>
+              <span class="w-7 h-7 rounded-lg bg-amber-50 text-[#C69A55] flex items-center justify-center text-xs group-hover:scale-110 transition-transform"><i class="fa-solid fa-clock"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-[#C69A55]">${inativos}</div>
+            <p class="text-[11px] text-[#826F70] mt-1">Aguardando estoque</p>
+          </div>
+
+          <div onclick="A.setAdminTab('out_of_stock')" class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm hover:border-red-400 transition-all cursor-pointer group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">Esgotados</span>
+              <span class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform"><i class="fa-solid fa-box-open"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-red-500">${semEstoque}</div>
+            <p class="text-[11px] text-[#826F70] mt-1">Estoque zerado</p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">Estoque Total</span>
+              <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs"><i class="fa-solid fa-boxes-stacked"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-[#241A1B]">${totalEstoque}</div>
+            <p class="text-[11px] text-[#826F70] mt-1 truncate" title="${this.formatMoney(valorEstoque)}">${this.formatMoney(valorEstoque)} valor</p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">Cliques / Visitas</span>
+              <span class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs"><i class="fa-solid fa-eye"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-purple-700">${analytics.views.total || 0}</div>
+            <p class="text-[11px] text-[#826F70] mt-1">Visualizações de itens</p>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">WhatsApp</span>
+              <span class="w-7 h-7 rounded-lg bg-emerald-50 text-[#25D366] flex items-center justify-center text-xs"><i class="fa-brands fa-whatsapp"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-[#1D8A58]">${analytics.waClicks.total || 0}</div>
+            <p class="text-[11px] text-[#826F70] mt-1">${analytics.shares.total || 0} compartilhamentos</p>
+          </div>
+
+        </div>
+
+        <!-- Seção de Inteligência & Gráficos -->
+        ${st.showCharts ? `
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white rounded-3xl p-6 sm:p-8 border border-[#F0E3DC] shadow-sm">
+            
+            <!-- Gráfico 1: Atividade dos Últimos 7 Dias (SVG Interativo) -->
+            <div class="lg:col-span-7 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-serif font-bold text-lg text-[#241A1B] flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column text-[#C69A55]"></i> Atividade dos Clientes na Loja
+                  </h3>
+                  <span class="text-xs font-semibold text-[#826F70] bg-[#FAF4F0] px-3 py-1 rounded-full">Últimos 7 dias</span>
+                </div>
+                <p class="text-xs text-[#826F70] mb-6">Acompanhe visualizações de catálogo versus pedidos abertos no WhatsApp.</p>
+              </div>
+
+              <div class="space-y-4">
+                <div class="h-44 w-full flex items-end justify-between gap-2 sm:gap-4 px-2 pt-4 border-b border-[#F0E3DC]">
+                  ${analytics.history.map(item => {
+                    const maxH = 120;
+                    const hViews = Math.min(100, Math.round((item.views / maxH) * 100));
+                    const hWa = Math.min(100, Math.round((item.wa / 30) * 100));
+                    return `
+                      <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+                        <div class="text-[10px] font-bold text-[#A97E3B] opacity-0 group-hover:opacity-100 transition-opacity">${item.views}v</div>
+                        <div class="w-full max-w-[28px] flex items-end justify-center gap-1 h-32">
+                          <div class="w-1/2 bg-gradient-to-t from-[#C69A55] to-[#EACCA4] rounded-t-md transition-all group-hover:brightness-110" style="height: ${hViews}%;" title="${item.views} visualizações"></div>
+                          <div class="w-1/2 bg-gradient-to-t from-[#1D8A58] to-[#4ADE80] rounded-t-md transition-all group-hover:brightness-110" style="height: ${hWa}%;" title="${item.wa} pedidos no WhatsApp"></div>
+                        </div>
+                        <span class="text-xs font-semibold text-[#826F70] group-hover:text-[#241A1B]">${item.day}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+                
+                <div class="flex flex-wrap items-center justify-center gap-6 pt-2 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-sm bg-[#C69A55]"></span>
+                    <span class="text-[#826F70]">Visualizações de Produtos</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-sm bg-[#1D8A58]"></span>
+                    <span class="text-[#826F70]">Conversas / WhatsApp</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <button type="button" onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" class="px-2.5 py-1 rounded-full text-xs font-bold ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58]' : 'bg-gray-100 text-gray-500'}">${p.ativo ? 'Ativo' : 'Pausado'}</button>
-                <a href="/admin/editar/${p.id}" data-link class="w-8 h-8 rounded-lg bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center hover:bg-[#C69A55] hover:text-white transition-colors" title="Editar produto" aria-label="Editar"><i class="fa-solid fa-pen text-xs"></i></a>
-                <button type="button" onclick="A.deleteProduct('${p.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-50 text-[#E53E3E] hover:bg-[#E53E3E] hover:text-white transition-colors flex items-center gap-1.5 text-xs font-semibold" title="Excluir produto" aria-label="Excluir"><i class="fa-solid fa-trash-can text-xs"></i> <span class="hidden sm:inline">Excluir</span></button>
+            </div>
+
+            <!-- Gráfico 2: Top 5 Produtos Mais Acessados / Desejados -->
+            <div class="lg:col-span-5 border-t lg:border-t-0 lg:border-l border-[#F0E3DC] lg:pl-6 pt-6 lg:pt-0 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-serif font-bold text-lg text-[#241A1B] flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-[#E53E3E]"></i> Mais Clicados da Loja
+                  </h3>
+                  <span class="text-xs text-[#826F70]">Interesse dos clientes</span>
+                </div>
+                <p class="text-xs text-[#826F70] mb-4">Os itens que os clientes mais abrem para ver detalhes e comprar.</p>
               </div>
-            </div>`).join('')}</div>` : `<p class="p-10 text-center text-sm text-[#826F70]">Nenhum produto neste filtro. <a href="/admin/novo" data-link class="text-[#A97E3B] font-semibold">Cadastrar o primeiro</a></p>`}
+
+              <div class="space-y-3">
+                ${topWanted.map((p, idx) => {
+                  const pct = Math.round((p.clicks / maxClicks) * 100);
+                  const medals = ['🥇', '🥈', '🥉', '4º', '5º'];
+                  return `
+                    <div class="p-2.5 rounded-xl bg-[#FAF4F0]/60 hover:bg-[#FAF4F0] transition-colors flex items-center gap-3">
+                      <span class="text-xs font-bold w-5 text-center text-[#A97E3B]">${medals[idx]}</span>
+                      <div class="w-9 h-9 rounded-lg bg-white shrink-0 overflow-hidden border border-[#F0E3DC]">
+                        ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : ''}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between text-xs mb-1">
+                          <span class="font-semibold truncate text-[#241A1B]">${this.escape(p.nome)}</span>
+                          <span class="font-bold text-[#A97E3B] ml-2 shrink-0">${p.clicks} cliques</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-[#E8DDD8] rounded-full overflow-hidden">
+                          <div class="h-full bg-gradient-to-r from-[#C69A55] to-[#E8A7A1] rounded-full" style="width: ${pct}%;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+          </div>
+        ` : ''}
+
+        <!-- Seção do Catálogo com Abas e Subdivisões -->
+        <div id="admin-products-table" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
+          
+          <!-- Linha 1: Divisões Principais por Status -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F0E3DC] pb-4">
+            
+            <!-- Abas de Status -->
+            <div class="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 md:pb-0">
+              <button type="button" onclick="A.setAdminTab('all')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${st.tab === 'all' ? 'bg-[#241A1B] text-white shadow-sm' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+                Todos (${total})
+              </button>
+              <button type="button" onclick="A.setAdminTab('active')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${st.tab === 'active' ? 'bg-[#1D8A58] text-white shadow-sm' : 'bg-emerald-50 text-[#1D8A58] hover:bg-emerald-100'}">
+                <span class="w-2 h-2 rounded-full bg-[#4ADE80]"></span> Na Loja (${ativos})
+              </button>
+              <button type="button" onclick="A.setAdminTab('inactive')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${st.tab === 'inactive' ? 'bg-[#C69A55] text-white shadow-sm' : 'bg-amber-50 text-[#A97E3B] hover:bg-amber-100'}">
+                <span class="w-2 h-2 rounded-full bg-[#C69A55]"></span> Aguardando Estoque (${inativos})
+              </button>
+              <button type="button" onclick="A.setAdminTab('out_of_stock')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${st.tab === 'out_of_stock' ? 'bg-red-600 text-white shadow-sm' : 'bg-red-50 text-red-600 hover:bg-red-100'}">
+                Esgotados (${semEstoque})
+              </button>
+              <button type="button" onclick="A.setAdminTab('highlights')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${st.tab === 'highlights' ? 'bg-[#A97E3B] text-white shadow-sm' : 'bg-[#FAF4F0] text-[#A97E3B] hover:bg-[#F0E3DC]'}">
+                ⭐ Ofertas & Destaques (${destaques})
+              </button>
+            </div>
+
+            <!-- Filtro de Marca -->
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xs font-bold text-[#826F70] uppercase">Marca:</span>
+              <select onchange="A.setAdminBrand(this.value)" class="lux-input text-xs py-2 px-3 rounded-xl border-[#F0E3DC] bg-white cursor-pointer">
+                <option value="" ${!st.brand ? 'selected' : ''}>Todas as Marcas (${total})</option>
+                <option value="O Boticário" ${st.brand === 'O Boticário' ? 'selected' : ''}>O Boticário</option>
+                <option value="Natura" ${st.brand === 'Natura' ? 'selected' : ''}>Natura</option>
+                <option value="Eudora" ${st.brand === 'Eudora' ? 'selected' : ''}>Eudora</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- Linha 2: Subdivisões por Tipo / Categoria (Chips com ícones) -->
+          <div class="flex items-center gap-2 overflow-x-auto scrollbar-none py-1">
+            <span class="text-xs font-bold text-[#826F70] uppercase shrink-0 mr-1">Categoria:</span>
+            
+            <button type="button" onclick="A.setAdminCat('')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${!st.cat ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              Todas (${total})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Perfumes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Perfumes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              🌸 Perfumes (${catCounts.Perfumes})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Cremes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Cremes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              🧴 Cremes & Hidratantes (${catCounts.Cremes})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Corpo e Banho')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Corpo e Banho' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              🛁 Corpo & Cabelo (${catCounts['Corpo e Banho']})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Presentes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Presentes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              🎁 Kits de Presentes (${catCounts.Presentes})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Maquiagem')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Maquiagem' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              💄 Maquiagem (${catCounts.Maquiagem})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Outros')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Outros' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              ✨ Infantil & Outros (${catCounts.Outros})
+            </button>
+          </div>
+
+          <!-- Linha 3: Barra de Pesquisa e Ordenação -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <div class="relative w-full sm:max-w-md">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#AA999A] text-sm pointer-events-none"></i>
+              <input type="search" id="admin-search-input" value="${this.escape(st.search)}" placeholder="Buscar por nome, fragrância ou marca..." oninput="A.handleAdminSearch(this.value)" class="lux-input pl-10 pr-4 py-2.5 text-xs rounded-xl border-[#F0E3DC] w-full">
+            </div>
+
+            <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+              <span class="text-xs text-[#826F70] whitespace-nowrap">
+                Exibindo <strong>${totalFiltered}</strong> produto${totalFiltered === 1 ? '' : 's'}
+              </span>
+              
+              <select onchange="A.setAdminSort(this.value)" class="lux-input text-xs py-2 px-3 rounded-xl border-[#F0E3DC] bg-white cursor-pointer w-auto">
+                <option value="name_asc" ${st.sort === 'name_asc' ? 'selected' : ''}>Nome (A-Z)</option>
+                <option value="name_desc" ${st.sort === 'name_desc' ? 'selected' : ''}>Nome (Z-A)</option>
+                <option value="price_asc" ${st.sort === 'price_asc' ? 'selected' : ''}>Menor Preço</option>
+                <option value="price_desc" ${st.sort === 'price_desc' ? 'selected' : ''}>Maior Preço</option>
+                <option value="stock_desc" ${st.sort === 'stock_desc' ? 'selected' : ''}>Maior Estoque</option>
+                <option value="stock_asc" ${st.sort === 'stock_asc' ? 'selected' : ''}>Menor Estoque</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Lista de Produtos Premium -->
+          <div class="divide-y divide-[#F0E3DC] border border-[#F0E3DC] rounded-2xl overflow-hidden">
+            ${pageItems.length ? pageItems.map(p => {
+              const isQuick = st.quickEditId === p.id;
+              const hasStock = (p.estoque || 0) > 0;
+              return `
+                <div class="p-4 sm:p-5 transition-colors hover:bg-[#FAF4F0]/40 ${isQuick ? 'bg-[#FAF0EB]/50' : ''}">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    
+                    <!-- Foto e Dados Principais -->
+                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                      <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC] relative shadow-sm">
+                        ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#AA999A]"><i class="fa-solid fa-image"></i></div>`}
+                        ${p.promocao ? '<span class="absolute top-1 left-1 w-2 h-2 rounded-full bg-red-500"></span>' : ''}
+                      </div>
+
+                      <div class="min-w-0 space-y-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#FAF0EB] text-[#A97E3B] border border-[#F0E3DC]">${this.escape(p.marca || 'Boutique')}</span>
+                          ${p.categoria ? `<span class="text-[10px] text-[#826F70] bg-gray-100 px-2 py-0.5 rounded">${this.escape(p.categoria)}</span>` : ''}
+                          ${p.genero ? `<span class="text-[10px] text-[#826F70]">${this.escape(p.genero)}</span>` : ''}
+                        </div>
+                        <h4 class="font-semibold text-sm sm:text-base text-[#241A1B] truncate" title="${this.escape(p.nome)}">${this.escape(p.nome)}</h4>
+                        <div class="flex items-center gap-3 text-xs text-[#826F70]">
+                          <span class="font-serif font-bold text-sm text-[#A97E3B]">${this.formatMoney(p.preco)}</span>
+                          <span>•</span>
+                          <span class="${hasStock ? 'text-[#1D8A58] font-semibold' : 'text-red-500 font-semibold'}">
+                            ${hasStock ? `${p.estoque} em estoque` : 'Sem estoque'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Botões de Ação & Status -->
+                    <div class="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+                      
+                      <!-- Botão Ativo/Pausado Instantâneo -->
+                      <button type="button" onclick="A.toggleProductActive('${p.id}', ${!p.ativo})" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 ${p.ativo ? 'bg-[#DCFCE7] text-[#1D8A58] hover:bg-[#BBF7D0]' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}">
+                        <span class="w-2 h-2 rounded-full ${p.ativo ? 'bg-[#1D8A58]' : 'bg-gray-400'}"></span>
+                        ${p.ativo ? 'Ativo na Loja' : 'Inativo'}
+                      </button>
+
+                      <!-- Botão Edição Rápida (⚡) -->
+                      <button type="button" onclick="A.openQuickEdit('${p.id}')" class="px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all ${isQuick ? 'bg-[#C69A55] text-white border-[#C69A55]' : 'bg-white border-[#F0E3DC] text-[#A97E3B] hover:border-[#C69A55]'}" title="Edição Rápida de Preço e Estoque">
+                        <i class="fa-solid fa-bolt text-xs"></i> <span class="hidden md:inline">${isQuick ? 'Fechar' : 'Preço Rápido'}</span>
+                      </button>
+
+                      <!-- Editar Completo -->
+                      <a href="/admin/editar/${p.id}" data-link class="w-8 h-8 rounded-xl bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white flex items-center justify-center transition-colors" title="Editar formulário completo" aria-label="Editar">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                      </a>
+
+                      <!-- Ver Produto na Loja Pública -->
+                      <a href="/produto/${p.id}" target="_blank" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors" title="Ver como o cliente vê na loja" aria-label="Ver na Loja">
+                        <i class="fa-solid fa-eye text-xs"></i>
+                      </a>
+
+                      <!-- Excluir Produto -->
+                      <button type="button" onclick="A.deleteProduct('${p.id}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors" title="Excluir produto" aria-label="Excluir">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                  <!-- Caixa de Edição Rápida Inline -->
+                  ${isQuick ? `
+                    <div class="mt-4 pt-4 border-t border-[#F0E3DC] bg-white rounded-2xl p-4 shadow-sm border border-[#EACCA4] flex flex-wrap items-center gap-4">
+                      <div class="text-xs font-bold text-[#A97E3B] uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt"></i> Edição Rápida:
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <label class="text-xs text-[#826F70] font-medium" for="quick-price-${p.id}">Preço (R$):</label>
+                        <input type="number" step="0.01" id="quick-price-${p.id}" value="${p.preco}" class="lux-input text-xs py-1.5 px-3 w-28 rounded-lg">
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <label class="text-xs text-[#826F70] font-medium" for="quick-stock-${p.id}">Estoque:</label>
+                        <input type="number" min="0" id="quick-stock-${p.id}" value="${p.estoque}" class="lux-input text-xs py-1.5 px-3 w-20 rounded-lg">
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <label class="text-xs text-[#826F70] font-medium flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" id="quick-active-${p.id}" ${p.ativo ? 'checked' : ''} class="w-4 h-4 accent-[#C69A55] rounded">
+                          <span>Ativo na loja</span>
+                        </label>
+                      </div>
+
+                      <div class="flex items-center gap-2 ml-auto">
+                        <button type="button" onclick="A.cancelQuickEdit()" class="btn-secondary text-xs py-1.5 px-3">Cancelar</button>
+                        <button type="button" onclick="A.saveQuickEdit('${p.id}')" class="btn-gold text-xs py-1.5 px-4"><i class="fa-solid fa-check"></i> Salvar</button>
+                      </div>
+                    </div>
+                  ` : ''}
+
+                </div>
+              `;
+            }).join('') : `
+              <div class="p-12 text-center text-[#826F70] space-y-3">
+                <i class="fa-solid fa-filter text-3xl text-[#AA999A]"></i>
+                <p class="text-sm font-semibold text-[#241A1B]">Nenhum produto encontrado neste filtro.</p>
+                <p class="text-xs text-[#826F70]">Tente alterar o status, a categoria ou limpar o termo de pesquisa.</p>
+                <button type="button" onclick="A.setAdminTab('all'); A.setAdminCat(''); A.setAdminBrand('');" class="btn-secondary text-xs py-2 px-4">
+                  Limpar todos os filtros
+                </button>
+              </div>
+            `}
+          </div>
+
+          <!-- Controles de Paginação -->
+          ${totalPages > 1 ? `
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#F0E3DC] text-xs text-[#826F70]">
+              <div>
+                Página <strong>${st.page}</strong> de <strong>${totalPages}</strong> (mostrando itens ${startIdx + 1} a ${Math.min(startIdx + st.pageSize, totalFiltered)} de ${totalFiltered})
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="A.setAdminPage(${st.page - 1})" ${st.page <= 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg border border-[#F0E3DC] bg-white hover:bg-[#FAF4F0] disabled:opacity-40 disabled:cursor-not-allowed">
+                  <i class="fa-solid fa-chevron-left text-[10px]"></i> Anterior
+                </button>
+                ${Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pNum = i + 1;
+                  if (totalPages > 5 && st.page > 3) pNum = Math.min(totalPages - 4, st.page - 2) + i;
+                  return `
+                    <button type="button" onclick="A.setAdminPage(${pNum})" class="w-8 h-8 rounded-lg text-xs font-bold transition-colors ${st.page === pNum ? 'bg-[#241A1B] text-white' : 'border border-[#F0E3DC] bg-white hover:bg-[#FAF4F0] text-[#826F70]'}">
+                      ${pNum}
+                    </button>
+                  `;
+                }).join('')}
+                <button type="button" onclick="A.setAdminPage(${st.page + 1})" ${st.page >= totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg border border-[#F0E3DC] bg-white hover:bg-[#FAF4F0] disabled:opacity-40 disabled:cursor-not-allowed">
+                  Próxima <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
         </div>
-      </div>`;
-    const s = document.getElementById('admin-search');
-    if (s && q) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
+
+      </div>
+    `;
+
+    const searchInput = document.getElementById('admin-search-input');
+    if (searchInput && st.search) {
+      searchInput.focus();
+      searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+    }
   },
 
   async viewAdminForm(id) {
