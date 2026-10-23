@@ -426,6 +426,15 @@ h1, h2, h3, h4, .font-serif {
         <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
       </button>
     </div>
+        <!-- BARRA DE PROGRESSO DE FRETE GRÁTIS / MIMO ESPECIAL (ASSIS/SP) -->
+    <div id="cart-free-shipping-banner" class="px-6 py-3 bg-[#FAF4F0] border-b border-[#F0E3DC] text-xs">
+      <div id="cart-free-shipping-text" class="flex items-center justify-between mb-1.5 font-semibold text-[#826F70]">
+        <span>Carregando benefícios...</span>
+      </div>
+      <div class="w-full h-2 bg-[#EFE3DB] rounded-full overflow-hidden">
+        <div id="cart-free-shipping-bar" class="h-full bg-gradient-to-r from-[#C69A55] to-[#1D8A58] rounded-full transition-all duration-500" style="width: 0%;"></div>
+      </div>
+    </div>
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
     <div id="cart-footer-container" class="p-6 border-t border-[#F0E3DC] bg-[#FCF9F7] space-y-4">
       <div class="space-y-2">
@@ -588,7 +597,12 @@ h1, h2, h3, h4, .font-serif {
     </div>
   </div>
 
-  <div class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
+    <!-- BOTÃO FLUTUANTE VOLTAR AO TOPO -->
+  <button id="back-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo da página" class="fixed bottom-24 md:bottom-8 left-5 z-40 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-lg text-[#A97E3B] hover:text-[#C69A55] hover:border-[#DBC3B7] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center opacity-0 pointer-events-none translate-y-4">
+    <i class="fa-solid fa-arrow-up text-sm" aria-hidden="true"></i>
+  </button>
+
+<div class="fixed bottom-24 md:bottom-8 right-5 z-40 flex flex-col items-end gap-2">
     <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[220px]">
       <span>👋 Dúvidas sobre presentes ou fragrâncias? Fale comigo!</span>
       <button type="button" onclick="A.closeWhatsAppTooltip(event)" class="text-[#AA999A] hover:text-[#241A1B] ml-1 text-sm font-bold" aria-label="Fechar aviso">×</button>
@@ -887,6 +901,19 @@ const A = {
       this.navigate(url.pathname + url.search);
     });
     window.addEventListener('popstate', () => this.handleRoute());
+
+    // Controle do Botão Flutuante Voltar ao Topo
+    const btt = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      if (!btt) return;
+      if (window.scrollY > 350) {
+        btt.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        btt.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      } else {
+        btt.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        btt.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      }
+    }, { passive: true });
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
       this.toggleCart(false);
@@ -909,7 +936,14 @@ const A = {
     this.path = (location.pathname.replace(/\/+$/, '') || '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.updateNav();
-    this.renderPage();
+    this.renderPage().then(() => {
+      // Deep Link: Abertura automática caso URL contenha ?p=ID ou ?produto=ID
+      const sp = new URLSearchParams(location.search);
+      const pid = sp.get('p') || sp.get('produto');
+      if (pid && this.pmap && this.pmap[pid]) {
+        setTimeout(() => this.openQuickView(pid), 180);
+      }
+    });
   },
 
   updateNav() {
@@ -1384,11 +1418,32 @@ const A = {
         </div>
 
         ${filtered.length === 0 ? `
-          <div class="text-center py-24 bg-white rounded-3xl border border-[#F0E3DC] p-8 max-w-lg mx-auto">
-            <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-box-open"></i></div>
-            <h2 class="font-serif font-bold text-xl mb-2">Nenhum produto encontrado</h2>
-            <p class="text-sm text-[#826F70] mb-6">Tente outro termo ou limpe os filtros.</p>
-            <button type="button" onclick="A.navigate('/produtos')" class="btn-secondary text-xs">Limpar filtros</button>
+          <div class="text-center py-16 bg-white rounded-3xl border border-[#F0E3DC] p-8 sm:p-12 max-w-xl mx-auto shadow-sm space-y-4">
+            <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div>
+              <h2 class="font-serif font-bold text-2xl text-[#241A1B] mb-1">Nenhum produto encontrado</h2>
+              <p class="text-xs sm:text-sm text-[#826F70]">Não encontramos nada com esses filtros. Que tal experimentar uma dessas opções populares?</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+              <button type="button" onclick="A.setCatalogFilters({q:'Lily',cat:'',brand:'',promo:false,destaque:false,ready:false})" class="px-3 py-1.5 rounded-full bg-[#FAF4F0] hover:bg-[#F0E3DC] text-xs font-semibold text-[#241A1B] border border-[#F0E3DC] transition-colors">
+                🌸 Lily
+              </button>
+              <button type="button" onclick="A.setCatalogFilters({q:'Malbec',cat:'',brand:'',promo:false,destaque:false,ready:false})" class="px-3 py-1.5 rounded-full bg-[#FAF4F0] hover:bg-[#F0E3DC] text-xs font-semibold text-[#241A1B] border border-[#F0E3DC] transition-colors">
+                🍇 Malbec
+              </button>
+              <button type="button" onclick="A.setCatalogFilters({cat:'Presentes',q:'',promo:false,destaque:false,ready:false})" class="px-3 py-1.5 rounded-full bg-[#FAF4F0] hover:bg-[#F0E3DC] text-xs font-semibold text-[#241A1B] border border-[#F0E3DC] transition-colors">
+                🎁 Kits de Presente
+              </button>
+              <button type="button" onclick="A.setCatalogFilters({promo:true,q:'',cat:''})" class="px-3 py-1.5 rounded-full bg-[#FFF5F5] hover:bg-red-50 text-xs font-semibold text-[#E53E3E] border border-red-200 transition-colors">
+                🔥 Promoções
+              </button>
+              <button type="button" onclick="A.setCatalogFilters({ready:true,q:'',cat:''})" class="px-3 py-1.5 rounded-full bg-[#F0FDF4] hover:bg-emerald-50 text-xs font-semibold text-[#1D8A58] border border-emerald-200 transition-colors">
+                📦 Pronta Entrega
+              </button>
+            </div>
+            <div class="pt-3">
+              <button type="button" onclick="A.navigate('/produtos')" class="btn-gold text-xs py-2.5 px-6">Ver Todo o Catálogo</button>
+            </div>
           </div>` : `
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             ${filtered.map(p => this.renderCard(p)).join('')}
@@ -1447,7 +1502,7 @@ const A = {
       <article class="product-card group">
         <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${id}')">
           ${p.imagem
-            ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+            ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Crect%20fill%3D%22%23FAF4F0%22%20width%3D%22400%22%20height%3D%22400%22%2F%3E%3Cpath%20d%3D%22M200%20140c-16.5%200-30%2013.5-30%2030v10h-10c-11%200-20%209-20%2020v60c0%2011%209%2020%2020%2020h80c11%200%2020-9%2020-20v-60c0-11-9-20-20-20h-10v-10c0-16.5-13.5-30-30-30zm-15%2030c0-8.3%206.7-15%2015-15s15%206.7%2015%2015v10h-30v-10zm-15%2030h60c5.5%200%2010%204.5%2010%2010v60c0%205.5-4.5%2010-10%2010h-60c-5.5%200-10-4.5-10-10v-60c0-5.5%204.5-10%2010-10z%22%20fill%3D%22%23C69A55%22%20opacity%3D%220.5%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22310%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%23AA999A%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3EVivi%20Boty%3C%2Ftext%3E%3C%2Fsvg%3E';">`
             : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
           <div class="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start pointer-events-none">${badges.join('')}</div>
           <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
@@ -1653,6 +1708,30 @@ const A = {
     if (checkout) checkout.disabled = this.cart.length === 0;
     this.updateCartUI();
 
+    // Atualizar Barra de Progresso de Frete Grátis / Mimo (Assis/SP)
+    const fsBanner = document.getElementById('cart-free-shipping-banner');
+    const fsText = document.getElementById('cart-free-shipping-text');
+    const fsBar = document.getElementById('cart-free-shipping-bar');
+    if (fsBanner && fsText && fsBar) {
+      if (!this.cart.length) {
+        fsBanner.classList.add('hidden');
+      } else {
+        fsBanner.classList.remove('hidden');
+        const threshold = 150.0;
+        if (total >= threshold) {
+          fsText.innerHTML = `<span class="text-[#1D8A58] font-bold flex items-center gap-1.5"><i class="fa-solid fa-gift"></i> Parabéns! Você garantiu Entrega Grátis em Assis/SP! 🎉</span>`;
+          fsBar.style.width = '100%';
+          fsBar.className = 'h-full bg-[#1D8A58] rounded-full transition-all duration-500';
+        } else {
+          const diff = threshold - total;
+          const pct = Math.min(100, Math.round((total / threshold) * 100));
+          fsText.innerHTML = `<span>Faltam <strong>${this.formatMoney(diff)}</strong> para <strong>Entrega Grátis</strong> em Assis! 🎁</span><span class="text-[#A97E3B] font-bold">${pct}%</span>`;
+          fsBar.style.width = `${pct}%`;
+          fsBar.className = 'h-full bg-gradient-to-r from-[#C69A55] to-[#A97E3B] rounded-full transition-all duration-500';
+        }
+      }
+    }
+
     if (!this.cart.length) {
       container.innerHTML = `<div class="text-center py-20 text-[#AA999A]">
         <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-bag-shopping"></i></div>
@@ -1856,7 +1935,14 @@ const A = {
           <div class="pt-2 flex flex-col gap-2">
             <button type="button" onclick="A.addToCart('${p.id}'); A.closeQuickView();" class="btn-gold w-full text-xs py-3"><i class="fa-solid fa-bag-shopping"></i> Adicionar à sacola</button>
             <button type="button" onclick="A.orderWhatsAppDirect('${p.id}'); A.closeQuickView();" class="btn-whatsapp w-full text-xs py-3"><i class="fa-brands fa-whatsapp text-lg"></i> Pedir no WhatsApp</button>
-            <a href="/produto/${p.id}" data-link onclick="A.closeQuickView()" class="text-center text-xs font-semibold text-[#A97E3B]">Ver página completa</a>
+            <div class="flex items-center justify-between pt-2 border-t border-[#F0E3DC]">
+              <a href="/produto/${p.id}" data-link onclick="A.closeQuickView()" class="text-xs font-semibold text-[#826F70] hover:text-[#241A1B] flex items-center gap-1">
+                Página completa <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+              <button type="button" onclick="A.shareProduct('${p.id}')" class="text-xs font-semibold text-[#826F70] hover:text-[#A97E3B] flex items-center gap-1.5 py-1">
+                <i class="fa-solid fa-share-nodes text-xs"></i> Compartilhar
+              </button>
+            </div>
           </div>
         </div>
       </div>`;
@@ -2213,6 +2299,66 @@ const A = {
     this.viewAdminProducts();
   },
 
+    exportOrdersCSV() {
+    if (!this.orders || !this.orders.length) {
+      this.showToast('Nenhum pedido para exportar', 'info');
+      return;
+    }
+    const headers = ['Codigo', 'Data', 'Cliente', 'Bairro', 'Status', 'Forma Pagamento', 'Valor Total (R$)', 'Itens', 'Observacoes'];
+    const rows = this.orders.map(o => {
+      const date = o.created_at ? new Date(o.created_at).toLocaleString('pt-BR') : '';
+      const itemsStr = (o.itens || []).map(i => `${i.q}x ${i.nome}`).join(' | ');
+      return [
+        `"${o.codigo || ''}"`,
+        `"${date}"`,
+        `"${(o.cliente_nome || '').replace(/"/g, '""')}"`,
+        `"${(o.cliente_bairro || '').replace(/"/g, '""')}"`,
+        `"${o.status || ''}"`,
+        `"${o.forma_pagamento || ''}"`,
+        `"${Number(o.valor_total || 0).toFixed(2)}"`,
+        `"${itemsStr.replace(/"/g, '""')}"`,
+        `"${(o.observacoes || '').replace(/"/g, '""')}"`
+      ].join(';');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pedidos_viviboty_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.showToast('Planilha CSV gerada com sucesso!', 'success');
+  },
+
+  copyDeliveryRoute() {
+    const pendings = (this.orders || []).filter(o => o.status !== 'cancelado');
+    if (!pendings.length) {
+      this.showToast('Nenhum pedido ativo na lista', 'info');
+      return;
+    }
+    const dateStr = new Date().toLocaleDateString('pt-BR');
+    let text = `📦 *ROTA DE ENTREGAS VIVI BOTY (${dateStr})*\n\n`;
+    pendings.forEach((o, i) => {
+      const cli = o.cliente_nome || 'Cliente';
+      const bairro = o.cliente_bairro ? ` (${o.cliente_bairro})` : '';
+      const itens = (o.itens || []).map(it => `${it.q}x ${it.nome}`).join(', ');
+      text += `${i + 1}. *${o.codigo}* - ${cli}${bairro}\n`;
+      text += `   🛍️ ${itens}\n`;
+      text += `   💰 Total: ${this.formatMoney(o.valor_total || 0)} [${o.forma_pagamento || 'A combinar'}]\n`;
+      if (o.observacoes) text += `   📝 Obs: ${o.observacoes}\n`;
+      text += `\n`;
+    });
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      this.showToast('Rota de entregas copiada para o WhatsApp!', 'success');
+    }).catch(() => {
+      this.showToast('Não foi possível copiar automaticamente', 'error');
+    });
+  },
+
   async updateOrderStatus(id, newStatus) {
     try {
       if (this.sb) {
@@ -2476,11 +2622,17 @@ const A = {
             <p class="text-xs sm:text-sm text-[#826F70]">Acompanhe em tempo real todos os carrinhos finalizados e pedidos iniciados pelos clientes.</p>
           </div>
 
-          <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" onclick="A.ensureOrders(true).then(() => A.viewAdminProducts())" class="btn-secondary text-xs py-2.5 px-3.5 hover:bg-[#FAF4F0]" title="Recarregar pedidos">
-              <i class="fa-solid fa-rotate"></i> Atualizar Pedidos
-            </button>
-          </div>
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <button type="button" onclick="A.copyDeliveryRoute()" class="btn-secondary text-xs py-2 px-3 flex items-center gap-1.5 hover:text-[#1D8A58] hover:border-emerald-200" title="Copiar lista das entregas para o WhatsApp">
+                <i class="fa-solid fa-truck text-emerald-600"></i> Copiar Rota de Entregas
+              </button>
+              <button type="button" onclick="A.exportOrdersCSV()" class="btn-secondary text-xs py-2 px-3 flex items-center gap-1.5 hover:text-[#C69A55] hover:border-[#DBC3B7]" title="Baixar planilha para Excel">
+                <i class="fa-solid fa-file-csv text-[#C69A55]"></i> Exportar CSV
+              </button>
+              <button type="button" onclick="A.ensureOrders(true).then(() => A.viewAdminProducts())" class="btn-secondary text-xs py-2 px-3 hover:bg-[#FAF4F0]" title="Recarregar pedidos">
+                <i class="fa-solid fa-rotate"></i> Atualizar
+              </button>
+            </div>
         </div>
 
         <!-- Cards de Métricas de Vendas & Conversão -->
