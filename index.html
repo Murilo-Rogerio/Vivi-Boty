@@ -436,8 +436,9 @@ h1, h2, h3, h4, .font-serif {
             <span class="block text-[#826F70] mt-0.5">Avisamos a Vivi para caprichar na embalagem especial.</span>
           </span>
         </label>
-        <div>
-          <input type="text" id="client-name-input" placeholder="Seu nome (opcional, para agilizar no WhatsApp)" class="lux-input text-xs py-2 px-3" maxlength="60">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input type="text" id="client-name-input" placeholder="Seu nome (opcional)" class="lux-input text-xs py-2 px-3" maxlength="60">
+          <input type="text" id="client-bairro-input" placeholder="Bairro para entrega (opcional)" class="lux-input text-xs py-2 px-3" maxlength="60">
         </div>
         <div class="space-y-1.5 pt-1">
           <span class="text-[11px] font-bold uppercase tracking-wider text-[#826F70]">Como prefere pagar?</span>
@@ -696,6 +697,14 @@ const A = {
   testimonialsLoaded: false,
   cart: [],
   favs: [],
+  orders: [],
+  ordersLoaded: false,
+  settings: {
+    whatsapp_number: '5518997871211',
+    whatsapp_template_cart: 'Olá, Vivi! Gostaria de fazer o pedido da minha sacola ({codigo_pedido}):\n\n{dados_cliente}{lista_itens}\n\n💰 *Total estimado:* {valor_total}\n💳 *Forma de pagamento:* {forma_pagamento}\n\nPodemos combinar a entrega e o pagamento? 🛍️',
+    whatsapp_template_single: 'Olá, Vivi! Vi este produto na sua loja virtual e tenho interesse:\n\n{codigo_pedido}✨ *{nome_produto}*\n🏷️ Marca: {marca}\n💰 Valor: {valor_produto}\n{dados_cliente}\nVocê tem pronta entrega ou aceita encomenda? 🛍️'
+  },
+  settingsLoaded: false,
   path: '/',
   prodsLoaded: false,
   haveAll: false,
@@ -704,7 +713,9 @@ const A = {
   renderToken: 0,
   selectedPayment: 'Pix',
   adminState: {
-    section: 'products', // 'products' ou 'testimonials'
+    section: 'products', // 'products', 'orders', 'testimonials', 'settings'
+    orderFilter: 'all', // 'all', 'iniciado_whatsapp', 'em_atendimento', 'concluido', 'cancelado'
+    orderSearch: '',
     testimFilter: 'all', // 'all', 'visible', 'hidden'
     testimSearch: '',
     tab: 'all',
@@ -1027,12 +1038,24 @@ const A = {
     main.innerHTML = this.loadingHtml();
     const path = this.path;
 
+    // Ocultar botão flutuante 'Falar com a Vivi' em todas as páginas do painel admin
+    const waFloat = document.getElementById('wa-floating');
+    if (waFloat) {
+      if (path.startsWith('/admin')) {
+        waFloat.classList.add('hidden');
+      } else {
+        waFloat.classList.remove('hidden');
+      }
+    }
+
     if (path === '/' || path === '/home') { await this.viewHome(); }
     else if (path === '/produtos') { await this.viewCatalog(); }
     else if (path.startsWith('/produto/')) { await this.viewDetail(path.split('/produto/')[1]); }
     else if (path === '/admin' || path === '/admin/login') { this.viewAdminLogin(); }
     else if (path === '/admin/produtos') { this.adminState.section = 'products'; await this.viewAdminProducts(); }
+    else if (path === '/admin/pedidos') { this.adminState.section = 'orders'; await this.viewAdminProducts(); }
     else if (path === '/admin/depoimentos') { this.adminState.section = 'testimonials'; await this.viewAdminProducts(); }
+    else if (path === '/admin/configuracoes') { this.adminState.section = 'settings'; await this.viewAdminProducts(); }
     else if (path === '/admin/novo') { await this.viewAdminForm(); }
     else if (path.startsWith('/admin/editar/')) { await this.viewAdminForm(path.split('/admin/editar/')[1]); }
     else { this.viewNotFound(); }
@@ -1659,36 +1682,100 @@ const A = {
     }).join('');
   },
 
-  checkoutWhatsApp() {
+  async checkoutWhatsApp() {
     if (!this.cart.length) {
       this.showToast('Adicione produtos à sacola antes de finalizar', 'error');
       return;
     }
+    await this.ensureSettings();
     const isGift = document.getElementById('gift-checkbox')?.checked;
-    const clientName = document.getElementById('client-name-input')?.value.trim();
+    const clientName = document.getElementById('client-name-input')?.value.trim() || '';
+    const clientBairro = document.getElementById('client-bairro-input')?.value.trim() || '';
     const totalQty = this.cart.reduce((sum, item) => sum + item.q, 0);
     const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
     this.trackEvent('wa', 'cart', `Sacola (${totalQty} itens)`);
-    let message = clientName ? `Olá, Vivi! Aqui é ${clientName}.\n` : `Olá, Vivi!\n`;
-    message += `Gostaria de fazer o pedido da minha sacola no site (${totalQty} ${totalQty === 1 ? 'item' : 'itens'}):\n\n`;
-    message += this.cart.map(i => `✨ ${i.q}x *${i.nome}* — ${this.formatMoney(i.preco * i.q)}`).join('\n');
-    message += `\n\n💰 *Total estimado:* ${this.formatMoney(total)}`;
-    if (isGift) {
-      message += `\n🎁 *Para presente:* Sim, favor caprichar na embalagem!`;
+
+    // 1. Criar registro de intenção de compra no banco
+    let orderCode = '#PED-' + Math.floor(100 + Math.random() * 900);
+    try {
+      if (this.sb) {
+        const orderPayload = {
+          cliente_nome: clientName || null,
+          cliente_bairro: clientBairro || null,
+          itens: this.cart.map(i => ({ id: i.id, nome: i.nome, preco: i.preco, q: i.q, marca: i.marca, imagem: i.imagem })),
+          valor_total: total,
+          forma_pagamento: this.selectedPayment || 'Pix',
+          origem: 'carrinho',
+          status: 'iniciado_whatsapp',
+          observacoes: isGift ? 'Para presente (caprichar na embalagem)' : null
+        };
+        const { data, error } = await this.sb.from('orders').insert(orderPayload).select('codigo').single();
+        if (!error && data?.codigo) {
+          orderCode = data.codigo;
+        }
+      }
+    } catch (e) {
+      console.warn('Erro ao salvar intenção de pedido no banco:', e);
     }
-    if (this.selectedPayment) {
-      message += `\n💳 *Forma de pagamento:* ${this.selectedPayment}`;
+
+    // 2. Montar mensagem formatada com as tags dinâmicas
+    const itemsListText = this.cart.map(i => `✨ ${i.q}x *${i.nome}* — ${this.formatMoney(i.preco * i.q)}`).join('\n');
+    let clientInfoText = '';
+    if (clientName) clientInfoText += `👤 *Cliente:* ${clientName}\n`;
+    if (clientBairro) clientInfoText += `📍 *Bairro:* ${clientBairro}\n`;
+    if (clientInfoText) clientInfoText += '\n';
+
+    let template = this.settings.whatsapp_template_cart || 'Olá, Vivi! Gostaria de fazer o pedido da minha sacola ({codigo_pedido}):\n\n{dados_cliente}{lista_itens}\n\n💰 *Total estimado:* {valor_total}\n💳 *Forma de pagamento:* {forma_pagamento}\n\nPodemos combinar a entrega e o pagamento? 🛍️';
+
+    let message = template
+      .replace(/{codigo_pedido}/g, orderCode)
+      .replace(/{dados_cliente}/g, clientInfoText)
+      .replace(/{lista_itens}/g, itemsListText)
+      .replace(/{valor_total}/g, this.formatMoney(total))
+      .replace(/{forma_pagamento}/g, this.selectedPayment || 'A combinar');
+
+    if (isGift && !message.includes('presente')) {
+      message += '\n🎁 *Para presente:* Sim, favor caprichar na embalagem especial!';
     }
-    message += `\n\nPode me confirmar a disponibilidade e como combinamos a entrega? Muito obrigada! 💕`;
-    window.open(`${WA_BASE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+
+    const phone = (this.settings.whatsapp_number || WA_PHONE).replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
   },
 
-  orderWhatsAppDirect(id) {
+  async orderWhatsAppDirect(id) {
     const p = this.pmap[this.safeId(id)];
     if (!p) return;
+    await this.ensureSettings();
     this.trackEvent('wa', p.id, p.nome);
-    const text = `Olá, Vivi! Tenho interesse no produto *${p.nome}* (${this.formatMoney(p.preco)}) da marca ${p.marca || 'Boutique'}.\n\nPode me passar mais detalhes e a disponibilidade para pronta entrega?`;
-    window.open(`${WA_BASE}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+
+    let orderCode = '#PED-' + Math.floor(100 + Math.random() * 900);
+    try {
+      if (this.sb) {
+        const orderPayload = {
+          itens: [{ id: p.id, nome: p.nome, preco: p.preco || 0, q: 1, marca: p.marca, imagem: p.imagem }],
+          valor_total: p.preco || 0,
+          forma_pagamento: 'A combinar',
+          origem: 'direto',
+          status: 'iniciado_whatsapp'
+        };
+        const { data, error } = await this.sb.from('orders').insert(orderPayload).select('codigo').single();
+        if (!error && data?.codigo) orderCode = data.codigo;
+      }
+    } catch (e) {
+      console.warn('Erro ao registrar pedido direto:', e);
+    }
+
+    let template = this.settings.whatsapp_template_single || 'Olá, Vivi! Vi este produto na sua loja virtual e tenho interesse:\n\n{codigo_pedido}✨ *{nome_produto}*\n🏷️ Marca: {marca}\n💰 Valor: {valor_produto}\n{dados_cliente}\nVocê tem pronta entrega ou aceita encomenda? 🛍️';
+
+    let message = template
+      .replace(/{codigo_pedido}/g, `*Pedido:* ${orderCode}\n`)
+      .replace(/{nome_produto}/g, p.nome)
+      .replace(/{marca}/g, p.marca || 'Boutique')
+      .replace(/{valor_produto}/g, this.formatMoney(p.preco || 0))
+      .replace(/{dados_cliente}/g, '');
+
+    const phone = (this.settings.whatsapp_number || WA_PHONE).replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
   },
 
   toggleFav(id) {
@@ -2082,6 +2169,116 @@ const A = {
     return false;
   },
 
+  async ensureSettings() {
+    if (this.settingsLoaded) return this.settings;
+    try {
+      if (this.sb) {
+        const { data, error } = await this.sb.from('store_settings').select('key, value');
+        if (!error && data && data.length) {
+          data.forEach(item => {
+            this.settings[item.key] = item.value;
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar configurações:', e);
+    }
+    this.settingsLoaded = true;
+    return this.settings;
+  },
+
+  async ensureOrders(force = false) {
+    if (this.ordersLoaded && !force) return this.orders;
+    try {
+      if (this.sb) {
+        const { data, error } = await this.sb.from('orders').select('*').order('created_at', { ascending: false });
+        if (!error && data) {
+          this.orders = data;
+        }
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar pedidos:', e);
+    }
+    this.ordersLoaded = true;
+    return this.orders;
+  },
+
+  setAdminOrderFilter(filter) {
+    this.adminState.orderFilter = filter;
+    this.viewAdminProducts();
+  },
+
+  handleAdminOrderSearch(val) {
+    this.adminState.orderSearch = val;
+    this.viewAdminProducts();
+  },
+
+  async updateOrderStatus(id, newStatus) {
+    try {
+      if (this.sb) {
+        const { error } = await this.sb.from('orders').update({ status: newStatus }).eq('id', id);
+        if (error) throw error;
+      }
+      const ord = (this.orders || []).find(o => o.id === id);
+      if (ord) ord.status = newStatus;
+      this.showToast('Status do pedido atualizado!', 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao atualizar status do pedido:', e);
+      this.showToast('Erro ao atualizar status: ' + (e.message || ''), 'error');
+    }
+  },
+
+  async deleteOrder(id) {
+    const ord = (this.orders || []).find(o => o.id === id);
+    const cod = ord ? ord.codigo : 'este pedido';
+    if (!confirm(`Deseja excluir permanentemente o pedido "${cod}"?\n\nEsta ação apagará o registro do banco de dados.`)) {
+      return;
+    }
+    try {
+      if (this.sb) {
+        const { error } = await this.sb.from('orders').delete().eq('id', id);
+        if (error) throw error;
+      }
+      this.orders = (this.orders || []).filter(o => o.id !== id);
+      this.showToast('Pedido excluído com sucesso!', 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao excluir pedido:', e);
+      this.showToast('Erro ao excluir: ' + (e.message || ''), 'error');
+    }
+  },
+
+  async saveStoreSettings(newSettings) {
+    try {
+      if (this.sb) {
+        const entries = Object.entries(newSettings).map(([key, value]) => ({
+          key,
+          value,
+          updated_at: new Date().toISOString()
+        }));
+        const { error } = await this.sb.from('store_settings').upsert(entries, { onConflict: 'key' });
+        if (error) throw error;
+      }
+      Object.assign(this.settings, newSettings);
+      this.showToast('Configurações da loja salvas com sucesso!', 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao salvar configurações:', e);
+      this.showToast('Erro ao salvar: ' + (e.message || ''), 'error');
+    }
+  },
+
+  async resetStoreSettings() {
+    if (!confirm('Deseja restaurar as mensagens e número padrão do WhatsApp?')) return;
+    const defaults = {
+      whatsapp_number: '5518997871211',
+      whatsapp_template_cart: 'Olá, Vivi! Gostaria de fazer o pedido da minha sacola ({codigo_pedido}):\n\n{dados_cliente}{lista_itens}\n\n💰 *Total estimado:* {valor_total}\n💳 *Forma de pagamento:* {forma_pagamento}\n\nPodemos combinar a entrega e o pagamento? 🛍️',
+      whatsapp_template_single: 'Olá, Vivi! Vi este produto na sua loja virtual e tenho interesse:\n\n{codigo_pedido}✨ *{nome_produto}*\n🏷️ Marca: {marca}\n💰 Valor: {valor_produto}\n{dados_cliente}\nVocê tem pronta entrega ou aceita encomenda? 🛍️'
+    };
+    await this.saveStoreSettings(defaults);
+  },
+
   setAdminSection(sec) {
     this.adminState.section = sec;
     this.viewAdminProducts();
@@ -2241,6 +2438,316 @@ const A = {
     } catch (e) {
       this.showToast('Erro ao atualizar: ' + (e.message || 'tente novamente'), 'error');
     }
+  },
+
+  renderAdminOrdersSection(st) {
+    const totalOrders = (this.orders || []).length;
+    const pendingOrders = (this.orders || []).filter(o => o.status === 'iniciado_whatsapp').length;
+    const inProgressOrders = (this.orders || []).filter(o => o.status === 'em_atendimento').length;
+    const completedOrders = (this.orders || []).filter(o => o.status === 'concluido').length;
+    const totalOrdersValue = (this.orders || []).filter(o => o.status !== 'cancelado').reduce((sum, o) => sum + (parseFloat(o.valor_total) || 0), 0);
+    const avgTicket = totalOrders ? totalOrdersValue / (this.orders.filter(o => o.status !== 'cancelado').length || 1) : 0;
+    
+    const filter = st.orderFilter || 'all';
+    const search = (st.orderSearch || '').toLowerCase().trim();
+
+    let list = (this.orders || []).slice();
+    if (filter !== 'all') {
+      list = list.filter(o => o.status === filter);
+    }
+    if (search) {
+      list = list.filter(o => 
+        `${o.codigo || ''} ${o.cliente_nome || ''} ${o.cliente_bairro || ''} ${o.forma_pagamento || ''}`.toLowerCase().includes(search)
+      );
+    }
+
+    return `
+      <div id="admin-orders-section" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
+        
+        <!-- Topo da Seção de Pedidos -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F0E3DC] pb-5">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 text-[#1D8A58] border border-emerald-200">
+                <i class="fa-solid fa-receipt"></i> Gestão de Vendas & WhatsApp
+              </span>
+            </div>
+            <h2 class="font-serif font-bold text-2xl text-[#241A1B]">Intenções de Compra & Carrinhos</h2>
+            <p class="text-xs sm:text-sm text-[#826F70]">Acompanhe em tempo real todos os carrinhos finalizados e pedidos iniciados pelos clientes.</p>
+          </div>
+
+          <div class="flex items-center gap-2.5 shrink-0">
+            <button type="button" onclick="A.ensureOrders(true).then(() => A.viewAdminProducts())" class="btn-secondary text-xs py-2.5 px-3.5 hover:bg-[#FAF4F0]" title="Recarregar pedidos">
+              <i class="fa-solid fa-rotate"></i> Atualizar Pedidos
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards de Métricas de Vendas & Conversão -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div class="bg-[#FAF4F0]/60 p-4 rounded-2xl border border-[#F0E3DC]">
+            <span class="text-[11px] font-bold text-[#826F70] uppercase">Total de Pedidos</span>
+            <div class="font-serif font-bold text-2xl text-[#241A1B] mt-1">${totalOrders}</div>
+            <p class="text-[11px] text-[#826F70] mt-0.5">${pendingOrders} aguardando resposta</p>
+          </div>
+          <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+            <span class="text-[11px] font-bold text-[#1D8A58] uppercase">Vendas Fechadas</span>
+            <div class="font-serif font-bold text-2xl text-[#1D8A58] mt-1">${completedOrders}</div>
+            <p class="text-[11px] text-[#826F70] mt-0.5">${inProgressOrders} em atendimento</p>
+          </div>
+          <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-100">
+            <span class="text-[11px] font-bold text-[#A97E3B] uppercase">Valor dos Pedidos</span>
+            <div class="font-serif font-bold text-2xl text-[#A97E3B] mt-1">${this.formatMoney(totalOrdersValue)}</div>
+            <p class="text-[11px] text-[#826F70] mt-0.5">Soma dos pedidos gerados</p>
+          </div>
+          <div class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100">
+            <span class="text-[11px] font-bold text-purple-700 uppercase">Ticket Médio</span>
+            <div class="font-serif font-bold text-2xl text-purple-700 mt-1">${this.formatMoney(avgTicket)}</div>
+            <p class="text-[11px] text-[#826F70] mt-0.5">Média por pedido</p>
+          </div>
+        </div>
+
+        <!-- Barra de Filtros e Busca -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+            <button type="button" onclick="A.setAdminOrderFilter('all')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${filter === 'all' ? 'bg-[#241A1B] text-white shadow-sm' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              Todos (${totalOrders})
+            </button>
+            <button type="button" onclick="A.setAdminOrderFilter('iniciado_whatsapp')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${filter === 'iniciado_whatsapp' ? 'bg-amber-600 text-white shadow-sm' : 'bg-amber-50 text-amber-800 hover:bg-amber-100'}">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span> Novo / Contato (${pendingOrders})
+            </button>
+            <button type="button" onclick="A.setAdminOrderFilter('em_atendimento')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${filter === 'em_atendimento' ? 'bg-blue-600 text-white shadow-sm' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}">
+              <span class="w-2 h-2 rounded-full bg-blue-400"></span> Em Atendimento (${inProgressOrders})
+            </button>
+            <button type="button" onclick="A.setAdminOrderFilter('concluido')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${filter === 'concluido' ? 'bg-[#1D8A58] text-white shadow-sm' : 'bg-emerald-50 text-[#1D8A58] hover:bg-emerald-100'}">
+              <span class="w-2 h-2 rounded-full bg-[#4ADE80]"></span> Concluído (${completedOrders})
+            </button>
+          </div>
+
+          <div class="relative w-full sm:w-72">
+            <input type="text" placeholder="Buscar por código, cliente ou bairro..." value="${this.escapeAttr(st.orderSearch || '')}" oninput="A.handleAdminOrderSearch(this.value)" class="lux-input text-xs py-2 pl-9 pr-8 rounded-xl border-[#F0E3DC] w-full">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#826F70]"></i>
+            ${st.orderSearch ? `
+              <button type="button" onclick="A.handleAdminOrderSearch('')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#826F70] hover:text-[#241A1B]">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Lista de Pedidos -->
+        <div class="space-y-4">
+          ${list.length > 0 ? list.map(o => {
+            const formattedDate = this.formatDate(o.created_at);
+            const items = Array.isArray(o.itens) ? o.itens : [];
+            const statusConfig = {
+              iniciado_whatsapp: { label: 'Iniciado no WhatsApp', bg: 'bg-amber-50 text-amber-800 border-amber-300', dot: 'bg-amber-500' },
+              em_atendimento: { label: 'Em Atendimento', bg: 'bg-blue-50 text-blue-700 border-blue-300', dot: 'bg-blue-500' },
+              concluido: { label: 'Venda Concluída', bg: 'bg-emerald-50 text-[#1D8A58] border-emerald-300', dot: 'bg-[#1D8A58]' },
+              cancelado: { label: 'Cancelado', bg: 'bg-red-50 text-red-600 border-red-200', dot: 'bg-red-500' }
+            }[o.status] || { label: o.status, bg: 'bg-gray-100 text-gray-700', dot: 'bg-gray-400' };
+
+            return `
+              <div class="p-5 sm:p-6 rounded-2xl border border-[#F0E3DC] bg-white transition-all hover:shadow-md space-y-4">
+                
+                <!-- Cabeçalho do Card de Pedido -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F0E3DC]/60 pb-3">
+                  <div class="flex items-center gap-3">
+                    <span class="font-mono font-bold text-sm text-[#A97E3B] bg-[#FBF4E8] px-3 py-1 rounded-xl border border-[#EACCA4]">
+                      ${this.escape(o.codigo)}
+                    </span>
+                    <span class="text-xs text-[#826F70]">• ${formattedDate}</span>
+                    <span class="text-[11px] font-semibold text-[#826F70] bg-[#FAF4F0] px-2.5 py-0.5 rounded-full border border-[#F0E3DC]">
+                      ${o.origem === 'carrinho' ? '🛍️ Sacola' : '⚡ Pedido Direto'}
+                    </span>
+                  </div>
+
+                  <!-- Seletor Rápido de Status -->
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-[#826F70]">Status:</span>
+                    <select onchange="A.updateOrderStatus('${o.id}', this.value)" class="text-xs font-bold py-1.5 px-3 rounded-xl border cursor-pointer ${statusConfig.bg}">
+                      <option value="iniciado_whatsapp" ${o.status === 'iniciado_whatsapp' ? 'selected' : ''}>⏳ Aguardando Contato</option>
+                      <option value="em_atendimento" ${o.status === 'em_atendimento' ? 'selected' : ''}>💬 Em Atendimento</option>
+                      <option value="concluido" ${o.status === 'concluido' ? 'selected' : ''}>✅ Venda Concluída</option>
+                      <option value="cancelado" ${o.status === 'cancelado' ? 'selected' : ''}>❌ Cancelado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Dados do Cliente e Pagamento -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#FCF9F7] p-3.5 rounded-xl border border-[#F0E3DC]/60 text-xs text-[#3D2C2E]">
+                  <div>
+                    <span class="text-[#826F70] font-semibold block mb-0.5">Cliente:</span>
+                    <span class="font-bold text-sm text-[#241A1B] flex items-center gap-1.5">
+                      <i class="fa-solid fa-user text-[#C69A55]"></i> ${this.escape(o.cliente_nome || 'Não informou nome')}
+                    </span>
+                  </div>
+                  <div>
+                    <span class="text-[#826F70] font-semibold block mb-0.5">Bairro / Entrega:</span>
+                    <span class="font-medium text-[#241A1B] flex items-center gap-1.5">
+                      <i class="fa-solid fa-location-dot text-rose-500"></i> ${this.escape(o.cliente_bairro || 'A combinar entrega')}
+                    </span>
+                  </div>
+                  <div>
+                    <span class="text-[#826F70] font-semibold block mb-0.5">Pagamento Escolhido:</span>
+                    <span class="font-medium text-[#241A1B] flex items-center gap-1.5">
+                      <i class="fa-solid fa-credit-card text-blue-500"></i> ${this.escape(o.forma_pagamento || 'A combinar')}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Itens Escolhidos -->
+                <div class="space-y-2">
+                  <span class="text-xs font-bold text-[#826F70] uppercase tracking-wider block">Itens do Pedido (${items.length}):</span>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${items.map(it => `
+                      <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#F0E3DC] shadow-xs">
+                        <div class="w-10 h-10 rounded-lg overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC] shrink-0">
+                          ${it.imagem ? `<img src="${this.escapeAttr(it.imagem)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-bag-shopping"></i></div>`}
+                        </div>
+                        <div class="min-w-0 flex-1 text-xs">
+                          <p class="font-bold text-[#241A1B] truncate">${this.escape(it.nome)}</p>
+                          <p class="text-[#826F70] text-[11px]">${it.q}x ${this.formatMoney(it.preco)} • <strong class="text-[#A97E3B]">${this.formatMoney(it.preco * it.q)}</strong></p>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Rodapé com Total e Ações -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#F0E3DC]/60">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-xs font-semibold text-[#826F70]">Total Calculado:</span>
+                    <span class="font-serif font-bold text-xl text-[#1D8A58]">${this.formatMoney(o.valor_total)}</span>
+                    ${o.observacoes ? `<span class="text-[11px] text-[#A97E3B] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">🎁 ${this.escape(o.observacoes)}</span>` : ''}
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="navigator.clipboard.writeText('Pedido ${o.codigo} - Cliente: ${o.cliente_nome || ''} (${o.cliente_bairro || ''}) - Total: ${this.formatMoney(o.valor_total)}'); A.showToast('Resumo copiado!', 'success')" class="btn-secondary text-xs py-2 px-3 hover:bg-[#FAF4F0]">
+                      <i class="fa-solid fa-copy"></i> Copiar Resumo
+                    </button>
+                    <button type="button" onclick="A.deleteOrder('${o.id}')" class="btn-secondary text-xs py-2 px-3 text-red-600 hover:bg-red-50 hover:border-red-300" title="Excluir pedido">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            `;
+          }).join('') : `
+            <div class="py-16 text-center text-xs text-[#826F70] space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-[#FAF0EB] text-[#1D8A58] flex items-center justify-center mx-auto text-2xl shadow-sm">
+                <i class="fa-solid fa-bag-shopping"></i>
+              </div>
+              <p class="font-bold text-base text-[#241A1B]">Nenhum pedido encontrado</p>
+              <p class="text-xs text-[#826F70] max-w-sm mx-auto">
+                ${search ? 'Nenhum pedido corresponde aos termos de busca digitados.' : 'Conforme os clientes finalizarem pedidos na sacola, eles aparecerão aqui com código e detalhes.'}
+              </p>
+              ${search ? `
+                <button type="button" onclick="A.handleAdminOrderSearch('')" class="btn-secondary text-xs py-2 px-3.5">Limpar busca</button>
+              ` : ''}
+            </div>
+          `}
+        </div>
+
+      </div>
+    `;
+  },
+
+  renderAdminSettingsSection() {
+    const s = this.settings;
+    return `
+      <div id="admin-settings-section" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-4 sm:p-6 lg:p-8 space-y-8">
+        
+        <!-- Topo da Seção de Configurações -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F0E3DC] pb-5">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-amber-50 text-[#A97E3B] border border-amber-200">
+                <i class="fa-brands fa-whatsapp text-emerald-600"></i> WhatsApp & Mensagens
+              </span>
+            </div>
+            <h2 class="font-serif font-bold text-2xl text-[#241A1B]">Configurações da Loja</h2>
+            <p class="text-xs sm:text-sm text-[#826F70]">Altere o número de WhatsApp que recebe os pedidos e personalize os textos das mensagens automáticas.</p>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <button type="button" onclick="A.resetStoreSettings()" class="btn-secondary text-xs py-2.5 px-4 text-red-600 hover:bg-red-50">
+              <i class="fa-solid fa-rotate-left"></i> Restaurar Padrão
+            </button>
+          </div>
+        </div>
+
+        <form onsubmit="event.preventDefault(); A.handleSaveSettingsForm();" class="space-y-6 max-w-3xl">
+          
+          <!-- Número de WhatsApp -->
+          <div class="bg-[#FCF9F7] p-5 rounded-2xl border border-[#F0E3DC] space-y-3">
+            <label class="block font-bold text-sm text-[#241A1B]">
+              <i class="fa-brands fa-whatsapp text-[#1D8A58] text-base mr-1"></i> Número de WhatsApp de Destino:
+            </label>
+            <p class="text-xs text-[#826F70]">Digite o número com DDD (ex: 5518997871211). É para este número que os clientes enviarão os pedidos.</p>
+            <input type="text" id="setting-whatsapp-number" value="${this.escapeAttr(s.whatsapp_number || '5518997871211')}" class="lux-input text-sm py-2.5 px-4 max-w-sm" placeholder="Ex: 5518997871211" required>
+          </div>
+
+          <!-- Template do Carrinho / Sacola -->
+          <div class="space-y-3">
+            <label class="block font-bold text-sm text-[#241A1B]">
+              <i class="fa-solid fa-cart-shopping text-[#C69A55] mr-1"></i> Mensagem Automática ao Finalizar a Sacola:
+            </label>
+            <p class="text-xs text-[#826F70]">
+              Variáveis que você pode usar: 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{codigo_pedido}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{dados_cliente}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{lista_itens}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{valor_total}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{forma_pagamento}</code>.
+            </p>
+            <textarea id="setting-template-cart" rows="6" class="lux-input text-xs py-3 px-4 font-mono leading-relaxed w-full">${this.escape(s.whatsapp_template_cart || '')}</textarea>
+          </div>
+
+          <!-- Template de Pedido Direto do Produto -->
+          <div class="space-y-3">
+            <label class="block font-bold text-sm text-[#241A1B]">
+              <i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Mensagem ao Clicar em Pedir pelo WhatsApp no Produto:
+            </label>
+            <p class="text-xs text-[#826F70]">
+              Variáveis: 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{codigo_pedido}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{nome_produto}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{marca}</code>, 
+              <code class="bg-[#FAF4F0] px-1.5 py-0.5 rounded text-[#A97E3B] font-bold">{valor_produto}</code>.
+            </p>
+            <textarea id="setting-template-single" rows="5" class="lux-input text-xs py-3 px-4 font-mono leading-relaxed w-full">${this.escape(s.whatsapp_template_single || '')}</textarea>
+          </div>
+
+          <!-- Botão Salvar -->
+          <div class="pt-2">
+            <button type="submit" class="btn-gold py-3 px-8 text-sm shadow-lg flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar Configurações
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    `;
+  },
+
+  handleSaveSettingsForm() {
+    const numEl = document.getElementById('setting-whatsapp-number');
+    const cartEl = document.getElementById('setting-template-cart');
+    const singEl = document.getElementById('setting-template-single');
+    if (!numEl) return;
+
+    const whatsapp_number = numEl.value.replace(/\D/g, '') || '5518997871211';
+    const whatsapp_template_cart = cartEl?.value?.trim() || '';
+    const whatsapp_template_single = singEl?.value?.trim() || '';
+
+    this.saveStoreSettings({
+      whatsapp_number,
+      whatsapp_template_cart,
+      whatsapp_template_single
+    });
   },
 
   renderAdminTestimonialsSection(st) {
@@ -2435,7 +2942,7 @@ const A = {
   async viewAdminProducts() {
     if (!(await this.guardAdmin())) return;
     this.setMeta({ title: 'Painel da Administradora | Vivi Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
-    await Promise.all([this.ensureProds(), this.ensureTestimonials(true)]);
+    await Promise.all([this.ensureProds(), this.ensureTestimonials(true), this.ensureOrders(true), this.ensureSettings()]);
 
     const st = this.adminState;
     const analytics = await this.loadAnalytics();
@@ -2445,6 +2952,16 @@ const A = {
     const totalTestim = (this.testimonials || []).length;
     const visibleTestim = (this.testimonials || []).filter(t => t.aprovado !== false).length;
     const hiddenTestim = totalTestim - visibleTestim;
+    
+    // Métricas de Pedidos e Conversão
+    const totalOrders = (this.orders || []).length;
+    const pendingOrders = (this.orders || []).filter(o => o.status === 'iniciado_whatsapp').length;
+    const inProgressOrders = (this.orders || []).filter(o => o.status === 'em_atendimento').length;
+    const completedOrders = (this.orders || []).filter(o => o.status === 'concluido').length;
+    const totalOrdersValue = (this.orders || []).filter(o => o.status !== 'cancelado').reduce((sum, o) => sum + (parseFloat(o.valor_total) || 0), 0);
+    const avgTicket = totalOrders ? totalOrdersValue / (this.orders.filter(o => o.status !== 'cancelado').length || 1) : 0;
+    const totalViewsCount = analytics.views.total || 0;
+    const conversionRate = totalViewsCount > 0 ? ((totalOrders / totalViewsCount) * 100).toFixed(1) : '0.0';
     const ativos = this.prods.filter(p => p.ativo).length;
     const inativos = total - ativos;
     const semEstoque = this.prods.filter(p => (p.estoque || 0) === 0).length;
@@ -2560,19 +3077,31 @@ const A = {
           </div>
         </div>
 
-        <!-- Abas Principais do Painel Executivo (Catálogo vs Depoimentos) -->
-        <div class="flex flex-wrap items-center gap-3 border-b border-[#F0E3DC] pb-4">
-          <button type="button" onclick="A.setAdminSection('products')" class="px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 ${st.section !== 'testimonials' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
-            <i class="fa-solid fa-boxes-stacked ${st.section !== 'testimonials' ? 'text-[#C69A55]' : ''}"></i>
-            <span>Catálogo de Produtos</span>
-            <span class="px-2 py-0.5 rounded-full text-[11px] ${st.section !== 'testimonials' ? 'bg-white/20 text-white' : 'bg-[#FAF4F0] text-[#826F70]'}">${total}</span>
+        <!-- Abas Principais do Painel Executivo -->
+        <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 border-b border-[#F0E3DC] pb-4">
+          <button type="button" onclick="A.setAdminSection('products')" class="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${st.section === 'products' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
+            <i class="fa-solid fa-boxes-stacked ${st.section === 'products' ? 'text-[#C69A55]' : ''}"></i>
+            <span>Catálogo</span>
+            <span class="px-2 py-0.5 rounded-full text-[11px] ${st.section === 'products' ? 'bg-white/20 text-white' : 'bg-[#FAF4F0] text-[#826F70]'}">${total}</span>
           </button>
 
-          <button type="button" onclick="A.setAdminSection('testimonials')" class="px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 ${st.section === 'testimonials' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
+          <button type="button" onclick="A.setAdminSection('orders')" class="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${st.section === 'orders' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
+            <i class="fa-solid fa-bag-shopping ${st.section === 'orders' ? 'text-[#4ADE80]' : 'text-[#1D8A58]'}"></i>
+            <span>Pedidos & Vendas</span>
+            <span class="px-2 py-0.5 rounded-full text-[11px] ${st.section === 'orders' ? 'bg-[#1D8A58] text-white' : 'bg-emerald-50 text-[#1D8A58] font-bold'}">${totalOrders}</span>
+            ${pendingOrders > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-bold animate-pulse" title="${pendingOrders} aguardando contato">${pendingOrders} novos</span>` : ''}
+          </button>
+
+          <button type="button" onclick="A.setAdminSection('testimonials')" class="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${st.section === 'testimonials' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
             <i class="fa-solid fa-comments ${st.section === 'testimonials' ? 'text-[#E8A7A1]' : ''}"></i>
-            <span>Depoimentos & Avaliações</span>
+            <span>Depoimentos</span>
             <span class="px-2 py-0.5 rounded-full text-[11px] ${st.section === 'testimonials' ? 'bg-[#E8A7A1] text-[#241A1B]' : 'bg-[#FAF4F0] text-[#826F70]'}">${totalTestim}</span>
-            ${hiddenTestim > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-bold" title="${hiddenTestim} comentários ocultos">${hiddenTestim} ocultos</span>` : ''}
+            ${hiddenTestim > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-bold" title="${hiddenTestim} ocultos">${hiddenTestim} ocultos</span>` : ''}
+          </button>
+
+          <button type="button" onclick="A.setAdminSection('settings')" class="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${st.section === 'settings' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
+            <i class="fa-solid fa-gear ${st.section === 'settings' ? 'text-[#C69A55]' : ''}"></i>
+            <span>WhatsApp & Textos</span>
           </button>
         </div>
 
@@ -2762,7 +3291,9 @@ const A = {
           </div>
         ` : ''}
 
-        ${st.section === 'testimonials' ? this.renderAdminTestimonialsSection(st) : `
+        ${st.section === 'orders' ? this.renderAdminOrdersSection(st) : 
+          st.section === 'settings' ? this.renderAdminSettingsSection() : 
+          st.section === 'testimonials' ? this.renderAdminTestimonialsSection(st) : `
         <!-- Seção do Catálogo com Abas e Subdivisões -->
         <div id="admin-products-table" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
           
