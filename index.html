@@ -296,6 +296,7 @@ h1, h2, h3, h4, .font-serif {
   backdrop-filter: blur(4px);
 }
 .drawer-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+#image-modal.open #image-modal-dialog { transform: scale(1); opacity: 1; }
 .drawer-panel {
   transform: translateX(100%);
   visibility: hidden;
@@ -488,6 +489,31 @@ h1, h2, h3, h4, .font-serif {
         </button>
       </div>
       <div id="fav-items-list" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Modal Lightbox de Visualização Ampliada de Imagem -->
+  <div id="image-modal" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" onclick="A.closeImageModal()" role="dialog" aria-modal="true" aria-labelledby="image-modal-title">
+    <div id="image-modal-dialog" class="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl border border-[#F0E3DC] flex flex-col relative transition-all duration-300 scale-95 opacity-0" onclick="event.stopPropagation()">
+      <div class="px-5 py-4 border-b border-[#F0E3DC] flex items-center justify-between bg-[#FCF9F7]">
+        <div class="min-w-0 pr-3">
+          <h3 id="image-modal-title" class="font-serif font-bold text-base text-[#241A1B] truncate">Visualização da Imagem</h3>
+          <span class="text-[11px] text-[#826F70] flex items-center gap-1.5 mt-0.5">
+            <i class="fa-solid fa-expand text-[#A97E3B]"></i> Foto em alta resolução
+          </span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <a id="image-modal-open-tab" href="#" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white border border-[#F0E3DC] text-[#826F70] hover:text-[#A97E3B] hover:border-[#C69A55] flex items-center justify-center transition-colors" title="Abrir imagem original em nova aba" aria-label="Abrir em nova aba">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+          </a>
+          <button type="button" onclick="A.closeImageModal()" class="w-9 h-9 rounded-full bg-white border border-[#F0E3DC] text-[#826F70] hover:text-[#241A1B] hover:border-[#241A1B] flex items-center justify-center transition-colors" aria-label="Fechar visualização">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-4 sm:p-6 flex-1 overflow-auto flex items-center justify-center bg-[#FAF4F0]/40 min-h-[260px] sm:min-h-[380px]">
+        <img id="image-modal-img" src="" alt="Produto ampliado" class="max-w-full max-h-[72vh] w-auto h-auto object-contain rounded-2xl shadow-md border border-[#F0E3DC] bg-white transition-all">
+      </div>
     </div>
   </div>
 
@@ -734,6 +760,7 @@ const A = {
       this.toggleCart(false);
       this.closeQuickView();
       this.closeFavModal();
+      this.closeImageModal();
     });
   },
 
@@ -1393,9 +1420,10 @@ const A = {
           <span class="text-[#241A1B] font-semibold truncate">${this.escape(p.nome)}</span>
         </nav>
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 sm:p-10 border border-[#F0E3DC] shadow-sm mb-16">
-          <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC]">
-            ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover" fetchpriority="high" decoding="async">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`}
-            <button type="button" onclick="A.toggleFav('${id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+          <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer group" onclick="${p.imagem ? `A.openImageModal('${this.escapeAttr(p.imagem)}', '${this.escapeAttr(p.nome)}')` : ''}" title="Clique para ampliar a foto">
+            ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" fetchpriority="high" decoding="async">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`}
+            ${p.imagem ? `<div class="absolute bottom-3 right-3 bg-black/50 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full opacity-80 group-hover:opacity-100 transition-opacity flex items-center gap-1.5"><i class="fa-solid fa-magnifying-glass-plus"></i> Ampliar</div>` : ''}
+            <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
               <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-base" aria-hidden="true"></i>
             </button>
           </div>
@@ -1443,7 +1471,7 @@ const A = {
   },
 
   anyDialogOpen() {
-    return ['cart-drawer', 'quickview-overlay', 'fav-overlay']
+    return ['cart-drawer', 'quickview-overlay', 'fav-overlay', 'image-modal']
       .some(id => document.getElementById(id)?.classList.contains('open'));
   },
 
@@ -1655,6 +1683,45 @@ const A = {
   closeQuickView() {
     this.setDialogOpen(['quickview-overlay'], false);
     if (!this.anyDialogOpen()) document.body.style.overflow = '';
+  },
+
+  openImageModal(src, title) {
+    if (!src) return;
+    const modal = document.getElementById('image-modal');
+    const img = document.getElementById('image-modal-img');
+    const titleEl = document.getElementById('image-modal-title');
+    const openTab = document.getElementById('image-modal-open-tab');
+    if (!modal || !img) return;
+    img.src = src;
+    img.alt = title || 'Imagem ampliada';
+    if (titleEl) titleEl.textContent = title || 'Visualização da Imagem';
+    if (openTab) {
+      if (src.startsWith('data:')) {
+        openTab.style.display = 'none';
+      } else {
+        openTab.style.display = 'flex';
+        openTab.href = src;
+      }
+    }
+    this.setDialogOpen(['image-modal'], true);
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeImageModal() {
+    this.setDialogOpen(['image-modal'], false);
+    if (!this.anyDialogOpen()) document.body.style.overflow = '';
+  },
+
+  openPreviewImage() {
+    const preview = document.getElementById('img-preview');
+    if (!preview) return;
+    const img = preview.querySelector('img');
+    if (!img || !img.src) {
+      this.showToast('Nenhuma imagem enviada ainda', 'info');
+      return;
+    }
+    const name = document.getElementById('form-name')?.value?.trim() || 'Visualização da Imagem';
+    this.openImageModal(img.src, name);
   },
 
   async shareProduct(id) {
@@ -2209,9 +2276,14 @@ const A = {
                     
                     <!-- Foto e Dados Principais -->
                     <div class="flex items-center gap-3.5 min-w-0 flex-1">
-                      <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC] relative shadow-sm">
-                        ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#AA999A]"><i class="fa-solid fa-image"></i></div>`}
-                        ${p.promocao ? '<span class="absolute top-1 left-1 w-2 h-2 rounded-full bg-red-500"></span>' : ''}
+                      <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC] relative shadow-sm cursor-pointer group hover:border-[#C69A55] transition-all" onclick="${p.imagem ? `A.openImageModal('${this.escapeAttr(p.imagem)}', '${this.escapeAttr(p.nome)}')` : ''}" title="Clique para ampliar imagem">
+                        ${p.imagem ? `
+                          <img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                          <div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i>
+                          </div>
+                        ` : `<div class="w-full h-full flex items-center justify-center text-[#AA999A]"><i class="fa-solid fa-image"></i></div>`}
+                        ${p.promocao ? '<span class="absolute top-1 left-1 w-2 h-2 rounded-full bg-red-500 shadow"></span>' : ''}
                       </div>
 
                       <div class="min-w-0 space-y-1">
@@ -2399,10 +2471,25 @@ const A = {
           <div>
             <label class="block text-xs font-bold uppercase mb-1" for="form-file">Imagem (JPG, PNG ou WEBP, até 5 MB)</label>
             <div class="flex items-center gap-4">
-              <div id="img-preview" class="w-20 h-20 rounded-2xl bg-[#FAF0EB] border border-[#F0E3DC] overflow-hidden flex items-center justify-center shrink-0">
-                ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="" class="w-full h-full object-cover">` : '<i class="fa-solid fa-image text-xl text-[#AA999A]"></i>'}
+              <div id="img-preview"
+                   onclick="A.openPreviewImage()"
+                   class="w-24 h-24 rounded-2xl bg-[#FAF0EB] border-2 border-dashed border-[#E5D7D0] hover:border-[#C69A55] overflow-hidden flex items-center justify-center shrink-0 relative group cursor-pointer shadow-sm transition-all"
+                   title="Clique para ampliar a imagem">
+                ${p.imagem ? `
+                  <img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 backdrop-blur-[1px]">
+                    <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+                    <span class="text-[9px] font-bold uppercase tracking-wider">Ampliar</span>
+                  </div>
+                ` : '<i class="fa-solid fa-image text-xl text-[#AA999A]"></i>'}
               </div>
-              <input type="file" id="form-file" accept="image/jpeg,image/png,image/webp,image/gif">
+              <div class="space-y-1.5 flex-1 min-w-0">
+                <input type="file" id="form-file" accept="image/jpeg,image/png,image/webp,image/gif" class="text-xs text-[#826F70] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#FAF0EB] file:text-[#A97E3B] hover:file:bg-[#F3E5DD] file:cursor-pointer w-full">
+                <p class="text-[11px] text-[#826F70] flex items-center gap-1.5">
+                  <i class="fa-solid fa-magnifying-glass text-[#A97E3B]"></i>
+                  <span>Clique na foto ao lado para visualizá-la em tamanho grande.</span>
+                </p>
+              </div>
             </div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#F0E3DC]">
@@ -2443,7 +2530,17 @@ const A = {
         return;
       }
       const reader = new FileReader();
-      reader.onload = ev => { document.getElementById('img-preview').innerHTML = `<img src="${ev.target.result}" alt="" class="w-full h-full object-cover">`; };
+      reader.onload = ev => {
+        const preview = document.getElementById('img-preview');
+        if (preview) {
+          preview.innerHTML = `
+            <img src="${ev.target.result}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 backdrop-blur-[1px]">
+              <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
+              <span class="text-[9px] font-bold uppercase tracking-wider">Ampliar</span>
+            </div>`;
+        }
+      };
       reader.readAsDataURL(file);
     });
   },
