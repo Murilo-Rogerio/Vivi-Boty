@@ -17,15 +17,19 @@ function esc(value) {
 export default async function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
   const url = new URL(request.url);
+  const productId = url.pathname.split('/').filter(Boolean).pop();
 
-  // Se for um usuário humano (Brave, Chrome, Safari, etc.), serve o index.html da SPA com status 200
+  // Se for um usuário humano (Brave, Chrome, Safari, etc.) que acessou /produto/:id diretamente,
+  // redireciona com 302 para a raiz com ?p=:id onde a SPA abre o modal instantaneamente sem 404
   if (!BOT_UA.test(ua)) {
-    return fetch(new URL('/index.html', request.url));
+    if (productId && productId !== 'produto') {
+      return Response.redirect(new URL(`/?p=${encodeURIComponent(productId)}`, request.url), 302);
+    }
+    return Response.redirect(new URL('/', request.url), 302);
   }
 
-  const productId = url.pathname.split('/').filter(Boolean).pop();
   if (!productId || productId === 'produto') {
-    return fetch(new URL('/index.html', request.url));
+    return Response.redirect(new URL('/', request.url), 302);
   }
 
   let product = null;
@@ -52,7 +56,7 @@ export default async function middleware(request) {
     : 'Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes';
   const desc = (product?.descricao || 'Perfumes, cosméticos e presentes originais com atendimento humanizado pelo WhatsApp.').slice(0, 160);
   const image = product?.imagem || FALLBACK_IMAGE;
-  const canonical = `https://www.vivicarvalhoboty.com.br/produto/${encodeURIComponent(productId)}`;
+  const canonical = `https://www.vivicarvalhoboty.com.br/?p=${encodeURIComponent(productId)}`;
 
   const html = `<!DOCTYPE html><html lang="pt-BR"><head>
 <meta charset="UTF-8">
