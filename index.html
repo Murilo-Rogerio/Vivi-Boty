@@ -782,12 +782,19 @@ const A = {
 
   trackEvent(type, id, name) {
     if (!type) return;
+    const key = `te_${type}_${id || 'none'}`;
+    const now = Date.now();
+    this._lastTrack = this._lastTrack || {};
+    if (this._lastTrack[key] && (now - this._lastTrack[key]) < 5000) {
+      return; // Previne flood de eventos repetidos em menos de 5s
+    }
+    this._lastTrack[key] = now;
     try {
       if (this.sb) {
         this.sb.from('analytics_events').insert({
           event_type: type,
-          product_id: id ? String(id) : null,
-          product_name: name || null
+          product_id: id ? String(id).slice(0, 100) : null,
+          product_name: name ? String(name).slice(0, 150) : null
         }).then(() => {}).catch(() => {});
       }
     } catch {}
@@ -1503,7 +1510,7 @@ const A = {
           <span class="text-[#241A1B] font-semibold truncate">${this.escape(p.nome)}</span>
         </nav>
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 sm:p-10 border border-[#F0E3DC] shadow-sm mb-16">
-          <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer group" onclick="${p.imagem ? `A.openImageModal('${this.escapeAttr(p.imagem)}', '${this.escapeAttr(p.nome)}')` : ''}" title="Clique para ampliar a foto">
+          <div class="md:col-span-5 relative aspect-square rounded-2xl overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer group" onclick="${p.imagem ? `A.openImageModalById('${this.safeId(p.id)}')` : ''}" title="Clique para ampliar a foto">
             ${p.imagem ? `<img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" fetchpriority="high" decoding="async">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-6xl"></i></div>`}
             ${p.imagem ? `<div class="absolute bottom-3 right-3 bg-black/50 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full opacity-80 group-hover:opacity-100 transition-opacity flex items-center gap-1.5"><i class="fa-solid fa-magnifying-glass-plus"></i> Ampliar</div>` : ''}
             <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
@@ -1920,22 +1927,31 @@ const A = {
     const btn = document.getElementById('testimonial-submit-btn');
     const err = document.getElementById('testimonial-error');
 
-    const nome = nomeEl?.value?.trim() || '';
-    const cidade = cidadeEl?.value?.trim() || 'Cliente';
-    const estrelas = parseInt(ratingEl?.value, 10) || 5;
-    const produto_mencionado = prodEl?.value?.trim() || '';
-    const comentario = commEl?.value?.trim() || '';
+    // Rate limiting contra spam de formulário (30s)
+    const lastSub = parseInt(sessionStorage.getItem('last_testim_submit') || '0', 10);
+    if (Date.now() - lastSub < 30000) {
+      if (err) { err.textContent = 'Aguarde alguns segundos antes de enviar outro depoimento.'; err.classList.remove('hidden'); }
+      return;
+    }
 
-    if (!nome) {
-      if (err) { err.textContent = 'Por favor, informe seu nome.'; err.classList.remove('hidden'); }
+    const clean = s => String(s || '').replace(/[\u0000-\u0008\u000B-\u001F\u007F-\u009F]/g, '').trim();
+    const nome = clean(nomeEl?.value).slice(0, 80);
+    const cidade = clean(cidadeEl?.value).slice(0, 60) || 'Cliente';
+    const estrelas = Math.max(1, Math.min(5, parseInt(ratingEl?.value, 10) || 5));
+    const produto_mencionado = clean(prodEl?.value).slice(0, 100);
+    const comentario = clean(commEl?.value).slice(0, 600);
+
+    if (nome.length < 2) {
+      if (err) { err.textContent = 'Por favor, informe seu nome completo ou primeiro nome.'; err.classList.remove('hidden'); }
       nomeEl?.focus();
       return;
     }
-    if (!comentario) {
-      if (err) { err.textContent = 'Por favor, escreva seu comentário.'; err.classList.remove('hidden'); }
+    if (comentario.length < 5) {
+      if (err) { err.textContent = 'Seu comentário deve ter pelo menos 5 caracteres.'; err.classList.remove('hidden'); }
       commEl?.focus();
       return;
     }
+    sessionStorage.setItem('last_testim_submit', String(Date.now()));
 
     if (btn) {
       btn.disabled = true;
@@ -2549,7 +2565,7 @@ const A = {
                     
                     <!-- Foto e Dados Principais -->
                     <div class="flex items-center gap-3.5 min-w-0 flex-1">
-                      <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC] relative shadow-sm cursor-pointer group hover:border-[#C69A55] transition-all" onclick="${p.imagem ? `A.openImageModal('${this.escapeAttr(p.imagem)}', '${this.escapeAttr(p.nome)}')` : ''}" title="Clique para ampliar imagem">
+                      <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC] relative shadow-sm cursor-pointer group hover:border-[#C69A55] transition-all" onclick="${p.imagem ? `A.openImageModalById('${this.safeId(p.id)}')` : ''}" title="Clique para ampliar imagem">
                         ${p.imagem ? `
                           <img src="${this.escapeAttr(p.imagem)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                           <div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs">
@@ -2964,9 +2980,19 @@ const A = {
   },
   escape(str) {
     if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   },
   escapeAttr(str) { return this.escape(str); },
+  openImageModalById(id) {
+    const p = this.pmap[this.safeId(id)];
+    if (!p || !p.imagem) return;
+    this.openImageModal(p.imagem, p.nome);
+  },
   safeId(id) { return String(id || '').replace(/[^a-zA-Z0-9-]/g, ''); },
 
   showToast(msg, type = 'info') {
