@@ -704,6 +704,9 @@ const A = {
   renderToken: 0,
   selectedPayment: 'Pix',
   adminState: {
+    section: 'products', // 'products' ou 'testimonials'
+    testimFilter: 'all', // 'all', 'visible', 'hidden'
+    testimSearch: '',
     tab: 'all',
     cat: '',
     brand: '',
@@ -1028,7 +1031,8 @@ const A = {
     else if (path === '/produtos') { await this.viewCatalog(); }
     else if (path.startsWith('/produto/')) { await this.viewDetail(path.split('/produto/')[1]); }
     else if (path === '/admin' || path === '/admin/login') { this.viewAdminLogin(); }
-    else if (path === '/admin/produtos') { await this.viewAdminProducts(); }
+    else if (path === '/admin/produtos') { this.adminState.section = 'products'; await this.viewAdminProducts(); }
+    else if (path === '/admin/depoimentos') { this.adminState.section = 'testimonials'; await this.viewAdminProducts(); }
     else if (path === '/admin/novo') { await this.viewAdminForm(); }
     else if (path.startsWith('/admin/editar/')) { await this.viewAdminForm(path.split('/admin/editar/')[1]); }
     else { this.viewNotFound(); }
@@ -1817,11 +1821,11 @@ const A = {
     this.openImageModal(img.src, name);
   },
 
-  async ensureTestimonials() {
-    if (this.testimonialsLoaded) return this.testimonials;
+  async ensureTestimonials(force = false) {
+    if (this.testimonialsLoaded && !force) return this.testimonials;
     try {
       const { data, error } = await this.sb.from('testimonials').select('*').order('data_criacao', { ascending: false });
-      if (!error && data && data.length) {
+      if (!error && data) {
         this.testimonials = data;
       }
     } catch (e) {
@@ -1832,7 +1836,7 @@ const A = {
   },
 
   renderTestimonialsCards() {
-    const list = this.testimonials && this.testimonials.length ? this.testimonials : [];
+    const list = (this.testimonials && this.testimonials.length ? this.testimonials : []).filter(t => t.aprovado !== false);
     return list.map(t => {
       const initials = (t.nome || 'Cliente')
         .split(' ')
@@ -2078,6 +2082,75 @@ const A = {
     return false;
   },
 
+  setAdminSection(sec) {
+    this.adminState.section = sec;
+    this.viewAdminProducts();
+  },
+
+  setAdminTestimFilter(filter) {
+    this.adminState.testimFilter = filter;
+    this.viewAdminProducts();
+  },
+
+  handleAdminTestimSearch(val) {
+    this.adminState.testimSearch = val;
+    this.viewAdminProducts();
+  },
+
+  async refreshAdminTestimonials() {
+    this.testimonialsLoaded = false;
+    await this.ensureTestimonials(true);
+    this.showToast('Depoimentos atualizados!', 'info');
+    this.viewAdminProducts();
+  },
+
+  async toggleTestimonialApproval(id, aprovado) {
+    try {
+      if (this.sb) {
+        const { error } = await this.sb.from('testimonials').update({ aprovado }).eq('id', id);
+        if (error) throw error;
+      }
+      const t = (this.testimonials || []).find(x => x.id === id);
+      if (t) t.aprovado = aprovado;
+      this.showToast(aprovado ? 'Depoimento publicado na vitrine da loja!' : 'Depoimento ocultado da vitrine!', 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao alternar status do depoimento:', e);
+      this.showToast('Erro ao atualizar: ' + (e.message || ''), 'error');
+    }
+  },
+
+  async deleteTestimonial(id) {
+    const t = (this.testimonials || []).find(x => x.id === id);
+    const nome = t ? t.nome : 'este depoimento';
+    if (!confirm(`Tem certeza que deseja EXCLUIR permanentemente o depoimento de "${nome}"?\n\nEsta ação removerá o comentário do banco de dados e não poderá ser desfeita.`)) {
+      return;
+    }
+    try {
+      if (this.sb) {
+        const { error } = await this.sb.from('testimonials').delete().eq('id', id);
+        if (error) throw error;
+      }
+      this.testimonials = (this.testimonials || []).filter(x => x.id !== id);
+      this.showToast('Depoimento excluído com sucesso!', 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao excluir depoimento:', e);
+      this.showToast('Erro ao excluir: ' + (e.message || ''), 'error');
+    }
+  },
+
+  formatDate(d) {
+    if (!d) return '';
+    try {
+      const dt = new Date(d);
+      if (isNaN(dt.getTime())) return '';
+      return dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '';
+    }
+  },
+
   setAdminTab(tab) {
     this.adminState.tab = tab;
     this.adminState.page = 1;
@@ -2170,16 +2243,208 @@ const A = {
     }
   },
 
+  renderAdminTestimonialsSection(st) {
+    const totalTestim = (this.testimonials || []).length;
+    const visibleTestim = (this.testimonials || []).filter(t => t.aprovado !== false).length;
+    const hiddenTestim = totalTestim - visibleTestim;
+    const filter = st.testimFilter || 'all';
+    const search = (st.testimSearch || '').toLowerCase().trim();
+
+    let list = (this.testimonials || []).slice();
+    if (filter === 'visible') list = list.filter(t => t.aprovado !== false);
+    else if (filter === 'hidden') list = list.filter(t => t.aprovado === false);
+
+    if (search) {
+      list = list.filter(t => 
+        `${t.nome || ''} ${t.cidade || ''} ${t.comentario || ''} ${t.produto_mencionado || ''}`.toLowerCase().includes(search)
+      );
+    }
+
+    const avgRating = totalTestim ? (this.testimonials.reduce((sum, t) => sum + (t.estrelas || 5), 0) / totalTestim).toFixed(1) : '5.0';
+
+    return `
+      <div id="admin-testimonials-section" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
+        
+        <!-- Topo da Seção de Moderação -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F0E3DC] pb-5">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-rose-50 text-[#C69A55] border border-rose-200">
+                <i class="fa-solid fa-shield-heart"></i> Moderação & Segurança
+              </span>
+              <span class="text-xs text-[#826F70]">• Média de Avaliações: <strong class="text-amber-500 font-bold">${avgRating} ★</strong></span>
+            </div>
+            <h2 class="font-serif font-bold text-2xl text-[#241A1B]">Depoimentos & Avaliações dos Clientes</h2>
+            <p class="text-xs sm:text-sm text-[#826F70]">Gerencie as opiniões exibidas no site. Você pode ocultar comentários indesejados ou excluí-los em definitivo.</p>
+          </div>
+
+          <div class="flex items-center gap-2.5 shrink-0">
+            <button type="button" onclick="A.openTestimonialModal()" class="btn-gold text-xs py-2.5 px-4 shadow-sm inline-flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Cadastrar Depoimento
+            </button>
+            <button type="button" onclick="A.refreshAdminTestimonials()" class="btn-secondary text-xs py-2.5 px-3.5 hover:bg-[#FAF4F0]" title="Recarregar depoimentos do banco">
+              <i class="fa-solid fa-rotate"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner Explicativo de Segurança -->
+        <div class="bg-gradient-to-r from-[#FAF0EB] to-white border border-[#EACCA4] rounded-2xl p-4 flex items-start gap-3 shadow-sm text-xs sm:text-sm text-[#3D2C2E]">
+          <div class="w-9 h-9 rounded-xl bg-[#C69A55] text-white flex items-center justify-center shrink-0 shadow-sm text-sm">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="leading-relaxed">
+            <p class="font-bold text-[#A97E3B]">Controle Total de Conteúdo:</p>
+            <p class="text-[#826F70]">Caso receba algum comentário inadequado ou de mau gosto, você pode usar <strong>"Ocultar da Loja"</strong> (o comentário sai imediatamente da vitrine pública) ou <strong>"Excluir Comentário"</strong> (apaga em definitivo do banco de dados).</p>
+          </div>
+        </div>
+
+        <!-- Linha de Filtros e Busca -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          
+          <!-- Abas de Filtro -->
+          <div class="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+            <button type="button" onclick="A.setAdminTestimFilter('all')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${filter === 'all' ? 'bg-[#241A1B] text-white shadow-sm' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              Todos (${totalTestim})
+            </button>
+            <button type="button" onclick="A.setAdminTestimFilter('visible')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${filter === 'visible' ? 'bg-[#1D8A58] text-white shadow-sm' : 'bg-emerald-50 text-[#1D8A58] hover:bg-emerald-100'}">
+              <span class="w-2 h-2 rounded-full bg-[#4ADE80]"></span> No Site (${visibleTestim})
+            </button>
+            <button type="button" onclick="A.setAdminTestimFilter('hidden')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1.5 ${filter === 'hidden' ? 'bg-amber-600 text-white shadow-sm' : 'bg-amber-50 text-amber-800 hover:bg-amber-100'}">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span> Ocultos (${hiddenTestim})
+            </button>
+          </div>
+
+          <!-- Busca Rápida -->
+          <div class="relative w-full sm:w-72">
+            <input type="text" placeholder="Buscar por cliente, produto ou texto..." value="${this.escapeAttr(st.testimSearch || '')}" oninput="A.handleAdminTestimSearch(this.value)" class="lux-input text-xs py-2 pl-9 pr-8 rounded-xl border-[#F0E3DC] w-full">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#826F70]"></i>
+            ${st.testimSearch ? `
+              <button type="button" onclick="A.handleAdminTestimSearch('')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#826F70] hover:text-[#241A1B]" title="Limpar busca">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            ` : ''}
+          </div>
+
+        </div>
+
+        <!-- Grid de Depoimentos -->
+        <div class="space-y-4">
+          ${list.length > 0 ? list.map(t => {
+            const initials = (t.nome || 'Cliente')
+              .split(' ')
+              .filter(Boolean)
+              .slice(0, 2)
+              .map(w => w[0].toUpperCase())
+              .join('');
+            const starsCount = Math.max(1, Math.min(5, t.estrelas || 5));
+            const starsHtml = '<i class="fa-solid fa-star"></i>'.repeat(starsCount) + '<i class="fa-regular fa-star text-gray-300"></i>'.repeat(5 - starsCount);
+            const isApproved = (t.aprovado !== false);
+            const formattedDate = this.formatDate(t.data_criacao);
+
+            return `
+              <div class="p-5 sm:p-6 rounded-2xl border ${isApproved ? 'border-[#F0E3DC] bg-white' : 'border-amber-300 bg-amber-50/40'} transition-all hover:shadow-sm space-y-4">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  
+                  <!-- Info do Cliente -->
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-[#FAF0EB] to-[#F5E6DC] text-[#A97E3B] font-bold text-sm flex items-center justify-center shrink-0 border border-[#F0E3DC] shadow-sm">
+                      ${initials || 'VB'}
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold text-sm text-[#241A1B]">${this.escape(t.nome)}</span>
+                        <span class="text-xs text-[#826F70]">• ${this.escape(t.cidade || 'Cliente')}</span>
+                      </div>
+                      <div class="flex flex-wrap items-center gap-2 mt-1">
+                        <div class="flex text-amber-400 text-xs gap-0.5">
+                          ${starsHtml}
+                        </div>
+                        ${t.produto_mencionado ? `
+                          <span class="text-[10px] font-semibold text-[#A97E3B] bg-[#FAF4F0] px-2.5 py-0.5 rounded-full border border-[#F0E3DC]">
+                            <i class="fa-solid fa-bag-shopping text-[9px] mr-1"></i>${this.escape(t.produto_mencionado)}
+                          </span>
+                        ` : ''}
+                        ${formattedDate ? `<span class="text-[10px] text-[#AA999A]"><i class="fa-regular fa-clock text-[9px] mr-1"></i>${formattedDate}</span>` : ''}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Status Badge -->
+                  <div class="flex items-center gap-2 self-start sm:self-center">
+                    ${isApproved ? `
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-[#1D8A58] border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#1D8A58]"></span> Visível no Site
+                      </span>
+                    ` : `
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+                        <i class="fa-solid fa-eye-slash text-xs"></i> Oculto da Loja
+                      </span>
+                    `}
+                  </div>
+
+                </div>
+
+                <!-- Citação do Comentário -->
+                <div class="bg-[#FAF4F0]/60 p-4 rounded-xl border border-[#F0E3DC]/80 text-xs sm:text-sm text-[#3D2C2E] leading-relaxed italic relative">
+                  <span class="text-lg text-[#C69A55] font-serif font-bold mr-1">“</span>${this.escape(t.comentario)}<span class="text-lg text-[#C69A55] font-serif font-bold ml-1">”</span>
+                </div>
+
+                <!-- Botões de Ação de Moderação -->
+                <div class="flex flex-wrap items-center justify-end gap-2.5 pt-1 border-t border-[#F0E3DC]/60">
+                  ${isApproved ? `
+                    <button type="button" onclick="A.toggleTestimonialApproval('${t.id}', false)" class="btn-secondary text-xs py-2 px-3.5 bg-white border-amber-300 text-amber-800 hover:bg-amber-50 transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                      <i class="fa-solid fa-eye-slash"></i> Ocultar do Site
+                    </button>
+                  ` : `
+                    <button type="button" onclick="A.toggleTestimonialApproval('${t.id}', true)" class="btn-secondary text-xs py-2 px-3.5 bg-white border-emerald-300 text-[#1D8A58] hover:bg-emerald-50 transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                      <i class="fa-solid fa-circle-check"></i> Publicar no Site
+                    </button>
+                  `}
+
+                  <button type="button" onclick="A.deleteTestimonial('${t.id}')" class="btn-secondary text-xs py-2 px-3.5 bg-white border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors inline-flex items-center gap-1.5 shadow-sm" title="Excluir permanentemente este comentário">
+                    <i class="fa-solid fa-trash-can"></i> Excluir Comentário
+                  </button>
+                </div>
+
+              </div>
+            `;
+          }).join('') : `
+            <div class="py-16 text-center text-xs text-[#826F70] space-y-3">
+              <div class="w-14 h-14 rounded-2xl bg-[#FAF0EB] text-[#C69A55] flex items-center justify-center mx-auto text-2xl shadow-sm">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <p class="font-bold text-base text-[#241A1B]">Nenhum depoimento encontrado</p>
+              <p class="text-xs text-[#826F70] max-w-sm mx-auto">
+                ${search ? 'Nenhum comentário correspondeu à busca realizada.' : 'Não há avaliações cadastradas neste filtro.'}
+              </p>
+              ${search ? `
+                <button type="button" onclick="A.handleAdminTestimSearch('')" class="btn-secondary text-xs py-2 px-3.5">
+                  Limpar busca
+                </button>
+              ` : ''}
+            </div>
+          `}
+        </div>
+
+      </div>
+    `;
+  },
+
   async viewAdminProducts() {
     if (!(await this.guardAdmin())) return;
     this.setMeta({ title: 'Painel da Administradora | Vivi Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
-    await this.ensureProds();
+    await Promise.all([this.ensureProds(), this.ensureTestimonials(true)]);
 
     const st = this.adminState;
     const analytics = await this.loadAnalytics();
 
     // 1. Métricas principais (KPIs)
     const total = this.prods.length;
+    const totalTestim = (this.testimonials || []).length;
+    const visibleTestim = (this.testimonials || []).filter(t => t.aprovado !== false).length;
+    const hiddenTestim = totalTestim - visibleTestim;
     const ativos = this.prods.filter(p => p.ativo).length;
     const inativos = total - ativos;
     const semEstoque = this.prods.filter(p => (p.estoque || 0) === 0).length;
@@ -2280,13 +2545,35 @@ const A = {
             <button type="button" onclick="A.toggleAdminCharts()" class="btn-secondary text-xs py-2.5 px-4 bg-white/10 text-white border-white/20 hover:bg-white/20">
               <i class="fa-solid fa-chart-pie text-[#C69A55]"></i> ${st.showCharts ? 'Ocultar Gráficos' : 'Ver Gráficos'}
             </button>
-            <a href="/admin/novo" data-link class="btn-gold text-xs py-2.5 px-5 shadow-lg">
-              <i class="fa-solid fa-plus"></i> Novo Produto
-            </a>
+            ${st.section === 'testimonials' ? `
+              <button type="button" onclick="A.openTestimonialModal()" class="btn-gold text-xs py-2.5 px-5 shadow-lg">
+                <i class="fa-solid fa-plus"></i> Novo Depoimento
+              </button>
+            ` : `
+              <a href="/admin/novo" data-link class="btn-gold text-xs py-2.5 px-5 shadow-lg">
+                <i class="fa-solid fa-plus"></i> Novo Produto
+              </a>
+            `}
             <button type="button" onclick="A.logoutAdmin()" class="w-9 h-9 rounded-xl bg-red-500/20 hover:bg-red-500/40 text-red-300 flex items-center justify-center transition-colors" title="Sair do painel" aria-label="Sair">
               <i class="fa-solid fa-right-from-bracket text-xs"></i>
             </button>
           </div>
+        </div>
+
+        <!-- Abas Principais do Painel Executivo (Catálogo vs Depoimentos) -->
+        <div class="flex flex-wrap items-center gap-3 border-b border-[#F0E3DC] pb-4">
+          <button type="button" onclick="A.setAdminSection('products')" class="px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 ${st.section !== 'testimonials' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
+            <i class="fa-solid fa-boxes-stacked ${st.section !== 'testimonials' ? 'text-[#C69A55]' : ''}"></i>
+            <span>Catálogo de Produtos</span>
+            <span class="px-2 py-0.5 rounded-full text-[11px] ${st.section !== 'testimonials' ? 'bg-white/20 text-white' : 'bg-[#FAF4F0] text-[#826F70]'}">${total}</span>
+          </button>
+
+          <button type="button" onclick="A.setAdminSection('testimonials')" class="px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 ${st.section === 'testimonials' ? 'bg-[#241A1B] text-white shadow-md' : 'bg-white text-[#826F70] border border-[#F0E3DC] hover:bg-[#FAF4F0]'}">
+            <i class="fa-solid fa-comments ${st.section === 'testimonials' ? 'text-[#E8A7A1]' : ''}"></i>
+            <span>Depoimentos & Avaliações</span>
+            <span class="px-2 py-0.5 rounded-full text-[11px] ${st.section === 'testimonials' ? 'bg-[#E8A7A1] text-[#241A1B]' : 'bg-[#FAF4F0] text-[#826F70]'}">${totalTestim}</span>
+            ${hiddenTestim > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-bold" title="${hiddenTestim} comentários ocultos">${hiddenTestim} ocultos</span>` : ''}
+          </button>
         </div>
 
         <!-- Banner com Dica Autoexplicativa para a Consultora -->
@@ -2308,7 +2595,7 @@ const A = {
         ` : ''}
 
         <!-- Cards de Métricas Principais (KPIs) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
           
           <div onclick="A.setAdminTab('active')" class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm hover:border-[#1D8A58] transition-all cursor-pointer group">
             <div class="flex items-center justify-between mb-2">
@@ -2362,6 +2649,15 @@ const A = {
             </div>
             <div class="font-serif font-bold text-2xl sm:text-3xl text-[#1D8A58]">${analytics.waClicks.total || 0}</div>
             <p class="text-[11px] text-[#826F70] mt-1">${analytics.shares.total || 0} compartilhamentos reais</p>
+          </div>
+
+          <div onclick="A.setAdminSection('testimonials')" class="bg-white rounded-2xl p-4 border border-[#F0E3DC] shadow-sm hover:border-[#E8A7A1] transition-all cursor-pointer group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-[#826F70] uppercase tracking-wider">Depoimentos</span>
+              <span class="w-7 h-7 rounded-lg bg-rose-50 text-[#E8A7A1] flex items-center justify-center text-xs group-hover:scale-110 transition-transform"><i class="fa-solid fa-comments"></i></span>
+            </div>
+            <div class="font-serif font-bold text-2xl sm:text-3xl text-[#241A1B]">${totalTestim}</div>
+            <p class="text-[11px] text-[#826F70] mt-1">${visibleTestim} na loja • ${hiddenTestim} ocultos</p>
           </div>
 
         </div>
@@ -2466,6 +2762,7 @@ const A = {
           </div>
         ` : ''}
 
+        ${st.section === 'testimonials' ? this.renderAdminTestimonialsSection(st) : `
         <!-- Seção do Catálogo com Abas e Subdivisões -->
         <div id="admin-products-table" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
           
@@ -2697,6 +2994,7 @@ const A = {
           ` : ''}
 
         </div>
+        `}
 
       </div>
     `;
