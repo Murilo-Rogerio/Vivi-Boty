@@ -66,6 +66,25 @@
 </script>
 
 <style>
+
+/* Desativar o botão 'x' nativo do navegador para evitar duplo botão de limpar */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+input[type="search"]::-ms-clear,
+input[type="search"]::-ms-reveal {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 :root {
   --bg-main: #FCF9F7;
   --bg-card: #FFFFFF;
