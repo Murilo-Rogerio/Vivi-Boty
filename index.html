@@ -964,9 +964,13 @@ const A = {
     this.renderPage().then(() => {
       // Deep Link: Abertura automática caso URL contenha ?p=ID ou ?produto=ID
       const sp = new URLSearchParams(location.search);
-      const pid = sp.get('p') || sp.get('produto');
-      if (pid && this.pmap && this.pmap[pid]) {
-        setTimeout(() => this.openQuickView(pid), 180);
+      const pid = this.safeId(sp.get('p') || sp.get('produto'));
+      if (pid) {
+        this.ensureProds().then(() => {
+          if (this.pmap && this.pmap[pid]) {
+            setTimeout(() => this.openQuickView(pid), 200);
+          }
+        });
       }
     });
   },
@@ -2195,7 +2199,7 @@ const A = {
     if (!p) return;
     this.trackEvent('share', p.id, p.nome);
     const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : SITE_URL;
-    const url = `${origin}/produto/${encodeURIComponent(p.id)}`;
+    const url = `${origin}/?p=${encodeURIComponent(p.id)}`;
     const shareData = {
       title: `${p.nome} | Vivi Boty`,
       text: `Olha este produto na Vivi Carvalho Boty: ${p.nome}`,
