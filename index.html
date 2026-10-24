@@ -3408,15 +3408,16 @@ Esta ação removerá o comentário do banco de dados.`,
       });
       clearTimeout(timeoutId);
 
+      const proxyData = await proxyRes.json().catch(() => ({}));
+
       if (proxyRes.ok) {
-        const proxyData = await proxyRes.json();
-        const text = proxyData.candidates?.[0]?.content?.parts?.[0]?.text;
+        const parts = proxyData.candidates?.[0]?.content?.parts || [];
+        const text = parts.map(p => p.text).filter(Boolean).join('\n').trim();
         if (text) return text;
+        throw new Error('A IA respondeu, mas não retornou conteúdo textual.');
       } else {
-        const errJson = await proxyRes.json().catch(() => ({}));
-        if (errJson?.error?.message) {
-          throw new Error(errJson.error.message);
-        }
+        const errMsg = proxyData?.error?.message || `Erro no servidor de IA (HTTP ${proxyRes.status})`;
+        throw new Error(errMsg);
       }
     } catch (proxyErr) {
       clearTimeout(timeoutId);
@@ -3430,7 +3431,7 @@ Esta ação removerá o comentário do banco de dados.`,
     }
 
     // 2. Conexão direta de contingência
-    const models = ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash'];
+    const models = ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
     let lastError = null;
 
     for (const model of models) {
@@ -5278,7 +5279,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#F0E3DC]">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-[#F0E3DC]">
             <label for="form-active" class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF4F0]/80 hover:bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer transition-all select-none group">
               <div class="pr-3">
                 <span class="text-xs font-bold text-[#241A1B] group-hover:text-[#A97E3B] transition-colors block">Produto visível na loja</span>
@@ -5291,21 +5292,13 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             </label>
             <label for="form-feat" class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF4F0]/80 hover:bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer transition-all select-none group">
               <div class="pr-3">
-                <span class="text-xs font-bold text-[#241A1B] group-hover:text-[#A97E3B] transition-colors block">Destaque na página inicial</span>
-                <span class="text-[10px] text-[#826F70] block leading-tight mt-0.5">Exibe em destaque com preço "De / Por" promocional</span>
+                <span class="text-xs font-bold text-[#241A1B] group-hover:text-[#A97E3B] transition-colors flex items-center gap-1.5">
+                  <i class="fa-solid fa-tag text-[#E53E3E]"></i> Destaque & Promoção (Oferta)
+                </span>
+                <span class="text-[10px] text-[#826F70] block leading-tight mt-0.5">Exibe na vitrine da página inicial com selo de oferta e preço riscado "De / Por"</span>
               </div>
               <div class="tog">
-                <input type="checkbox" id="form-feat" ${p.destaque ? 'checked' : ''}>
-                <span class="tog-slider"></span>
-              </div>
-            </label>
-            <label for="form-promo" class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF4F0]/80 hover:bg-[#FAF4F0] border border-[#F0E3DC] cursor-pointer transition-all select-none group">
-              <div class="pr-3">
-                <span class="text-xs font-bold text-[#241A1B] group-hover:text-[#A97E3B] transition-colors block">Em promoção / Oferta</span>
-                <span class="text-[10px] text-[#826F70] block leading-tight mt-0.5">Adiciona selo de desconto (% OFF) e preço riscado</span>
-              </div>
-              <div class="tog">
-                <input type="checkbox" id="form-promo" ${p.promocao ? 'checked' : ''}>
+                <input type="checkbox" id="form-feat" ${(p.destaque || p.promocao) ? 'checked' : ''}>
                 <span class="tog-slider"></span>
               </div>
             </label>
@@ -5392,7 +5385,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       estoque: parseInt(document.getElementById('form-stock').value, 10) || 0,
       ativo,
       destaque: document.getElementById('form-feat').checked,
-      promocao: document.getElementById('form-promo').checked,
+      promocao: document.getElementById('form-feat').checked,
       pronta_entrega: document.getElementById('form-ready').checked,
       data_atualizacao: new Date().toISOString()
     };

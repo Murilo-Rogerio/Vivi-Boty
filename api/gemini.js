@@ -37,13 +37,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Modelos rápidos e diretos:
-    // gemini-3.5-flash-lite: altíssima velocidade (< 1.5s), ideal para extração de dados e JSON
-    // gemini-3.8-flash: modelo flash mais potente
-    // gemini-2.5-flash: fallback
+    // Modelos rápidos e diretos na v1beta:
+    // gemini-2.5-flash-lite: altíssima velocidade (< 1.5s), ideal para extração de dados e JSON
+    // gemini-2.5-flash: modelo flash híbrido de alta capacidade
+    // gemini-2.0-flash: fallback robusto
     const priorityModels = model
-      ? [model, 'gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash']
-      : ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash'];
+      ? [model, 'gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash']
+      : ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
     const modelsToTry = [...new Set(priorityModels)];
 
     let lastError = null;
