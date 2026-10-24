@@ -785,7 +785,7 @@ const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
 const WA_PHONE = '5518997871211';
 const WA_BASE = 'https://wa.me/' + WA_PHONE;
-const CATS = ['Perfumes', 'Maquiagem', 'Cremes', 'Corpo e Banho', 'Presentes', 'Outros'];
+const CATS = ['Perfumes', 'Cabelos', 'Cremes', 'Corpo e Banho', 'Maquiagem', 'Presentes', 'Outros'];
 const BRANDS = ['O Boticário', 'Natura', 'Eudora', 'Outros'];
 const GENEROS = ['Feminino', 'Masculino', 'Unissex'];
 const CART_KEY = 'viviboty_cart_v2';
@@ -1454,12 +1454,13 @@ const A = {
               <a href="#/produtos?min=130" data-link class="px-3 py-1.5 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] font-semibold text-[#241A1B] transition-colors">✨ Perfumaria Premium</a>
             </div>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             ${[
               ['Perfumes', 'fa-spray-can-sparkles'],
-              ['Maquiagem', 'fa-wand-magic-sparkles'],
+              ['Cabelos', 'fa-scissors'],
               ['Cremes', 'fa-pump-soap'],
               ['Corpo e Banho', 'fa-shower'],
+              ['Maquiagem', 'fa-wand-magic-sparkles'],
               ['Presentes', 'fa-gift'],
               ['Outros', 'fa-star']
             ].map(([c, ic]) => `<a href="#/produtos?categoria=${encodeURIComponent(c)}" data-link class="bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:shadow-md rounded-2xl p-4 text-center font-semibold text-sm transition-all flex flex-col items-center gap-2 group">
@@ -3259,13 +3260,72 @@ Esta ação removerá o comentário do banco de dados.`,
     });
   },
 
+  normalizeCategory(cat) {
+    if (!cat) return '';
+    const s = String(cat).toLowerCase().trim();
+    if (s.includes('cabel') || s.includes('capilar') || s.includes('shampoo') || s.includes('condicionador') || s.includes('leave-in') || s.includes('leave in') || s.includes('máscara capilar') || s.includes('mascara capilar') || s.includes('siage') || s.includes('siàge') || s.includes('match') || s.includes('lumina') || s.includes('plant')) return 'Cabelos';
+    if (s.includes('perfum') || s.includes('colonia') || s.includes('colônia') || s.includes('fragr') || s.includes('eau de') || s.includes('parfum')) return 'Perfumes';
+    if (s.includes('banho') || s.includes('sabonete') || s.includes('desodorante') || s.includes('esfoliante corporal')) return 'Corpo e Banho';
+    if (s.includes('creme') || s.includes('hidratant') || s.includes('locao') || s.includes('loção') || s.includes('manteiga corporal') || s.includes('facial')) return 'Cremes';
+    if (s.includes('make') || s.includes('maquiag') || s.includes('batom') || s.includes('rímel') || s.includes('rimel') || s.includes('base ') || s.includes('blush')) return 'Maquiagem';
+    if (s.includes('kit') || s.includes('present') || s.includes('estojo')) return 'Presentes';
+    const direct = CATS.find(c => c.toLowerCase() === s);
+    return direct || 'Outros';
+  },
+
+  async fixLegacyHairCategories() {
+    if (!this.sb) return;
+    try {
+      const hairProducts = (this.prods || []).filter(p =>
+        /si[aà]ge|match|lumina|plant|shampoo|condicionador|argan oil/i.test(p.nome) &&
+        p.categoria !== 'Cabelos'
+      );
+      if (!hairProducts.length) return;
+      for (const p of hairProducts) {
+        await this.sb.from('products').update({ categoria: 'Cabelos' }).eq('id', p.id);
+        p.categoria = 'Cabelos';
+      }
+    } catch (e) {
+      console.warn('Erro ao ajustar categorias de cabelo:', e);
+    }
+  },
+
   async callGeminiApi(apiKey, contents, systemInstruction = '') {
+    apiKey = (apiKey || '').trim().replace(/^[\"']|[\"']$/g, '');
+    if (!apiKey) throw new Error('Chave da API do Google Gemini não informada.');
+
+    // 1. Tenta primeiro através do endpoint serverless (/api/gemini)
+    // Isso evita 100% de erros de CORS, CSP e bloqueios de ad-blockers do navegador
+    try {
+      const proxyRes = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apiKey, contents, systemInstruction })
+      });
+      if (proxyRes.ok) {
+        const proxyData = await proxyRes.json();
+        const text = proxyData.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) return text;
+      } else {
+        const errJson = await proxyRes.json().catch(() => ({}));
+        if (proxyRes.status !== 404 && errJson?.error?.message) {
+          throw new Error(errJson.error.message);
+        }
+      }
+    } catch (proxyErr) {
+      if (proxyErr.message && !proxyErr.message.includes('404') && !proxyErr.message.includes('Failed to fetch')) {
+        throw proxyErr;
+      }
+      console.warn('Proxy /api/gemini indisponível, tentando conexão direta com Google API:', proxyErr.message);
+    }
+
+    // 2. Conexão direta com a API do Google como fallback
     const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
     let lastError = null;
 
     for (const model of models) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
         const payload = {
           contents,
           generationConfig: {
@@ -3287,7 +3347,12 @@ Esta ação removerá o comentário do banco de dados.`,
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          throw new Error(errData?.error?.message || `HTTP ${res.status}`);
+          const msg = errData?.error?.message || `HTTP ${res.status}`;
+          if (res.status === 404 || msg.toLowerCase().includes('not found')) {
+            lastError = new Error(msg);
+            continue;
+          }
+          throw new Error(msg);
         }
 
         const data = await res.json();
@@ -3299,10 +3364,13 @@ Esta ação removerá o comentário do banco de dados.`,
         if (e.message && (e.message.includes('404') || e.message.includes('not found'))) {
           continue;
         }
+        if (e.message === 'Failed to fetch') {
+          throw new Error('Falha de conexão com a API do Google (Failed to fetch). Verifique se o seu navegador ou alguma extensão bloqueadora de anúncios está impedindo a conexão com generativelanguage.googleapis.com.');
+        }
         throw e;
       }
     }
-    throw lastError;
+    throw lastError || new Error('Não foi possível obter resposta do Gemini.');
   },
 
   parseGeminiJson(rawText) {
@@ -3359,7 +3427,6 @@ Esta ação removerá o comentário do banco de dados.`,
     const fileInput = document.getElementById('form-file');
     let file = fileInput?.files?.[0];
 
-    // Se nenhum arquivo foi selecionado no momento
     if (!file) {
       const existingImg = document.querySelector('#img-preview img')?.src;
       if (!existingImg || existingImg.startsWith('data:image/svg')) {
@@ -3405,11 +3472,18 @@ Esta ação removerá o comentário do banco de dados.`,
 Analise a embalagem/frasco/produto nesta imagem e extraia os dados oficiais com máxima precisão.
 
 Identifique:
-1. "nome": Nome comercial oficial completo do produto ou kit (ex: "Malbec Desodorante Colônia 100ml", "Kit Presente Lily", "Creme Desodorante Nutritivo Tododia Algodão 400ml").
+1. "nome": Nome comercial oficial completo do produto ou kit (ex: "Malbec Desodorante Colônia 100ml", "Kit Impression Eau de Parfum", "Kit Siàge Nutri Rosé", "Creme Desodorante Nutritivo Tododia Algodão 400ml").
 2. "marca": Apenas "O Boticário", "Natura" ou "Eudora".
-3. "categoria": Uma destas: "Perfumes", "Cremes", "Corpo e Banho", "Presentes", "Maquiagem" ou "Outros".
+3. "categoria": Escolha rigorosamente uma destas categorias:
+   - "Perfumes": Perfumaria, desodorante colônia, eau de parfum.
+   - "Cabelos": Shampoos, condicionadores, máscaras capilares, óleos capilares, tônicos e finalizadores (linhas Siàge, Match, Lumina, Plant, etc.).
+   - "Cremes": Hidratantes corporais, faciais e mãos.
+   - "Corpo e Banho": Sabonetes, óleos corporais de banho, desodorantes e esfoliantes.
+   - "Maquiagem": Batons, bases, máscaras de cílios, sombras, pós.
+   - "Presentes": Kits completos para presente, estojos e caixas presenteáveis.
+   - "Outros": Acessórios ou itens não listados.
 4. "genero": "Feminino", "Masculino" ou "Unissex".
-5. "descricao": Descrição completa e profissional como no site oficial da marca, incluindo pirâmide olfativa (notas de saída, corpo e fundo) para perfumes, benefícios e fórmula para cremes/cabelos, itens do kit se for estojo, e modo de usar.
+5. "descricao": Descrição completa e profissional como no site oficial da marca, incluindo pirâmide olfativa (notas de saída, corpo e fundo) para perfumes, benefícios e fórmula para cremes e cabelos, itens do kit se for estojo, e modo de usar.
 6. "preco_sugerido": Preço de tabela sugerido em reais (número decimal, ex: 189.90 ou 0 se desconhecido).
 
 Retorne EXCLUSIVAMENTE em formato JSON:
@@ -3454,7 +3528,8 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       if (res.categoria) {
         const catEl = document.getElementById('form-cat');
         if (catEl) {
-          const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === res.categoria.toLowerCase());
+          const mappedCat = this.normalizeCategory(res.categoria);
+          const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === mappedCat.toLowerCase());
           if (match) { catEl.value = match.value; filled.push('form-cat'); }
         }
       }
@@ -3522,16 +3597,24 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
     try {
       const promptText = `Você é uma especialista em cosméticos e perfumaria brasileira (O Boticário, Natura e Eudora).
-Pesquise e forneça as informações oficiais da loja oficial da marca para o produto: "${curName}"${curBrand ? ` da marca "${curBrand}"` : ''}.
+Pesquise e forneça as informações oficiais da loja oficial da marca para o produto: "${curName}"${curBrand ? ` (marca informada no formulário: "${curBrand}", mas se for de outra marca oficial como Impression/Siàge que é Eudora, corrija para a marca verdadeira)` : ''}.
 
-Puxe os dados oficiais:
-1. "nome_completo": Nome comercial oficial completo e corrigido da marca (ex: "Egeo Dolce Desodorante Colônia 90ml", "Essencial Oud Deo Parfum Masculino 100ml").
-2. "marca": "O Boticário", "Natura" ou "Eudora".
-3. "categoria": "Perfumes", "Cremes", "Corpo e Banho", "Presentes", "Maquiagem" ou "Outros".
+Puxe os dados oficiais com precisão:
+1. "nome_completo": Nome comercial oficial completo e corrigido da marca (ex: "Egeo Dolce Desodorante Colônia 90ml", "Kit Impression Eau de Parfum", "Essencial Oud Deo Parfum Masculino 100ml", "Shampoo Siàge Nutri Rosé 250ml").
+2. "marca": "O Boticário", "Natura" ou "Eudora" (identifique a marca real dona do produto).
+3. "categoria": Escolha rigorosamente uma destas categorias:
+   - "Perfumes": Perfumaria, desodorante colônia, eau de parfum.
+   - "Cabelos": Shampoos, condicionadores, máscaras capilares, óleos capilares, leave-in, tônicos e finalizadores (linhas Siàge, Match, Lumina, Plant, etc.).
+   - "Cremes": Hidratantes corporais, faciais e mãos.
+   - "Corpo e Banho": Sabonetes, óleos corporais de banho, desodorantes e esfoliantes corporais.
+   - "Maquiagem": Batons, bases, máscaras de cílios, sombras, pós.
+   - "Presentes": Kits completos para presente, estojos e caixas presenteáveis (ex: Kit Impression, Kit Lily, Kit Presenteável).
+   - "Outros": Acessórios ou itens não listados.
 4. "genero": "Feminino", "Masculino" ou "Unissex".
 5. "descricao": Descrição completa, elegante e detalhada do produto como na loja virtual oficial da marca:
-   - Para perfumes: Família olfativa e pirâmide olfativa (notas de saída/topo, coração/corpo e fundo).
-   - Para cremes e cuidados: Ativos da fórmula, benefícios na pele, textura e modo de usar.
+   - Para perfumes: Família olfativa e pirâmide olfativa (notas de topo/saída, coração/corpo e fundo).
+   - Para cabelos: Tecnologia capilar, benefícios, ativos da fórmula e modo de usar.
+   - Para cremes corporais: Ativos da fórmula, benefícios na pele, textura e modo de usar.
    - Para kits ou presentes: Itens que compõem o kit com suas volumetrias.
 6. "preco_sugerido": Preço de tabela sugerido em reais (número decimal, ex: 169.90 ou 0 se desconhecido).
 
@@ -3559,15 +3642,16 @@ Retorne EXCLUSIVAMENTE em formato JSON:
         nameEl.value = res.nome_completo;
         filled.push('form-name');
       }
-      if (res.marca && brandEl && !brandEl.value) {
+      if (res.marca && brandEl) {
         const match = Array.from(brandEl.options).find(o => o.value.toLowerCase() === res.marca.toLowerCase());
         if (match) { brandEl.value = match.value; filled.push('form-brand'); }
       }
-      if (res.categoria && catEl && !catEl.value) {
-        const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === res.categoria.toLowerCase());
+      if (res.categoria && catEl) {
+        const mappedCat = this.normalizeCategory(res.categoria);
+        const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === mappedCat.toLowerCase());
         if (match) { catEl.value = match.value; filled.push('form-cat'); }
       }
-      if (res.genero && genEl && !genEl.value) {
+      if (res.genero && genEl) {
         const match = Array.from(genEl.options).find(o => o.value.toLowerCase() === res.genero.toLowerCase());
         if (match) { genEl.value = match.value; filled.push('form-gen'); }
       }
@@ -4210,6 +4294,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     if (!(await this.guardAdmin())) return;
     this.setMeta({ title: 'Painel da Administradora | Vivi Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
     await Promise.all([this.ensureProds(), this.ensureTestimonials(true), this.ensureOrders(true), this.ensureSettings()]);
+        this.fixLegacyHairCategories();
 
     const st = this.adminState;
     const analytics = await this.loadAnalytics();
@@ -4239,6 +4324,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     // Contagem por categoria
     const catCounts = {
       Perfumes: this.prods.filter(p => p.categoria === 'Perfumes').length,
+      Cabelos: this.prods.filter(p => p.categoria === 'Cabelos').length,
       Cremes: this.prods.filter(p => p.categoria === 'Cremes').length,
       'Corpo e Banho': this.prods.filter(p => p.categoria === 'Corpo e Banho').length,
       Presentes: this.prods.filter(p => p.categoria === 'Presentes').length,
@@ -4613,13 +4699,16 @@ Retorne EXCLUSIVAMENTE em formato JSON:
               Todas (${total})
             </button>
             <button type="button" onclick="A.setAdminCat('Perfumes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Perfumes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
-              🌸 Perfumes (${catCounts.Perfumes})
+              🌸 Perfumes (${catCounts.Perfumes || 0})
+            </button>
+            <button type="button" onclick="A.setAdminCat('Cabelos')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Cabelos' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
+              💇 Cabelos (${catCounts.Cabelos || 0})
             </button>
             <button type="button" onclick="A.setAdminCat('Cremes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Cremes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
-              🧴 Cremes & Hidratantes (${catCounts.Cremes})
+              🧴 Cremes Corporais (${catCounts.Cremes || 0})
             </button>
             <button type="button" onclick="A.setAdminCat('Corpo e Banho')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Corpo e Banho' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
-              🛁 Corpo & Cabelo (${catCounts['Corpo e Banho']})
+              🛁 Banho & Sabonetes (${catCounts['Corpo e Banho'] || 0})
             </button>
             <button type="button" onclick="A.setAdminCat('Presentes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Presentes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
               🎁 Kits de Presentes (${catCounts.Presentes})
