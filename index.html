@@ -3272,25 +3272,61 @@ Esta ação removerá o comentário do banco de dados.`,
     });
   },
 
-  normalizeCategory(cat, name = '') {
-    const text = (String(cat || '') + ' ' + String(name || '')).toLowerCase().trim();
-    // Se tiver termos corporais explícitos, NUNCA é Cabelos
-    if (/\b(corporal|iluminadora corporal|óleo corporal|oleo corporal|manteiga corporal|hidratante corporal|creme corporal|para o corpo|pele|mãos|pes|facial|rosto|merengue|acetinado|deleite)\b/i.test(text) && !/\b(cabelo|capilar|fios)\b/i.test(text)) {
+  normalizeGenero(gen, name = '') {
+    const s = (String(gen || '') + ' ' + String(name || '')).toLowerCase();
+    if (/\b(malbec|zaad|portinari|connexion|clash|the blend|quasar|arbo|men|homem|masculin|kaiak|biografia masc|essencial masc|impression|club 6|uomini)\b/i.test(s)) {
+      return 'Masculino';
+    }
+    if (/\b(lily|floratta|elysee|elysée|glamour|egeo doce|egeo dolce|liz|luna|ilia|ília|feminin|mulher|woman|dama|choc|intense|rose sucrée|rose sucree)\b/i.test(s)) {
+      return 'Feminino';
+    }
+    if (/\b(unissex|compartilh|todos|criança|bebe|bebê|baby)\b/i.test(s)) {
+      return 'Unissex';
+    }
+    if (s.includes('masculin') || s.includes('homem')) return 'Masculino';
+    if (s.includes('feminin') || s.includes('mulher')) return 'Feminino';
+    return 'Unissex';
+  },
+
+  normalizeCategory(cat, name = '', desc = '') {
+    const text = (String(cat || '') + ' ' + String(name || '') + ' ' + String(desc || '')).toLowerCase().trim();
+
+    // Regra 1: Produtos explicitamente corporais/faciais NUNCA entram em Cabelos
+    if (/\b(corporal|iluminadora corporal|óleo corporal|oleo corporal|manteiga corporal|hidratante corporal|creme corporal|para o corpo|pele|mãos|pes|pés|facial|rosto|merengue|acetinado|deleite)\b/i.test(text) && !/\b(cabelo|capilar|fios)\b/i.test(text)) {
       if (/\b(sabonete|banho|esfoliante)\b/i.test(text)) return 'Corpo e Banho';
       return 'Cremes';
     }
-    // Produtos exclusivamente de cabelo
+
+    // Regra 2: Cabelos & Linha Capilar (EXCLUSIVAMENTE cabelos)
     if (/\b(shampoo|condicionador|cabelo|capilar|leave-in|leave in|frizz|antifrizz|anti-frizz|reparador de pontas|máscara capilar|mascara capilar|creme de pentear|creme para pentear|tônico capilar|tonico capilar|reconstrói os fios|hair plastia|ciça terapy|cica therapy|nutri ácido complex|argan oil siage|hair)\b/i.test(text) ||
-        (/\b(siage|siàge)\b/i.test(text) && !/\b(batom|maquiag)\b/i.test(text))) {
+        (/\b(siage|siàge)\b/i.test(text) && !/\b(batom|maquiag)\b/i.test(text)) ||
+        (/\b(match)\b/i.test(text) && /\b(botic[aá]rio)\b/i.test(text)) ||
+        (/\b(lumina|plant)\b/i.test(text) && /\b(natura)\b/i.test(text))) {
       return 'Cabelos';
     }
-    if (/\b(perfum|colonia|colônia|fragr|eau de|parfum)\b/i.test(text)) return 'Perfumes';
-    if (/\b(banho|sabonete|desodorante|roll-on|roll on|antitranspirante)\b/i.test(text)) return 'Corpo e Banho';
+
+    // Regra 3: Presentes e Kits (quando não for estojo capilar)
+    if (/\b(kit|present|estojo)\b/i.test(text) && !/\b(cabelo|shampoo|siage|siàge)\b/i.test(text)) {
+      return 'Presentes';
+    }
+
+    // Regra 4: Perfumaria
+    if (/\b(perfum|colonia|colônia|fragr|eau de|parfum|splash|desodorante colônia)\b/i.test(text) ||
+        /\b(malbec|clash|zaad|elysée|elysee|lily|floratta|egeo|coffee|arbo|quasar|impression|volpe|club 6|biografia|kaiak|essencial|luna|ilia|ília)\b/i.test(text)) {
+      return 'Perfumes';
+    }
+
+    // Regra 5: Corpo e Banho
+    if (/\b(banho|sabonete|desodorante|roll-on|roll on|antitranspirante|esfoliante corporal)\b/i.test(text)) return 'Corpo e Banho';
+
+    // Regra 6: Cremes
     if (/\b(creme|hidratant|locao|loção|manteiga|geleia|gelei|mousse)\b/i.test(text)) return 'Cremes';
-    if (/\b(make|maquiag|batom|rímel|rimel|base |blush|sombra|delineador)\b/i.test(text)) return 'Maquiagem';
-    if (/\b(kit|present|estojo)\b/i.test(text)) return 'Presentes';
+
+    // Regra 7: Maquiagem
+    if (/\b(make|maquiag|batom|rímel|rimel|base |blush|sombra|delineador|glam|make b)\b/i.test(text)) return 'Maquiagem';
+
     const direct = CATS.find(c => c.toLowerCase() === String(cat || '').toLowerCase());
-    return direct || 'Outros';
+    return direct || 'Perfumes';
   },
 
   async fixLegacyHairCategories() {
@@ -3321,47 +3357,92 @@ Esta ação removerá o comentário do banco de dados.`,
     }
   },
 
+  setAiLoading(isLoading, mode = '') {
+    this.aiBusy = Boolean(isLoading);
+    const btnPhoto = document.getElementById('btn-ai-photo');
+    const btnName = document.getElementById('btn-ai-name');
+    
+    if (isLoading) {
+      if (btnPhoto) {
+        btnPhoto.disabled = true;
+        btnPhoto.classList.add('opacity-70', 'cursor-not-allowed');
+        if (mode === 'photo') {
+          btnPhoto.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm text-[#C69A55]"></i> Analisando com Gemini...';
+        }
+      }
+      if (btnName) {
+        btnName.disabled = true;
+        btnName.classList.add('opacity-70', 'cursor-not-allowed');
+        if (mode === 'name') {
+          btnName.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm text-[#EACCA4]"></i> Puxando do site oficial...';
+        }
+      }
+    } else {
+      if (btnPhoto) {
+        btnPhoto.disabled = false;
+        btnPhoto.classList.remove('opacity-70', 'cursor-not-allowed');
+        btnPhoto.innerHTML = '<i class="fa-solid fa-camera text-[#A97E3B]"></i> Identificar Produto pela Foto';
+      }
+      if (btnName) {
+        btnName.disabled = false;
+        btnName.classList.remove('opacity-70', 'cursor-not-allowed');
+        btnName.innerHTML = '<i class="fa-solid fa-sparkles text-[#EACCA4]"></i> Puxar Descrição Oficial pelo Nome';
+      }
+    }
+  },
+
   async callGeminiApi(apiKey, contents, systemInstruction = '') {
     apiKey = (apiKey || '').trim().replace(/^[\"']|[\"']$/g, '');
     if (!apiKey) throw new Error('Chave da API do Google Gemini não informada.');
 
-    // 1. Tenta primeiro através do endpoint serverless (/api/gemini)
-    // Esse endpoint usa Gemini 3.8 Flash e autodescoberta dinâmica de modelos
+    // 1. Tenta endpoint serverless (/api/gemini) com AbortController de 12 segundos
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+
     try {
       const proxyRes = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey, contents, systemInstruction })
+        body: JSON.stringify({ apiKey, contents, systemInstruction }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
+
       if (proxyRes.ok) {
         const proxyData = await proxyRes.json();
         const text = proxyData.candidates?.[0]?.content?.parts?.[0]?.text;
         if (text) return text;
       } else {
         const errJson = await proxyRes.json().catch(() => ({}));
-        if (proxyRes.status !== 404 && errJson?.error?.message) {
+        if (errJson?.error?.message) {
           throw new Error(errJson.error.message);
         }
       }
     } catch (proxyErr) {
+      clearTimeout(timeoutId);
+      if (proxyErr.name === 'AbortError') {
+        throw new Error('Tempo limite esgotado ao consultar a IA (12s). Tente novamente.');
+      }
       if (proxyErr.message && !proxyErr.message.includes('404') && !proxyErr.message.includes('Failed to fetch')) {
         throw proxyErr;
       }
-      console.warn('Proxy /api/gemini indisponível, tentando conexão direta com Google API:', proxyErr.message);
+      console.warn('Proxy /api/gemini indisponível, tentando conexão direta:', proxyErr.message);
     }
 
-    // 2. Conexão direta com modelos modernos (Gemini 3.8 / 3.5 / 2.5)
-    // Modelos legados (1.5 e 2.0) foram descontinuados pela Google na v1beta
-    const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+    // 2. Conexão direta de contingência
+    const models = ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash'];
     let lastError = null;
 
     for (const model of models) {
+      const directController = new AbortController();
+      const directTimeoutId = setTimeout(() => directController.abort(), 10000);
+
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
         const payload = {
           contents,
           generationConfig: {
-            temperature: 0.2,
+            temperature: 0.1,
             responseMimeType: 'application/json'
           }
         };
@@ -3374,8 +3455,11 @@ Esta ação removerá o comentário do banco de dados.`,
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: directController.signal
         });
+
+        clearTimeout(directTimeoutId);
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
@@ -3392,17 +3476,22 @@ Esta ação removerá o comentário do banco de dados.`,
         if (!text) throw new Error('Resposta vazia da IA');
         return text;
       } catch (e) {
+        clearTimeout(directTimeoutId);
         lastError = e;
+        if (e.name === 'AbortError') {
+          lastError = new Error('Tempo limite de conexão esgotado.');
+          continue;
+        }
         if (e.message && (e.message.includes('404') || e.message.includes('not found'))) {
           continue;
         }
         if (e.message === 'Failed to fetch') {
-          throw new Error('Falha de conexão com a API do Google (Failed to fetch). Verifique sua rede ou se há bloqueador de anúncios impedindo o acesso ao Google AI.');
+          throw new Error('Falha de conexão com a API do Google (Failed to fetch). Verifique sua rede.');
         }
         throw e;
       }
     }
-    throw lastError || new Error('Não foi possível obter resposta do Gemini com os modelos disponíveis.');
+    throw lastError || new Error('Não foi possível obter resposta do Gemini.');
   },
 
   parseGeminiJson(rawText) {
@@ -3451,7 +3540,13 @@ Esta ação removerá o comentário do banco de dados.`,
       box.classList.add('text-[#826F70]');
     }
   },
+
   async aiFillFromPhoto() {
+    if (this.aiBusy) {
+      this.showToast('Aguarde a IA concluir a análise em andamento...', 'info');
+      return;
+    }
+
     const key = await this.getGeminiApiKey();
     if (!key) return;
 
@@ -3470,13 +3565,8 @@ Esta ação removerá o comentário do banco de dados.`,
       }
     }
 
-    const btn = document.getElementById('btn-ai-photo');
-    const origHtml = btn ? btn.innerHTML : '';
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i> Analisando com Gemini...';
-    }
-    this.setAiStatus('Processando imagem e consultando catálogo oficial com o Gemini...');
+    this.setAiLoading(true, 'photo');
+    this.setAiStatus('Processando imagem e consultando dados oficiais...');
 
     try {
       let imageData = null;
@@ -3496,25 +3586,25 @@ Esta ação removerá o comentário do banco de dados.`,
       }
 
       if (!imageData) {
-        throw new Error('Nenhuma imagem disponível para análise');
+        throw new Error('Nenhuma imagem disponível para análise.');
       }
 
       const promptText = `Você é uma especialista no catálogo de cosméticos e perfumaria brasileira (O Boticário, Natura e Eudora).
 Analise a embalagem/frasco/produto nesta imagem e extraia os dados oficiais com máxima precisão.
 
 Identifique:
-1. "nome": Nome comercial oficial completo do produto ou kit (ex: "Malbec Desodorante Colônia 100ml", "Kit Impression Eau de Parfum", "Kit Siàge Nutri Rosé", "Creme Desodorante Nutritivo Tododia Algodão 400ml").
+1. "nome": Nome comercial oficial completo do produto ou kit (ex: "Clash Extreme Desodorante Colônia 100ml", "Kit Impression Eau de Parfum", "Shampoo Siàge Nutri Rosé 250ml", "Geleia Iluminadora Corporal Lily 250g").
 2. "marca": Apenas "O Boticário", "Natura" ou "Eudora".
 3. "categoria": Escolha rigorosamente uma destas categorias:
-   - "Perfumes": Perfumaria, desodorante colônia, eau de parfum.
-   - "Cabelos": Shampoos, condicionadores, máscaras capilares, óleos capilares, tônicos e finalizadores (linhas Siàge, Match, Lumina, Plant, etc.).
-   - "Cremes": Hidratantes corporais, faciais e mãos.
-   - "Corpo e Banho": Sabonetes, óleos corporais de banho, desodorantes e esfoliantes.
+   - "Perfumes": Perfumaria, desodorante colônia, eau de parfum, body splash.
+   - "Cabelos": Shampoos, condicionadores, cremes de pentear, máscaras capilares, óleos capilares antifrizz, leave-in (linhas Siàge, Match, Lumina, Plant).
+   - "Cremes": Hidratantes corporais, faciais, mãos e geleias corporais. NUNCA coloque cremes corporais em Cabelos!
+   - "Corpo e Banho": Sabonetes, óleos corporais de banho, desodorantes e esfoliantes corporais.
    - "Maquiagem": Batons, bases, máscaras de cílios, sombras, pós.
-   - "Presentes": Kits completos para presente, estojos e caixas presenteáveis.
-   - "Outros": Acessórios ou itens não listados.
+   - "Presentes": Kits e estojos presenteáveis.
+   - "Outros": Outros itens.
 4. "genero": "Feminino", "Masculino" ou "Unissex".
-5. "descricao": Descrição completa e profissional como no site oficial da marca, incluindo pirâmide olfativa (notas de saída, corpo e fundo) para perfumes, benefícios e fórmula para cremes e cabelos, itens do kit se for estojo, e modo de usar.
+5. "descricao": Descrição completa e profissional como no site oficial da marca, incluindo pirâmide olfativa (saída, corpo e fundo) para perfumes, benefícios e fórmula para cremes e cabelos, itens do kit se for estojo, e modo de usar.
 6. "preco_sugerido": Preço de tabela sugerido em reais (número decimal, ex: 189.90 ou 0 se desconhecido).
 
 Retorne EXCLUSIVAMENTE em formato JSON:
@@ -3545,10 +3635,14 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       if (!res) throw new Error('Não foi possível interpretar a resposta da IA.');
 
       const filled = [];
+
+      // Nome
       if (res.nome) {
         const nameEl = document.getElementById('form-name');
         if (nameEl) { nameEl.value = res.nome; filled.push('form-name'); }
       }
+
+      // Marca
       if (res.marca) {
         const brandEl = document.getElementById('form-brand');
         if (brandEl) {
@@ -3556,25 +3650,30 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           if (match) { brandEl.value = match.value; filled.push('form-brand'); }
         }
       }
-      if (res.categoria) {
-        const catEl = document.getElementById('form-cat');
-        if (catEl) {
-          const mappedCat = this.normalizeCategory(res.categoria, res.nome);
-          const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === mappedCat.toLowerCase());
-          if (match) { catEl.value = match.value; filled.push('form-cat'); }
-        }
+
+      // Categoria (sempre preenchida e garantida)
+      const catEl = document.getElementById('form-cat');
+      if (catEl) {
+        const mappedCat = this.normalizeCategory(res.categoria, res.nome);
+        catEl.value = mappedCat;
+        filled.push('form-cat');
       }
-      if (res.genero) {
-        const genEl = document.getElementById('form-gen');
-        if (genEl) {
-          const match = Array.from(genEl.options).find(o => o.value.toLowerCase() === res.genero.toLowerCase());
-          if (match) { genEl.value = match.value; filled.push('form-gen'); }
-        }
+
+      // Gênero (sempre preenchido e garantido)
+      const genEl = document.getElementById('form-gen');
+      if (genEl) {
+        const mappedGen = this.normalizeGenero(res.genero, res.nome);
+        genEl.value = mappedGen;
+        filled.push('form-gen');
       }
+
+      // Descrição
       if (res.descricao) {
         const descEl = document.getElementById('form-desc');
         if (descEl) { descEl.value = res.descricao; filled.push('form-desc'); }
       }
+
+      // Preço sugerido
       if (res.preco_sugerido && res.preco_sugerido > 0) {
         const priceEl = document.getElementById('form-price');
         if (priceEl && (!priceEl.value || parseFloat(priceEl.value) === 0)) {
@@ -3584,22 +3683,24 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       }
 
       this.highlightFilledFields(filled);
-      this.showToast('✨ Produto identificado! Nome, marca e descrição preenchidos com Gemini.', 'success');
-      this.setAiStatus(`Identificado com sucesso: ${res.marca || ''} ${res.nome || ''}`);
+      this.showToast('✨ Produto, categoria, gênero e descrição preenchidos com sucesso!', 'success');
+      this.setAiStatus(`Preenchido com sucesso: ${res.marca || ''} ${res.nome || ''}`);
       setTimeout(() => this.setAiStatus(''), 4000);
     } catch (e) {
       console.error('Erro ao identificar produto com IA:', e);
       this.showToast('Erro na identificação com IA: ' + (e?.message || 'Falha na requisição'), 'error');
       this.setAiStatus('Falha ao identificar produto: ' + (e?.message || ''), true);
     } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = origHtml;
-      }
+      this.setAiLoading(false);
     }
   },
 
   async aiFillFromName() {
+    if (this.aiBusy) {
+      this.showToast('Aguarde a IA concluir a pesquisa em andamento...', 'info');
+      return;
+    }
+
     const key = await this.getGeminiApiKey();
     if (!key) return;
 
@@ -3618,29 +3719,24 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     }
 
     const curBrand = brandEl?.value || '';
-    const btn = document.getElementById('btn-ai-name');
-    const origHtml = btn ? btn.innerHTML : '';
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i> Puxando do site oficial...';
-    }
+    this.setAiLoading(true, 'name');
     this.setAiStatus(`Consultando catálogo oficial de ${curBrand || 'cosméticos'} para "${curName}" com o Gemini...`);
 
     try {
       const promptText = `Você é uma especialista em cosméticos e perfumaria brasileira (O Boticário, Natura e Eudora).
-Pesquise e forneça as informações oficiais da loja oficial da marca para o produto: "${curName}"${curBrand ? ` (marca informada no formulário: "${curBrand}", mas se for de outra marca oficial como Impression/Siàge que é Eudora, corrija para a marca verdadeira)` : ''}.
+Pesquise e forneça as informações oficiais da loja oficial da marca para o produto: "${curName}"${curBrand ? ` (marca informada no formulário: "${curBrand}", mas se for de outra marca oficial corrija para a verdadeira: O Boticário, Natura ou Eudora)` : ''}.
 
 Puxe os dados oficiais com precisão:
-1. "nome_completo": Nome comercial oficial completo e corrigido da marca (ex: "Egeo Dolce Desodorante Colônia 90ml", "Kit Impression Eau de Parfum", "Essencial Oud Deo Parfum Masculino 100ml", "Shampoo Siàge Nutri Rosé 250ml").
-2. "marca": "O Boticário", "Natura" ou "Eudora" (identifique a marca real dona do produto).
+1. "nome_completo": Nome comercial oficial completo e corrigido da marca (ex: "Clash Extreme Desodorante Colônia 100ml", "Kit Impression Eau de Parfum", "Shampoo Siàge Nutri Rosé 250ml", "Essencial Oud Deo Parfum Masculino 100ml").
+2. "marca": "O Boticário", "Natura" ou "Eudora".
 3. "categoria": Escolha rigorosamente uma destas categorias:
-   - "Perfumes": Perfumaria, desodorante colônia, eau de parfum.
-   - "Cabelos": Shampoos, condicionadores, máscaras capilares, óleos capilares, leave-in, tônicos e finalizadores (linhas Siàge, Match, Lumina, Plant, etc.).
-   - "Cremes": Hidratantes corporais, faciais e mãos.
+   - "Perfumes": Perfumaria, desodorante colônia, eau de parfum, body splash.
+   - "Cabelos": Shampoos, condicionadores, cremes de pentear, máscaras capilares, óleos capilares antifrizz, leave-in (linhas Siàge, Match, Lumina, Plant).
+   - "Cremes": Hidratantes corporais, faciais, mãos e geleias corporais. NUNCA coloque cremes corporais em Cabelos!
    - "Corpo e Banho": Sabonetes, óleos corporais de banho, desodorantes e esfoliantes corporais.
    - "Maquiagem": Batons, bases, máscaras de cílios, sombras, pós.
-   - "Presentes": Kits completos para presente, estojos e caixas presenteáveis (ex: Kit Impression, Kit Lily, Kit Presenteável).
-   - "Outros": Acessórios ou itens não listados.
+   - "Presentes": Kits e estojos presenteáveis.
+   - "Outros": Outros itens.
 4. "genero": "Feminino", "Masculino" ou "Unissex".
 5. "descricao": Descrição completa, elegante e detalhada do produto como na loja virtual oficial da marca:
    - Para perfumes: Família olfativa e pirâmide olfativa (notas de topo/saída, coração/corpo e fundo).
@@ -3669,34 +3765,47 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       if (!res) throw new Error('Não foi possível interpretar a resposta da IA.');
 
       const filled = [];
+
+      // Nome completo
       if (res.nome_completo && nameEl) {
         nameEl.value = res.nome_completo;
         filled.push('form-name');
       }
+
+      // Marca
       if (res.marca && brandEl) {
         const match = Array.from(brandEl.options).find(o => o.value.toLowerCase() === res.marca.toLowerCase());
         if (match) { brandEl.value = match.value; filled.push('form-brand'); }
       }
-      if (res.categoria && catEl) {
-        const mappedCat = this.normalizeCategory(res.categoria, res.nome);
-        const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === mappedCat.toLowerCase());
-        if (match) { catEl.value = match.value; filled.push('form-cat'); }
+
+      // Categoria (sempre preenchida e garantida)
+      if (catEl) {
+        const mappedCat = this.normalizeCategory(res.categoria, res.nome_completo || curName, res.descricao);
+        catEl.value = mappedCat;
+        filled.push('form-cat');
       }
-      if (res.genero && genEl) {
-        const match = Array.from(genEl.options).find(o => o.value.toLowerCase() === res.genero.toLowerCase());
-        if (match) { genEl.value = match.value; filled.push('form-gen'); }
+
+      // Gênero (sempre preenchido e garantido)
+      if (genEl) {
+        const mappedGen = this.normalizeGenero(res.genero, res.nome_completo || curName);
+        genEl.value = mappedGen;
+        filled.push('form-gen');
       }
+
+      // Descrição
       if (res.descricao && descEl) {
         descEl.value = res.descricao;
         filled.push('form-desc');
       }
+
+      // Preço
       if (res.preco_sugerido && res.preco_sugerido > 0 && priceEl && (!priceEl.value || parseFloat(priceEl.value) === 0)) {
         priceEl.value = Number(res.preco_sugerido).toFixed(2);
         filled.push('form-price');
       }
 
       this.highlightFilledFields(filled);
-      this.showToast('✨ Descrição oficial e dados preenchidos com o Gemini!', 'success');
+      this.showToast('✨ Nome, categoria, gênero e descrição preenchidos com sucesso!', 'success');
       this.setAiStatus('Dados oficiais carregados com sucesso!');
       setTimeout(() => this.setAiStatus(''), 4000);
     } catch (e) {
@@ -3704,14 +3813,11 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       this.showToast('Erro ao consultar IA: ' + (e?.message || 'Falha na requisição'), 'error');
       this.setAiStatus('Falha ao consultar IA: ' + (e?.message || ''), true);
     } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = origHtml;
-      }
+      this.setAiLoading(false);
     }
   },
 
-  async saveCustomOriginalPrice(id, origPrice) {
+    async saveCustomOriginalPrice(id, origPrice) {
     const map = this.getCustomOriginalPrices();
     if (origPrice && origPrice > 0) map[String(id)] = Number(origPrice.toFixed(2));
     else delete map[String(id)];
