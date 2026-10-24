@@ -17,9 +17,7 @@ export default async function handler(req, res) {
     if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
-      } catch (_) {
-        // body remains as-is
-      }
+      } catch (_) {}
     }
 
     const { apiKey, contents, systemInstruction, model } = body || {};
@@ -39,15 +37,58 @@ export default async function handler(req, res) {
       });
     }
 
-    const candidateModels = model
-      ? [model, 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
-      : ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
-    const models = [...new Set(candidateModels)];
+    // 1. Descobrir dinamicamente os modelos disponíveis para esta chave de API
+    let modelsToTry = [];
+    if (model) {
+      modelsToTry.push(model);
+    }
+
+    try {
+      const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`);
+      if (listRes.ok) {
+        const listData = await listRes.json();
+        if (Array.isArray(listData.models)) {
+          const supported = listData.models
+            .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+            .map(m => m.name.replace(/^models\//, ''));
+
+          const priority = [
+            'gemini-3.8-flash',
+            'gemini-3.6-flash',
+            'gemini-3.5-flash-lite',
+            'gemini-2.5-flash',
+            'gemini-2.5-flash-lite'
+          ];
+
+          for (const p of priority) {
+            if (supported.includes(p) && !modelsToTry.includes(p)) {
+              modelsToTry.push(p);
+            }
+          }
+          for (const s of supported) {
+            if (!modelsToTry.includes(s) && (s.includes('flash') || s.includes('gemini'))) {
+              modelsToTry.push(s);
+            }
+          }
+        }
+      } else {
+        const errJson = await listRes.json().catch(() => ({}));
+        if (listRes.status === 400 && errJson?.error?.message?.toLowerCase().includes('key')) {
+          return res.status(400).json(errJson);
+        }
+      }
+    } catch (listErr) {
+      console.warn('Não foi possível listar modelos dinamicamente, usando fallback padrão:', listErr.message);
+    }
+
+    if (!modelsToTry.length) {
+      modelsToTry = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+    }
 
     let lastError = null;
     let lastStatusCode = 500;
 
-    for (const m of models) {
+    for (const m of modelsToTry) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`;
         const payload = {
@@ -77,12 +118,12 @@ export default async function handler(req, res) {
           lastStatusCode = response.status;
           lastError = new Error(errMsg);
 
-          // Se for erro 404 (modelo não encontrado nesta versão), tenta o próximo modelo do cascade
+          // Se for erro 404 (modelo não suportado ou descontinuado), tenta o próximo modelo
           if (response.status === 404 || errMsg.toLowerCase().includes('not found')) {
             continue;
           }
 
-          // Para outros erros (ex: chave inválida 400 ou cota 429), retorna imediatamente o detalhe
+          // Para outros erros (ex: chave inválida ou cota excedida), retorna direto
           return res.status(response.status).json(data);
         }
 

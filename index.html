@@ -786,6 +786,15 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const WA_PHONE = '5518997871211';
 const WA_BASE = 'https://wa.me/' + WA_PHONE;
 const CATS = ['Perfumes', 'Cabelos', 'Cremes', 'Corpo e Banho', 'Maquiagem', 'Presentes', 'Outros'];
+const CAT_LABELS = {
+  Perfumes: '🌸 Perfumes & Colônias',
+  Cabelos: '💇 Cabelos & Capilar (shampoos, cremes de cabelo, óleos antifrizz, máscaras)',
+  Cremes: '🧴 Cremes & Hidratantes Corporais/Faciais (hidratantes de corpo, mãos, geleias)',
+  'Corpo e Banho': '🛁 Corpo & Banho (sabonetes, banho, desodorantes)',
+  Maquiagem: '💄 Maquiagem',
+  Presentes: '🎁 Kits Presenteáveis & Estojos',
+  Outros: '✨ Outros'
+};
 const BRANDS = ['O Boticário', 'Natura', 'Eudora', 'Outros'];
 const GENEROS = ['Feminino', 'Masculino', 'Unissex'];
 const CART_KEY = 'viviboty_cart_v2';
@@ -1456,16 +1465,16 @@ const A = {
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             ${[
-              ['Perfumes', 'fa-spray-can-sparkles'],
-              ['Cabelos', 'fa-scissors'],
-              ['Cremes', 'fa-pump-soap'],
-              ['Corpo e Banho', 'fa-shower'],
-              ['Maquiagem', 'fa-wand-magic-sparkles'],
-              ['Presentes', 'fa-gift'],
-              ['Outros', 'fa-star']
-            ].map(([c, ic]) => `<a href="#/produtos?categoria=${encodeURIComponent(c)}" data-link class="bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:shadow-md rounded-2xl p-4 text-center font-semibold text-sm transition-all flex flex-col items-center gap-2 group">
+              ['Perfumes', 'fa-spray-can-sparkles', 'Perfumes'],
+              ['Cabelos', 'fa-scissors', 'Cabelos & Capilar'],
+              ['Cremes', 'fa-pump-soap', 'Cremes Corporais'],
+              ['Corpo e Banho', 'fa-shower', 'Corpo e Banho'],
+              ['Maquiagem', 'fa-wand-magic-sparkles', 'Maquiagem'],
+              ['Presentes', 'fa-gift', 'Presentes & Kits'],
+              ['Outros', 'fa-star', 'Outros']
+            ].map(([c, ic, label]) => `<a href="#/produtos?categoria=${encodeURIComponent(c)}" data-link class="bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:shadow-md rounded-2xl p-4 text-center font-semibold text-sm transition-all flex flex-col items-center gap-2 group">
               <span class="w-10 h-10 rounded-xl bg-[#FAF4F0] text-[#A97E3B] group-hover:bg-[#C69A55] group-hover:text-white flex items-center justify-center transition-colors"><i class="fa-solid ${ic}" aria-hidden="true"></i></span>
-              <span>${c}</span>
+              <span class="text-xs sm:text-sm font-semibold">${label}</span>
             </a>`).join('')}
           </div>
         </section>
@@ -1634,7 +1643,10 @@ const A = {
           <button type="button" onclick="A.setCatalogFilters({promo:!A.catalogFilters().promo,cat:''})" class="filter-chip ${f.promo ? 'active' : ''}"><i class="fa-solid fa-tag text-[#E53E3E]" aria-hidden="true"></i> Promoções</button>
           <button type="button" onclick="A.setCatalogFilters({destaque:!A.catalogFilters().destaque})" class="filter-chip ${f.destaque ? 'active' : ''}"><i class="fa-solid fa-sparkles text-[#C69A55]" aria-hidden="true"></i> Destaques (-% OFF)</button>
           <button type="button" onclick="A.setCatalogFilters({ready:!A.catalogFilters().ready})" class="filter-chip ${f.ready ? 'active' : ''}"><i class="fa-solid fa-check text-[#1D8A58]" aria-hidden="true"></i> Pronta entrega</button>
-          ${CATS.map(c => `<button type="button" onclick="A.setCatalogFilters({cat:'${c}',promo:false})" class="filter-chip ${f.cat === c ? 'active' : ''}">${c}</button>`).join('')}
+          ${CATS.map(c => {
+            const label = c === 'Cabelos' ? '💇 Cabelos & Capilar' : c === 'Cremes' ? '🧴 Cremes Corporais' : c === 'Corpo e Banho' ? '🛁 Banho & Sabonetes' : c;
+            return `<button type="button" onclick="A.setCatalogFilters({cat:'${c}',promo:false})" class="filter-chip ${f.cat === c ? 'active' : ''}">${label}</button>`;
+          }).join('')}
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-[#F0E3DC]">
@@ -3260,33 +3272,52 @@ Esta ação removerá o comentário do banco de dados.`,
     });
   },
 
-  normalizeCategory(cat) {
-    if (!cat) return '';
-    const s = String(cat).toLowerCase().trim();
-    if (s.includes('cabel') || s.includes('capilar') || s.includes('shampoo') || s.includes('condicionador') || s.includes('leave-in') || s.includes('leave in') || s.includes('máscara capilar') || s.includes('mascara capilar') || s.includes('siage') || s.includes('siàge') || s.includes('match') || s.includes('lumina') || s.includes('plant')) return 'Cabelos';
-    if (s.includes('perfum') || s.includes('colonia') || s.includes('colônia') || s.includes('fragr') || s.includes('eau de') || s.includes('parfum')) return 'Perfumes';
-    if (s.includes('banho') || s.includes('sabonete') || s.includes('desodorante') || s.includes('esfoliante corporal')) return 'Corpo e Banho';
-    if (s.includes('creme') || s.includes('hidratant') || s.includes('locao') || s.includes('loção') || s.includes('manteiga corporal') || s.includes('facial')) return 'Cremes';
-    if (s.includes('make') || s.includes('maquiag') || s.includes('batom') || s.includes('rímel') || s.includes('rimel') || s.includes('base ') || s.includes('blush')) return 'Maquiagem';
-    if (s.includes('kit') || s.includes('present') || s.includes('estojo')) return 'Presentes';
-    const direct = CATS.find(c => c.toLowerCase() === s);
+  normalizeCategory(cat, name = '') {
+    const text = (String(cat || '') + ' ' + String(name || '')).toLowerCase().trim();
+    // Se tiver termos corporais explícitos, NUNCA é Cabelos
+    if (/\b(corporal|iluminadora corporal|óleo corporal|oleo corporal|manteiga corporal|hidratante corporal|creme corporal|para o corpo|pele|mãos|pes|facial|rosto|merengue|acetinado|deleite)\b/i.test(text) && !/\b(cabelo|capilar|fios)\b/i.test(text)) {
+      if (/\b(sabonete|banho|esfoliante)\b/i.test(text)) return 'Corpo e Banho';
+      return 'Cremes';
+    }
+    // Produtos exclusivamente de cabelo
+    if (/\b(shampoo|condicionador|cabelo|capilar|leave-in|leave in|frizz|antifrizz|anti-frizz|reparador de pontas|máscara capilar|mascara capilar|creme de pentear|creme para pentear|tônico capilar|tonico capilar|reconstrói os fios|hair plastia|ciça terapy|cica therapy|nutri ácido complex|argan oil siage|hair)\b/i.test(text) ||
+        (/\b(siage|siàge)\b/i.test(text) && !/\b(batom|maquiag)\b/i.test(text))) {
+      return 'Cabelos';
+    }
+    if (/\b(perfum|colonia|colônia|fragr|eau de|parfum)\b/i.test(text)) return 'Perfumes';
+    if (/\b(banho|sabonete|desodorante|roll-on|roll on|antitranspirante)\b/i.test(text)) return 'Corpo e Banho';
+    if (/\b(creme|hidratant|locao|loção|manteiga|geleia|gelei|mousse)\b/i.test(text)) return 'Cremes';
+    if (/\b(make|maquiag|batom|rímel|rimel|base |blush|sombra|delineador)\b/i.test(text)) return 'Maquiagem';
+    if (/\b(kit|present|estojo)\b/i.test(text)) return 'Presentes';
+    const direct = CATS.find(c => c.toLowerCase() === String(cat || '').toLowerCase());
     return direct || 'Outros';
   },
 
   async fixLegacyHairCategories() {
     if (!this.sb) return;
     try {
-      const hairProducts = (this.prods || []).filter(p =>
-        /si[aà]ge|match|lumina|plant|shampoo|condicionador|argan oil/i.test(p.nome) &&
-        p.categoria !== 'Cabelos'
+      // 1. Corrigir produtos corporais que foram indevidamente marcados como Cabelos (ex: Geleia corporal Lily)
+      const misclassifiedBody = (this.prods || []).filter(p =>
+        p.categoria === 'Cabelos' && /\b(corporal|corpo|geleia|pele|mãos|merengue)\b/i.test(p.nome)
       );
-      if (!hairProducts.length) return;
-      for (const p of hairProducts) {
+      for (const p of misclassifiedBody) {
+        await this.sb.from('products').update({ categoria: 'Cremes' }).eq('id', p.id);
+        p.categoria = 'Cremes';
+      }
+
+      // 2. Classificar corretamente produtos capilares legítimos que estavam perdidos em Corpo e Banho ou Outros
+      const genuineHair = (this.prods || []).filter(p =>
+        p.categoria !== 'Cabelos' && (
+          /\b(shampoo|condicionador|cabelo|capilar|leave-in|leave in|frizz|fios|hair plastia|ciça terapy|cica therapy|nutri ácido complex|argan oil)\b/i.test(p.nome) ||
+          (/\b(siage|siàge)\b/i.test(p.nome) && !/\b(corporal)\b/i.test(p.nome))
+        )
+      );
+      for (const p of genuineHair) {
         await this.sb.from('products').update({ categoria: 'Cabelos' }).eq('id', p.id);
         p.categoria = 'Cabelos';
       }
     } catch (e) {
-      console.warn('Erro ao ajustar categorias de cabelo:', e);
+      console.warn('Erro ao ajustar categorias:', e);
     }
   },
 
@@ -3295,7 +3326,7 @@ Esta ação removerá o comentário do banco de dados.`,
     if (!apiKey) throw new Error('Chave da API do Google Gemini não informada.');
 
     // 1. Tenta primeiro através do endpoint serverless (/api/gemini)
-    // Isso evita 100% de erros de CORS, CSP e bloqueios de ad-blockers do navegador
+    // Esse endpoint usa Gemini 3.8 Flash e autodescoberta dinâmica de modelos
     try {
       const proxyRes = await fetch('/api/gemini', {
         method: 'POST',
@@ -3319,8 +3350,9 @@ Esta ação removerá o comentário do banco de dados.`,
       console.warn('Proxy /api/gemini indisponível, tentando conexão direta com Google API:', proxyErr.message);
     }
 
-    // 2. Conexão direta com a API do Google como fallback
-    const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    // 2. Conexão direta com modelos modernos (Gemini 3.8 / 3.5 / 2.5)
+    // Modelos legados (1.5 e 2.0) foram descontinuados pela Google na v1beta
+    const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
     let lastError = null;
 
     for (const model of models) {
@@ -3365,12 +3397,12 @@ Esta ação removerá o comentário do banco de dados.`,
           continue;
         }
         if (e.message === 'Failed to fetch') {
-          throw new Error('Falha de conexão com a API do Google (Failed to fetch). Verifique se o seu navegador ou alguma extensão bloqueadora de anúncios está impedindo a conexão com generativelanguage.googleapis.com.');
+          throw new Error('Falha de conexão com a API do Google (Failed to fetch). Verifique sua rede ou se há bloqueador de anúncios impedindo o acesso ao Google AI.');
         }
         throw e;
       }
     }
-    throw lastError || new Error('Não foi possível obter resposta do Gemini.');
+    throw lastError || new Error('Não foi possível obter resposta do Gemini com os modelos disponíveis.');
   },
 
   parseGeminiJson(rawText) {
@@ -3419,7 +3451,6 @@ Esta ação removerá o comentário do banco de dados.`,
       box.classList.add('text-[#826F70]');
     }
   },
-
   async aiFillFromPhoto() {
     const key = await this.getGeminiApiKey();
     if (!key) return;
@@ -3528,7 +3559,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       if (res.categoria) {
         const catEl = document.getElementById('form-cat');
         if (catEl) {
-          const mappedCat = this.normalizeCategory(res.categoria);
+          const mappedCat = this.normalizeCategory(res.categoria, res.nome);
           const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === mappedCat.toLowerCase());
           if (match) { catEl.value = match.value; filled.push('form-cat'); }
         }
@@ -3647,7 +3678,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
         if (match) { brandEl.value = match.value; filled.push('form-brand'); }
       }
       if (res.categoria && catEl) {
-        const mappedCat = this.normalizeCategory(res.categoria);
+        const mappedCat = this.normalizeCategory(res.categoria, res.nome);
         const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === mappedCat.toLowerCase());
         if (match) { catEl.value = match.value; filled.push('form-cat'); }
       }
@@ -4702,7 +4733,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
               🌸 Perfumes (${catCounts.Perfumes || 0})
             </button>
             <button type="button" onclick="A.setAdminCat('Cabelos')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Cabelos' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
-              💇 Cabelos (${catCounts.Cabelos || 0})
+              💇 Cabelos & Capilar (${catCounts.Cabelos || 0})
             </button>
             <button type="button" onclick="A.setAdminCat('Cremes')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all shrink-0 ${st.cat === 'Cremes' ? 'bg-[#A97E3B] text-white' : 'bg-[#FAF4F0] text-[#826F70] hover:bg-[#F0E3DC]'}">
               🧴 Cremes Corporais (${catCounts.Cremes || 0})
@@ -5067,7 +5098,10 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             </div>
             <div>
               <label class="block text-xs font-bold uppercase mb-1" for="form-cat">Categoria</label>
-              <select id="form-cat" class="lux-input text-xs bg-white"><option value="">Selecione</option>${CATS.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${c}</option>`).join('')}</select>
+              <select id="form-cat" class="lux-input text-xs bg-white"><option value="">Selecione a categoria</option>${CATS.map(c => `<option value="${c}" ${p.categoria === c ? 'selected' : ''}>${(typeof CAT_LABELS !== 'undefined' && CAT_LABELS[c]) || c}</option>`).join('')}</select>
+              <p class="text-[10px] text-[#826F70] mt-1">
+                <i class="fa-solid fa-circle-info text-[#A97E3B]"></i> <strong>Cabelos & Capilar:</strong> exclusivamente shampoos, cremes de pentear, óleos antifrizz e máscaras de cabelo. Hidratantes e geleias corporais ficam em <strong>Cremes</strong>.
+              </p>
             </div>
             <div>
               <label class="block text-xs font-bold uppercase mb-1" for="form-gen">Gênero</label>
