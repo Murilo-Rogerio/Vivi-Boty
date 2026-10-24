@@ -1,4 +1,4 @@
-export const config = { matcher: '/produto/:path*' };
+export const config = { matcher: ['/produto/:path*', '/admin', '/admin/:path*'] };
 
 const BOT_UA = /facebookexternalhit|WhatsApp|Instagram|Twitterbot|linkedinbot|Slackbot|TelegramBot|Discordbot|Pinterest|Googlebot/i;
 const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
@@ -20,8 +20,15 @@ function formatBRL(v) {
 }
 
 export default async function middleware(request) {
-  const ua = request.headers.get('user-agent') || '';
   const url = new URL(request.url);
+
+  // Redireciona /admin direto para a tela inicial para evitar 404 e tela preta na Vercel
+  if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
+    const sub = url.pathname.replace(/^\/admin\/?/, '');
+    const redirectUrl = sub ? `/?admin=${encodeURIComponent(sub)}` : '/?admin=1';
+    return Response.redirect(new URL(redirectUrl, request.url), 302);
+  }
+  const ua = request.headers.get('user-agent') || '';
   const rawId = url.pathname.split('/').filter(Boolean).pop() || '';
   const productId = rawId.replace(/[^a-zA-Z0-9_-]/g, '');
 
