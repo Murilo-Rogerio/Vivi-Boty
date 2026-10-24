@@ -2744,6 +2744,10 @@ const A = {
     } catch (e) {
       console.warn('Erro ao carregar configurações:', e);
     }
+    if (!this.settings.gemini_api_key && typeof localStorage !== 'undefined') {
+      const localGemini = localStorage.getItem('gemini_api_key');
+      if (localGemini) this.settings.gemini_api_key = localGemini;
+    }
     this.settingsLoaded = true;
     this.syncWhatsAppLinks();
     return this.settings;
@@ -3137,6 +3141,461 @@ Esta ação removerá o comentário do banco de dados.`,
     }
   },
 
+  togglePasswordVisibility(inputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    el.type = el.type === 'password' ? 'text' : 'password';
+  },
+
+  async getGeminiApiKey() {
+    await this.ensureSettings();
+    let key = (this.settings.gemini_api_key || localStorage.getItem('gemini_api_key') || '').trim();
+    if (key) return key;
+
+    const inputKey = prompt(
+      'Para usar a IA do Google Gemini e preencher produtos automaticamente, informe sua chave da API:\n\n' +
+      '(Obtenha gratuitamente em: https://aistudio.google.com/apikey)\n\n' +
+      'Cole sua chave aqui:'
+    );
+    if (!inputKey || !inputKey.trim()) return null;
+
+    key = inputKey.trim();
+    localStorage.setItem('gemini_api_key', key);
+    this.settings.gemini_api_key = key;
+
+    try {
+      if (this.sb) {
+        await this.sb.from('store_settings').upsert({
+          key: 'gemini_api_key',
+          value: key,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'key' });
+      }
+    } catch (e) {
+      console.warn('Não foi possível salvar chave no banco:', e);
+    }
+
+    this.showToast('Chave da API Gemini salva com sucesso!', 'success');
+    return key;
+  },
+
+  async promptGeminiApiKey() {
+    const curKey = this.settings.gemini_api_key || localStorage.getItem('gemini_api_key') || '';
+    const newKey = prompt(
+      'Chave da API Google Gemini (para preenchimento inteligente de produtos):\n\n' +
+      'Obtenha gratuitamente em: https://aistudio.google.com/apikey\n\n' +
+      'Cole ou altere sua chave aqui:',
+      curKey
+    );
+    if (newKey === null) return;
+    const cleanKey = newKey.trim();
+    if (cleanKey) {
+      localStorage.setItem('gemini_api_key', cleanKey);
+      this.settings.gemini_api_key = cleanKey;
+      if (this.sb) {
+        await this.sb.from('store_settings').upsert({
+          key: 'gemini_api_key',
+          value: cleanKey,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'key' });
+      }
+      this.showToast('Chave Gemini salva com sucesso!', 'success');
+    } else {
+      localStorage.removeItem('gemini_api_key');
+      this.settings.gemini_api_key = '';
+      if (this.sb) {
+        await this.sb.from('store_settings').delete().eq('key', 'gemini_api_key');
+      }
+      this.showToast('Chave Gemini removida.', 'info');
+    }
+  },
+
+  async testGeminiConnection() {
+    const keyEl = document.getElementById('setting-gemini-key');
+    const key = (keyEl?.value || this.settings.gemini_api_key || localStorage.getItem('gemini_api_key') || '').trim();
+    if (!key) {
+      this.showToast('Informe a chave da API do Gemini primeiro para testar.', 'error');
+      return;
+    }
+    this.showToast('Testando conexão com o Google Gemini...', 'info');
+    try {
+      await this.callGeminiApi(key, [{
+        parts: [{ text: 'Responda com o JSON: {"status": "ok", "mensagem": "Conectado com sucesso"}' }]
+      }]);
+      this.showToast('Conexão com Google Gemini realizada com sucesso! 🎉', 'success');
+    } catch (e) {
+      console.error('Erro no teste do Gemini:', e);
+      this.showToast('Falha na conexão: ' + (e?.message || 'Chave inválida'), 'error');
+    }
+  },
+
+  async resizeImageForAi(file, maxDim = 1024) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          resolve({
+            mimeType: 'image/jpeg',
+            base64: dataUrl.split(',')[1]
+          });
+        };
+        img.onerror = () => reject(new Error('Erro ao processar imagem para IA'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Erro ao ler arquivo da imagem'));
+      reader.readAsDataURL(file);
+    });
+  },
+
+  async callGeminiApi(apiKey, contents, systemInstruction = '') {
+    const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    let lastError = null;
+
+    for (const model of models) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const payload = {
+          contents,
+          generationConfig: {
+            temperature: 0.2,
+            responseMimeType: 'application/json'
+          }
+        };
+        if (systemInstruction) {
+          payload.systemInstruction = {
+            parts: [{ text: systemInstruction }]
+          };
+        }
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData?.error?.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) throw new Error('Resposta vazia da IA');
+        return text;
+      } catch (e) {
+        lastError = e;
+        if (e.message && (e.message.includes('404') || e.message.includes('not found'))) {
+          continue;
+        }
+        throw e;
+      }
+    }
+    throw lastError;
+  },
+
+  parseGeminiJson(rawText) {
+    if (!rawText) return null;
+    let clean = rawText.trim();
+    if (clean.startsWith('```json')) clean = clean.replace(/^```json\s*/i, '');
+    if (clean.startsWith('```')) clean = clean.replace(/^```\s*/, '');
+    if (clean.endsWith('```')) clean = clean.replace(/\s*```$/, '');
+    try {
+      return JSON.parse(clean);
+    } catch (e) {
+      const match = clean.match(/\{[\s\S]*\}/);
+      if (match) return JSON.parse(match[0]);
+      throw e;
+    }
+  },
+
+  highlightFilledFields(fieldIds) {
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add('ring-2', 'ring-[#C69A55]', 'bg-[#FAF0EB]/60');
+      setTimeout(() => {
+        el.classList.remove('ring-2', 'ring-[#C69A55]', 'bg-[#FAF0EB]/60');
+      }, 3000);
+    });
+  },
+
+  setAiStatus(msg, isError = false) {
+    const box = document.getElementById('ai-status-msg');
+    const text = document.getElementById('ai-status-text');
+    if (!box || !text) return;
+    if (!msg) {
+      box.classList.add('hidden');
+      box.classList.remove('flex');
+      return;
+    }
+    box.classList.remove('hidden');
+    box.classList.add('flex');
+    text.textContent = msg;
+    if (isError) {
+      box.classList.add('text-red-600');
+      box.classList.remove('text-[#826F70]');
+    } else {
+      box.classList.remove('text-red-600');
+      box.classList.add('text-[#826F70]');
+    }
+  },
+
+  async aiFillFromPhoto() {
+    const key = await this.getGeminiApiKey();
+    if (!key) return;
+
+    const fileInput = document.getElementById('form-file');
+    let file = fileInput?.files?.[0];
+
+    // Se nenhum arquivo foi selecionado no momento
+    if (!file) {
+      const existingImg = document.querySelector('#img-preview img')?.src;
+      if (!existingImg || existingImg.startsWith('data:image/svg')) {
+        this.showToast('Selecione uma foto do produto para a IA analisar!', 'info');
+        fileInput?.click();
+        fileInput?.addEventListener('change', () => {
+          if (fileInput.files?.[0]) this.aiFillFromPhoto();
+        }, { once: true });
+        return;
+      }
+    }
+
+    const btn = document.getElementById('btn-ai-photo');
+    const origHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i> Analisando com Gemini...';
+    }
+    this.setAiStatus('Processando imagem e consultando catálogo oficial com o Gemini...');
+
+    try {
+      let imageData = null;
+      if (file) {
+        imageData = await this.resizeImageForAi(file);
+      } else {
+        const imgEl = document.querySelector('#img-preview img');
+        if (imgEl && imgEl.complete) {
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.min(imgEl.naturalWidth || 800, 1024);
+          canvas.height = Math.min(imgEl.naturalHeight || 800, 1024);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          imageData = { mimeType: 'image/jpeg', base64: dataUrl.split(',')[1] };
+        }
+      }
+
+      if (!imageData) {
+        throw new Error('Nenhuma imagem disponível para análise');
+      }
+
+      const promptText = `Você é uma especialista no catálogo de cosméticos e perfumaria brasileira (O Boticário, Natura e Eudora).
+Analise a embalagem/frasco/produto nesta imagem e extraia os dados oficiais com máxima precisão.
+
+Identifique:
+1. "nome": Nome comercial oficial completo do produto ou kit (ex: "Malbec Desodorante Colônia 100ml", "Kit Presente Lily", "Creme Desodorante Nutritivo Tododia Algodão 400ml").
+2. "marca": Apenas "O Boticário", "Natura" ou "Eudora".
+3. "categoria": Uma destas: "Perfumes", "Cremes", "Corpo e Banho", "Presentes", "Maquiagem" ou "Outros".
+4. "genero": "Feminino", "Masculino" ou "Unissex".
+5. "descricao": Descrição completa e profissional como no site oficial da marca, incluindo pirâmide olfativa (notas de saída, corpo e fundo) para perfumes, benefícios e fórmula para cremes/cabelos, itens do kit se for estojo, e modo de usar.
+6. "preco_sugerido": Preço de tabela sugerido em reais (número decimal, ex: 189.90 ou 0 se desconhecido).
+
+Retorne EXCLUSIVAMENTE em formato JSON:
+{
+  "nome": "string",
+  "marca": "string",
+  "categoria": "string",
+  "genero": "string",
+  "descricao": "string",
+  "preco_sugerido": 0.00
+}`;
+
+      const rawJson = await this.callGeminiApi(key, [
+        {
+          parts: [
+            { text: promptText },
+            {
+              inline_data: {
+                mime_type: imageData.mimeType,
+                data: imageData.base64
+              }
+            }
+          ]
+        }
+      ]);
+
+      const res = this.parseGeminiJson(rawJson);
+      if (!res) throw new Error('Não foi possível interpretar a resposta da IA.');
+
+      const filled = [];
+      if (res.nome) {
+        const nameEl = document.getElementById('form-name');
+        if (nameEl) { nameEl.value = res.nome; filled.push('form-name'); }
+      }
+      if (res.marca) {
+        const brandEl = document.getElementById('form-brand');
+        if (brandEl) {
+          const match = Array.from(brandEl.options).find(o => o.value.toLowerCase() === res.marca.toLowerCase());
+          if (match) { brandEl.value = match.value; filled.push('form-brand'); }
+        }
+      }
+      if (res.categoria) {
+        const catEl = document.getElementById('form-cat');
+        if (catEl) {
+          const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === res.categoria.toLowerCase());
+          if (match) { catEl.value = match.value; filled.push('form-cat'); }
+        }
+      }
+      if (res.genero) {
+        const genEl = document.getElementById('form-gen');
+        if (genEl) {
+          const match = Array.from(genEl.options).find(o => o.value.toLowerCase() === res.genero.toLowerCase());
+          if (match) { genEl.value = match.value; filled.push('form-gen'); }
+        }
+      }
+      if (res.descricao) {
+        const descEl = document.getElementById('form-desc');
+        if (descEl) { descEl.value = res.descricao; filled.push('form-desc'); }
+      }
+      if (res.preco_sugerido && res.preco_sugerido > 0) {
+        const priceEl = document.getElementById('form-price');
+        if (priceEl && (!priceEl.value || parseFloat(priceEl.value) === 0)) {
+          priceEl.value = Number(res.preco_sugerido).toFixed(2);
+          filled.push('form-price');
+        }
+      }
+
+      this.highlightFilledFields(filled);
+      this.showToast('✨ Produto identificado! Nome, marca e descrição preenchidos com Gemini.', 'success');
+      this.setAiStatus(`Identificado com sucesso: ${res.marca || ''} ${res.nome || ''}`);
+      setTimeout(() => this.setAiStatus(''), 4000);
+    } catch (e) {
+      console.error('Erro ao identificar produto com IA:', e);
+      this.showToast('Erro na identificação com IA: ' + (e?.message || 'Falha na requisição'), 'error');
+      this.setAiStatus('Falha ao identificar produto: ' + (e?.message || ''), true);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+  },
+
+  async aiFillFromName() {
+    const key = await this.getGeminiApiKey();
+    if (!key) return;
+
+    const nameEl = document.getElementById('form-name');
+    const brandEl = document.getElementById('form-brand');
+    const catEl = document.getElementById('form-cat');
+    const genEl = document.getElementById('form-gen');
+    const descEl = document.getElementById('form-desc');
+    const priceEl = document.getElementById('form-price');
+
+    const curName = (nameEl?.value || '').trim();
+    if (!curName) {
+      this.showToast('Digite o nome do produto no campo "Nome" para a IA pesquisar!', 'info');
+      nameEl?.focus();
+      return;
+    }
+
+    const curBrand = brandEl?.value || '';
+    const btn = document.getElementById('btn-ai-name');
+    const origHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i> Puxando do site oficial...';
+    }
+    this.setAiStatus(`Consultando catálogo oficial de ${curBrand || 'cosméticos'} para "${curName}" com o Gemini...`);
+
+    try {
+      const promptText = `Você é uma especialista em cosméticos e perfumaria brasileira (O Boticário, Natura e Eudora).
+Pesquise e forneça as informações oficiais da loja oficial da marca para o produto: "${curName}"${curBrand ? ` da marca "${curBrand}"` : ''}.
+
+Puxe os dados oficiais:
+1. "nome_completo": Nome comercial oficial completo e corrigido da marca (ex: "Egeo Dolce Desodorante Colônia 90ml", "Essencial Oud Deo Parfum Masculino 100ml").
+2. "marca": "O Boticário", "Natura" ou "Eudora".
+3. "categoria": "Perfumes", "Cremes", "Corpo e Banho", "Presentes", "Maquiagem" ou "Outros".
+4. "genero": "Feminino", "Masculino" ou "Unissex".
+5. "descricao": Descrição completa, elegante e detalhada do produto como na loja virtual oficial da marca:
+   - Para perfumes: Família olfativa e pirâmide olfativa (notas de saída/topo, coração/corpo e fundo).
+   - Para cremes e cuidados: Ativos da fórmula, benefícios na pele, textura e modo de usar.
+   - Para kits ou presentes: Itens que compõem o kit com suas volumetrias.
+6. "preco_sugerido": Preço de tabela sugerido em reais (número decimal, ex: 169.90 ou 0 se desconhecido).
+
+Retorne EXCLUSIVAMENTE em formato JSON:
+{
+  "nome_completo": "string",
+  "marca": "string",
+  "categoria": "string",
+  "genero": "string",
+  "descricao": "string",
+  "preco_sugerido": 0.00
+}`;
+
+      const rawJson = await this.callGeminiApi(key, [
+        {
+          parts: [{ text: promptText }]
+        }
+      ]);
+
+      const res = this.parseGeminiJson(rawJson);
+      if (!res) throw new Error('Não foi possível interpretar a resposta da IA.');
+
+      const filled = [];
+      if (res.nome_completo && nameEl) {
+        nameEl.value = res.nome_completo;
+        filled.push('form-name');
+      }
+      if (res.marca && brandEl && !brandEl.value) {
+        const match = Array.from(brandEl.options).find(o => o.value.toLowerCase() === res.marca.toLowerCase());
+        if (match) { brandEl.value = match.value; filled.push('form-brand'); }
+      }
+      if (res.categoria && catEl && !catEl.value) {
+        const match = Array.from(catEl.options).find(o => o.value.toLowerCase() === res.categoria.toLowerCase());
+        if (match) { catEl.value = match.value; filled.push('form-cat'); }
+      }
+      if (res.genero && genEl && !genEl.value) {
+        const match = Array.from(genEl.options).find(o => o.value.toLowerCase() === res.genero.toLowerCase());
+        if (match) { genEl.value = match.value; filled.push('form-gen'); }
+      }
+      if (res.descricao && descEl) {
+        descEl.value = res.descricao;
+        filled.push('form-desc');
+      }
+      if (res.preco_sugerido && res.preco_sugerido > 0 && priceEl && (!priceEl.value || parseFloat(priceEl.value) === 0)) {
+        priceEl.value = Number(res.preco_sugerido).toFixed(2);
+        filled.push('form-price');
+      }
+
+      this.highlightFilledFields(filled);
+      this.showToast('✨ Descrição oficial e dados preenchidos com o Gemini!', 'success');
+      this.setAiStatus('Dados oficiais carregados com sucesso!');
+      setTimeout(() => this.setAiStatus(''), 4000);
+    } catch (e) {
+      console.error('Erro ao buscar dados com IA:', e);
+      this.showToast('Erro ao consultar IA: ' + (e?.message || 'Falha na requisição'), 'error');
+      this.setAiStatus('Falha ao consultar IA: ' + (e?.message || ''), true);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+  },
+
   async saveCustomOriginalPrice(id, origPrice) {
     const map = this.getCustomOriginalPrices();
     if (origPrice && origPrice > 0) map[String(id)] = Number(origPrice.toFixed(2));
@@ -3493,6 +3952,32 @@ Esta ação removerá o comentário do banco de dados.`,
             <textarea id="setting-template-single" rows="5" class="lux-input text-xs py-3 px-4 font-mono leading-relaxed w-full">${this.escape(s.whatsapp_template_single || '')}</textarea>
           </div>
 
+          <!-- Chave da API Google Gemini (IA no Cadastro) -->
+          <div class="bg-[#FCF9F7] p-5 rounded-2xl border border-[#F0E3DC] space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <label class="block font-bold text-sm text-[#241A1B]">
+                <i class="fa-solid fa-wand-magic-sparkles text-[#C69A55] text-base mr-1"></i> Chave de API Google Gemini (IA no Cadastro):
+              </label>
+              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-[#A97E3B] hover:underline flex items-center gap-1.5">
+                <i class="fa-solid fa-key"></i> Obter chave gratuita no Google AI Studio <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              </a>
+            </div>
+            <p class="text-xs text-[#826F70]">
+              Usada para identificar fotos de produtos tiradas pela câmera e puxar automaticamente nome, pirâmide olfativa e descrições oficiais de O Boticário, Natura e Eudora.
+            </p>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-xl">
+              <div class="relative flex-1">
+                <input type="password" id="setting-gemini-key" value="${this.escapeAttr(s.gemini_api_key || localStorage.getItem('gemini_api_key') || '')}" class="lux-input text-xs py-2.5 px-4 font-mono w-full" placeholder="AIzaSy...">
+                <button type="button" onclick="A.togglePasswordVisibility('setting-gemini-key')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA999A] hover:text-[#241A1B] text-xs" title="Exibir/Ocultar chave">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+              <button type="button" onclick="A.testGeminiConnection()" class="btn-secondary text-xs py-2.5 px-4 flex items-center justify-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-bolt text-amber-500"></i> Testar Conexão
+              </button>
+            </div>
+          </div>
+
           <!-- Botão Salvar -->
           <div class="pt-2">
             <button type="submit" class="btn-gold py-3 px-8 text-sm shadow-lg flex items-center gap-2">
@@ -3515,11 +4000,20 @@ Esta ação removerá o comentário do banco de dados.`,
     const whatsapp_number = numEl.value.replace(/\D/g, '') || '5518997871211';
     const whatsapp_template_cart = cartEl?.value?.trim() || '';
     const whatsapp_template_single = singEl?.value?.trim() || '';
+    const geminiEl = document.getElementById('setting-gemini-key');
+    const gemini_api_key = geminiEl?.value?.trim() || '';
+
+    if (gemini_api_key) {
+      localStorage.setItem('gemini_api_key', gemini_api_key);
+    } else {
+      localStorage.removeItem('gemini_api_key');
+    }
 
     this.saveStoreSettings({
       whatsapp_number,
       whatsapp_template_cart,
-      whatsapp_template_single
+      whatsapp_template_single,
+      gemini_api_key
     });
   },
 
@@ -4425,8 +4919,56 @@ Esta ação removerá o comentário do banco de dados.`,
         <a href="#/admin/produtos" data-link class="inline-flex items-center gap-2 text-xs font-semibold text-[#826F70] hover:text-[#241A1B] mb-6"><i class="fa-solid fa-arrow-left"></i> Voltar à lista</a>
         <form onsubmit="event.preventDefault(); A.saveProduct('${id ? this.safeId(id) : ''}');" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-sm p-6 sm:p-8 space-y-5">
           <h2 class="font-serif font-bold text-2xl">${id ? 'Editar produto' : 'Cadastrar produto'}</h2>
+
+          <!-- Card de Assistente IA (Google Gemini) -->
+          <div class="bg-gradient-to-r from-[#FAF0EB] via-[#FFFBF8] to-[#FAF4F0] p-4 sm:p-5 rounded-2xl border border-[#EACCA4] shadow-sm space-y-3.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F0E3DC] pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#C69A55] to-[#EACCA4] text-white flex items-center justify-center text-sm shadow">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </span>
+                <div>
+                  <h3 class="font-serif font-bold text-sm text-[#241A1B] flex items-center gap-2">
+                    Preenchimento Inteligente com IA
+                    <span class="text-[10px] font-sans font-bold px-2 py-0.5 rounded-full bg-white text-[#A97E3B] border border-[#EACCA4]">Google Gemini</span>
+                  </h3>
+                  <p class="text-[11px] text-[#826F70]">Identifique pela foto ou puxe a descrição oficial da marca automaticamente.</p>
+                </div>
+              </div>
+              <button type="button" onclick="A.promptGeminiApiKey()" class="text-[11px] font-bold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1 self-start sm:self-center">
+                <i class="fa-solid fa-key text-[10px]"></i> ${(this.settings.gemini_api_key || localStorage.getItem('gemini_api_key')) ? 'Chave configurada' : 'Configurar Chave'}
+              </button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button type="button" 
+                      id="btn-ai-photo" 
+                      onclick="A.aiFillFromPhoto()" 
+                      class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-[#FAF0EB] text-[#241A1B] border border-[#EACCA4] text-xs font-bold transition-all shadow-xs flex items-center gap-2 hover:border-[#C69A55]">
+                <i class="fa-solid fa-camera text-[#A97E3B]"></i> Identificar Produto pela Foto
+              </button>
+
+              <button type="button" 
+                      id="btn-ai-name" 
+                      onclick="A.aiFillFromName()" 
+                      class="px-3.5 py-2.5 rounded-xl bg-[#241A1B] hover:bg-black text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2">
+                <i class="fa-solid fa-sparkles text-[#EACCA4]"></i> Puxar Descrição Oficial pelo Nome
+              </button>
+            </div>
+
+            <div id="ai-status-msg" class="text-xs text-[#826F70] hidden items-center gap-2 pt-1 font-medium animate-pulse">
+              <i class="fa-solid fa-spinner fa-spin text-[#C69A55]"></i>
+              <span id="ai-status-text">Consultando inteligência artificial...</span>
+            </div>
+          </div>
+
           <div>
-            <label class="block text-xs font-bold uppercase mb-1" for="form-name">Nome *</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold uppercase" for="form-name">Nome *</label>
+              <button type="button" onclick="A.aiFillFromName()" class="text-[11px] font-bold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1 transition-colors" title="Puxar dados oficiais a partir do nome digitado">
+                <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i> Puxar descrição pelo nome
+              </button>
+            </div>
             <input type="text" id="form-name" required value="${this.escapeAttr(p.nome)}" class="lux-input text-sm" maxlength="120">
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -4470,11 +5012,21 @@ Esta ação removerá o comentário do banco de dados.`,
             <strong>Dica de Promoção ("De / Por"):</strong> Quando o produto está marcado como <strong>Destaque</strong> ou <strong>Em Promoção</strong>, o site exibe automaticamente um preço "De" superior riscado e o seu Preço Real como oferta! Se preferir escolher exatamente o valor riscado, preencha o campo <em>Preço 'De' Riscado</em>.
           </p>
           <div>
-            <label class="block text-xs font-bold uppercase mb-1" for="form-desc">Descrição</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold uppercase" for="form-desc">Descrição</label>
+              <button type="button" onclick="A.aiFillFromName()" class="text-[11px] font-bold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1 transition-colors" title="Gerar ou buscar descrição oficial da marca com IA">
+                <i class="fa-solid fa-sparkles text-[10px]"></i> Preencher descrição com Gemini
+              </button>
+            </div>
             <textarea id="form-desc" rows="3" class="lux-input text-sm" maxlength="2000" placeholder="Descrição do produto, notas olfativas, modo de uso...">${this.escape(p.descricao || '')}</textarea>
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase mb-1" for="form-file">Imagem (JPG, PNG ou WEBP, até 5 MB)</label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold uppercase" for="form-file">Imagem (JPG, PNG ou WEBP, até 5 MB)</label>
+              <button type="button" onclick="A.aiFillFromPhoto()" class="text-[11px] font-bold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1 transition-colors" title="Analisar foto e identificar o produto">
+                <i class="fa-solid fa-camera text-[10px]"></i> Identificar pela foto
+              </button>
+            </div>
             <div class="flex items-center gap-4">
               <div id="img-preview"
                    onclick="A.openPreviewImage()"
