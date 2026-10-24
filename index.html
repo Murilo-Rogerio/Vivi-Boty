@@ -10,7 +10,7 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#241A1B">
 <meta name="description" content="Boutique digital de perfumes, cosméticos e presentes originais O Boticário, Natura e Eudora. Atendimento humanizado direto pelo WhatsApp.">
-<meta name="keywords" content="Vivi Boty, Vivi Carvalho, perfumes, O Boticário, Natura, Eudora, cosméticos, presentes">
+<meta name="keywords" content="Vivi Carvalho Boty, Vivi Carvalho, perfumes, O Boticário, Natura, Eudora, cosméticos, presentes">
 <meta property="og:site_name" content="Vivi Carvalho Boty">
 <meta property="og:title" content="Vivi Carvalho Boty | Perfumes, Cosméticos e Presentes">
 <meta property="og:description" content="Fragrâncias, cuidados e kits de presente com pronta entrega e atendimento pelo WhatsApp.">
@@ -401,13 +401,13 @@ h1, h2, h3, h4, .font-serif {
       <a href="#/" data-link class="flex items-center gap-3 no-underline group">
         <div class="relative w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] shadow-md transition-transform group-hover:scale-105">
           <img src="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.jpg"
-               alt="Logo Vivi Boty"
+               alt="Logo Vivi Carvalho Boty"
                class="w-full h-full rounded-full object-cover bg-white"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="w-full h-full rounded-full bg-[#3D2C2E] text-white font-serif font-bold text-sm hidden items-center justify-center">VB</div>
+          <div class="w-full h-full rounded-full bg-[#3D2C2E] text-white font-serif font-bold text-sm hidden items-center justify-center">VC</div>
         </div>
         <div class="flex flex-col">
-          <span class="font-serif font-bold text-xl sm:text-2xl text-[#241A1B] tracking-tight group-hover:text-[#A97E3B] transition-colors leading-none">Vivi Boty</span>
+          <span class="font-serif font-bold text-lg sm:text-2xl text-[#241A1B] tracking-tight group-hover:text-[#A97E3B] transition-colors leading-none">Vivi Carvalho Boty</span>
           <span class="text-[10px] tracking-[0.2em] uppercase text-[#826F70] font-semibold mt-1">Perfumaria & Presentes</span>
         </div>
       </a>
@@ -765,7 +765,7 @@ h1, h2, h3, h4, .font-serif {
       </div>
     </div>
     <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#706461]">
-      <p>© 2026 Vivi Boty — Todos os direitos reservados.</p>
+      <p>© 2026 Vivi Carvalho Boty — Todos os direitos reservados.</p>
       <p>Feito com carinho para a melhor mãe e consultora</p>
     </div>
   </footer>
@@ -773,7 +773,7 @@ h1, h2, h3, h4, .font-serif {
 
 <noscript>
   <div style="padding:2rem;text-align:center;font-family:sans-serif">
-    Ative o JavaScript para ver o catálogo da Vivi Boty, ou fale direto no
+    Ative o JavaScript para ver o catálogo da Vivi Carvalho Boty, ou fale direto no
     <a href="https://wa.me/5518997871211">WhatsApp</a>.
   </div>
 </noscript>
@@ -1324,7 +1324,7 @@ const A = {
   },
 
   viewNotFound() {
-    this.setMeta({ title: 'Página não encontrada | Vivi Boty', desc: 'A página pedida não existe.', url: SITE_URL + location.pathname });
+    this.setMeta({ title: 'Página não encontrada | Vivi Carvalho Boty', desc: 'A página pedida não existe.', url: SITE_URL + location.pathname });
     document.getElementById('main-content').innerHTML = `
       <div class="page-anim text-center py-24 px-4">
         <p class="text-sm font-bold tracking-widest text-[#A97E3B] mb-2">404</p>
@@ -1419,7 +1419,7 @@ const A = {
             <!-- FOTO DA CONSULTORA COM PROVA SOCIAL -->
             <div class="lg:col-span-5 flex justify-center relative">
               <div class="relative w-72 sm:w-80 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white float-subtle bg-[#FAF4F0]">
-                <img src="${VIVI_LOGO}" alt="Vivi Carvalho - Consultora Oficial Vivi Boty" class="w-full h-full object-cover" width="320" height="400" fetchpriority="high">
+                <img src="${VIVI_LOGO}" alt="Vivi Carvalho - Consultora Oficial Vivi Carvalho Boty" class="w-full h-full object-cover" width="320" height="400" fetchpriority="high">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent"></div>
                 
                 <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-1.5 shadow-md border border-[#F0E3DC] flex items-center gap-1.5">
@@ -1778,7 +1778,7 @@ const A = {
       <article class="product-card group ${pr.hasDiscount ? 'promo-card-glow' : ''}">
         <div class="img-box relative aspect-square bg-[#FAF4F0] overflow-hidden cursor-pointer" onclick="A.goToDetail('${id}')">
           ${safeImg
-            ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Crect%20fill%3D%22%23FAF4F0%22%20width%3D%22400%22%20height%3D%22400%22%2F%3E%3Cpath%20d%3D%22M200%20140c-16.5%200-30%2013.5-30%2030v10h-10c-11%200-20%209-20%2020v60c0%2011%209%2020%2020%2020h80c11%200%2020-9%2020-20v-60c0-11-9-20-20-20h-10v-10c0-16.5-13.5-30-30-30zm-15%2030c0-8.3%206.7-15%2015-15s15%206.7%2015%2015v10h-30v-10zm-15%2030h60c5.5%200%2010%204.5%2010%2010v60c0%205.5-4.5%2010-10%2010h-60c-5.5%200-10-4.5-10-10v-60c0-5.5%204.5-10%2010-10z%22%20fill%3D%22%23C69A55%22%20opacity%3D%220.5%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22310%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%23AA999A%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3EVivi%20Boty%3C%2Ftext%3E%3C%2Fsvg%3E';">`
+            ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Crect%20fill%3D%22%23FAF4F0%22%20width%3D%22400%22%20height%3D%22400%22%2F%3E%3Cpath%20d%3D%22M200%20140c-16.5%200-30%2013.5-30%2030v10h-10c-11%200-20%209-20%2020v60c0%2011%209%2020%2020%2020h80c11%200%2020-9%2020-20v-60c0-11-9-20-20-20h-10v-10c0-16.5-13.5-30-30-30zm-15%2030c0-8.3%206.7-15%2015-15s15%206.7%2015%2015v10h-30v-10zm-15%2030h60c5.5%200%2010%204.5%2010%2010v60c0%205.5-4.5%2010-10%2010h-60c-5.5%200-10-4.5-10-10v-60c0-5.5%204.5-10%2010-10z%22%20fill%3D%22%23C69A55%22%20opacity%3D%220.5%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22310%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%23AA999A%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3EVivi%20Carvalho%20Boty%3C%2Ftext%3E%3C%2Fsvg%3E';">`
             : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
           ${photoBadge ? `<div class="absolute top-2 left-2 pointer-events-none z-10">${photoBadge}</div>` : ''}
           <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
@@ -1852,7 +1852,7 @@ const A = {
     if (!ok && !this.prods.length) { main.innerHTML = this.errorHtml(); return; }
     const p = this.pmap[id];
     if (!p) {
-      this.setMeta({ title: 'Produto não encontrado | Vivi Boty', desc: 'Este produto não está disponível.', url: SITE_URL + '/produto/' + id });
+      this.setMeta({ title: 'Produto não encontrado | Vivi Carvalho Boty', desc: 'Este produto não está disponível.', url: SITE_URL + '/produto/' + id });
       main.innerHTML = `<div class="page-anim text-center py-24"><p class="text-[#826F70] mb-4">Produto não encontrado ou indisponível.</p><a href="#/produtos" data-link class="btn-gold">Voltar ao catálogo</a></div>`;
       return;
     }
@@ -1862,7 +1862,7 @@ const A = {
       "name": p.nome,
       "image": p.imagem ? [p.imagem] : [],
       "description": p.descricao || `${p.nome} - Original na Vivi Carvalho Boty.`,
-      "brand": { "@type": "Brand", "name": p.marca || "Vivi Boty" },
+      "brand": { "@type": "Brand", "name": p.marca || "Vivi Carvalho Boty" },
       "offers": {
         "@type": "Offer",
         "url": SITE_URL + '/produto/' + id,
@@ -1875,7 +1875,7 @@ const A = {
 
     this.setMeta({
       title: `${p.nome} | Vivi Carvalho Boty`,
-      desc: (p.descricao || `${p.nome} na Vivi Boty.`).slice(0, 160),
+      desc: (p.descricao || `${p.nome} na Vivi Carvalho Boty.`).slice(0, 160),
       url: SITE_URL + '/produto/' + id,
       image: p.imagem,
       schema: schemaProduct
@@ -1956,7 +1956,7 @@ const A = {
               ` : ''}
             </div>
             <div class="border-t border-b border-[#F0E3DC] py-4 text-sm text-[#826F70] leading-relaxed">
-              <p>${this.escape(p.descricao || 'Produto original selecionado com carinho pela Vivi Boty. Fale no WhatsApp para notas olfativas, combinações ou kits de presente.')}</p>
+              <p>${this.escape(p.descricao || 'Produto original selecionado com carinho pela Vivi Carvalho Boty. Fale no WhatsApp para notas olfativas, combinações ou kits de presente.')}</p>
             </div>
             <div class="space-y-3 pt-1">
               <div class="flex items-center gap-3">
@@ -2401,7 +2401,7 @@ const A = {
               <p class="font-serif font-bold text-2xl text-[#A97E3B]">${this.formatMoney(pr.finalPrice)}</p>
             `}
           </div>
-          <p class="text-xs text-[#826F70] leading-relaxed">${this.escape(p.descricao || 'Produto original com a qualidade Vivi Boty.')}</p>
+          <p class="text-xs text-[#826F70] leading-relaxed">${this.escape(p.descricao || 'Produto original com a qualidade Vivi Carvalho Boty.')}</p>
           <div class="pt-2 flex flex-col gap-2">
             <button type="button" onclick="A.addToCart('${id}'); A.closeQuickView();" class="btn-gold w-full text-xs py-3"><i class="fa-solid fa-bag-shopping"></i> Adicionar à sacola</button>
             <button type="button" onclick="A.orderWhatsAppDirect('${id}'); A.closeQuickView();" class="btn-whatsapp w-full text-xs py-3"><i class="fa-brands fa-whatsapp text-lg"></i> ${(p.estoque || 0) > 0 ? 'Pedir no WhatsApp' : 'Fazer pedido (sob encomenda)'}</button>
@@ -2674,7 +2674,7 @@ const A = {
     const origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : SITE_URL;
     const url = `${origin}/?p=${encodeURIComponent(p.id)}`;
     const shareData = {
-      title: `${p.nome} | Vivi Boty`,
+      title: `${p.nome} | Vivi Carvalho Boty`,
       text: `Olha este produto na Vivi Carvalho Boty: ${p.nome}`,
       url: url
     };
@@ -2699,7 +2699,7 @@ const A = {
 
   viewAdminLogin() {
     if (this.user && this.isAdmin) { this.navigate('/admin/produtos', true); return; }
-    this.setMeta({ title: 'Painel | Vivi Boty', desc: 'Acesso administrativo.', url: SITE_URL + '/admin' });
+    this.setMeta({ title: 'Painel | Vivi Carvalho Boty', desc: 'Acesso administrativo.', url: SITE_URL + '/admin' });
     document.getElementById('main-content').innerHTML = `
       <div class="page-anim min-h-[75vh] flex items-center justify-center px-4">
         <form onsubmit="event.preventDefault(); A.submitLogin();" class="bg-white rounded-3xl border border-[#F0E3DC] shadow-lg p-8 w-full max-w-sm text-center">
@@ -2859,7 +2859,7 @@ const A = {
       return;
     }
     const dateStr = new Date().toLocaleDateString('pt-BR');
-    let text = `📦 *ROTA DE ENTREGAS VIVI BOTY (${dateStr})*\n\n`;
+    let text = `📦 *ROTA DE ENTREGAS VIVI CARVALHO BOTY (${dateStr})*\n\n`;
     pendings.forEach((o, i) => {
       const cli = o.cliente_nome || 'Cliente';
       const bairro = o.cliente_bairro ? ` (${o.cliente_bairro})` : '';
@@ -4476,7 +4476,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
   async viewAdminProducts() {
     if (!(await this.guardAdmin())) return;
-    this.setMeta({ title: 'Painel da Administradora | Vivi Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
+    this.setMeta({ title: 'Painel da Administradora | Vivi Carvalho Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
     await Promise.all([this.ensureProds(), this.ensureTestimonials(true), this.ensureOrders(true), this.ensureSettings()]);
         this.fixLegacyHairCategories();
 
@@ -4584,7 +4584,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           
           <div class="flex items-center gap-4 relative z-10">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#C69A55] to-[#E8A7A1] p-0.5 shrink-0 shadow-lg">
-              <img src="${VIVI_LOGO}" alt="Vivi Boty" class="w-full h-full rounded-2xl object-cover bg-white">
+              <img src="${VIVI_LOGO}" alt="Vivi Carvalho Boty" class="w-full h-full rounded-2xl object-cover bg-white">
             </div>
             <div>
               <div class="flex items-center gap-2 mb-1">

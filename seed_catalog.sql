@@ -1,7 +1,7 @@
 -- Carga de Catálogo Base (Natura, Eudora, O Boticário)
 -- Todos os produtos cadastrados com:
 -- preco = 0, estoque = 0, ativo = false (inativo), destaque = false, promocao = false, pronta_entrega = false
--- Imagem padrão: logo da boutique Vivi Boty (para ser atualizada pela lojista ao receber estoque)
+-- Imagem padrão: logo da boutique Vivi Carvalho Boty (para ser atualizada pela lojista ao receber estoque)
 
 INSERT INTO public.products (
   nome, marca, categoria, genero, preco, estoque, descricao, imagem, ativo, destaque, promocao, pronta_entrega, data_criacao, data_atualizacao

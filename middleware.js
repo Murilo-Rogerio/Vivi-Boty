@@ -89,7 +89,7 @@ export default async function middleware(request) {
 <meta name="twitter:card" content="summary_large_image">
 <meta http-equiv="refresh" content="0;url=${esc(canonical)}">
 </head><body>
-<p>Redirecionando para <a href="${esc(canonical)}">${esc(product?.nome || 'Vivi Boty')}</a>...</p>
+<p>Redirecionando para <a href="${esc(canonical)}">${esc(product?.nome || 'Vivi Carvalho Boty')}</a>...</p>
 </body></html>`;
 
   return new Response(html, {

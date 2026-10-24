@@ -1,4 +1,4 @@
-# 🛍️ Vivi Boty — Vitrine Digital & Catálogo E-commerce
+# 🛍️ Vivi Carvalho Boty — Vitrine Digital & Catálogo E-commerce
 
 [![Status](https://img.shields.io/badge/Status-Ativo-brightgreen?style=flat-square)]()
 [![Stack](https://img.shields.io/badge/Stack-HTML5%20%7C%20TailwindCSS%20%7C%20VanillaJS-blue?style=flat-square)]()
