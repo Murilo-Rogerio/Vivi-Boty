@@ -837,7 +837,8 @@ const A = {
     page: 1,
     pageSize: 24,
     showCharts: true,
-    quickEditId: null
+    quickEditId: null,
+    selectedIds: new Set()
   },
 
   async loadAnalytics() {
@@ -1787,7 +1788,12 @@ const A = {
           </div>
           <div class="mt-3 pt-3 border-t border-[#F0E3DC] flex items-end justify-between gap-2">
             <div class="min-w-0">
-              ${pr.hasDiscount ? `
+              ${(p.preco || 0) <= 0 ? `
+                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#A97E3B] bg-[#FBF4E8] border border-[#EACCA4] px-2 py-0.5 rounded-md">
+                  <i class="fa-solid fa-gift text-[9px]"></i> Sob Encomenda
+                </span>
+                <span class="text-[10px] text-[#826F70] block leading-none mt-1">Consulte valor</span>
+              ` : pr.hasDiscount ? `
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <span class="text-[11px] text-[#AA999A] price-strike font-medium leading-none">De ${this.formatMoney(pr.originalPrice)}</span>
                 </div>
@@ -1892,7 +1898,15 @@ const A = {
               </div>
               <h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold leading-tight">${this.escape(p.nome)}</h1>
               <div class="p-4 rounded-2xl bg-[#FCF9F7] border border-[#F0E3DC] space-y-1.5">
-                ${pr.hasDiscount ? `
+                ${(p.preco || 0) <= 0 ? `
+                  <div class="flex items-center gap-2">
+                    <span class="font-serif font-bold text-2xl sm:text-3xl text-[#A97E3B]">Consulte valor</span>
+                    <span class="badge-tag bg-amber-50 text-amber-800 border border-amber-200 text-xs px-2.5 py-1">Sob Encomenda</span>
+                  </div>
+                  <p class="text-xs text-[#826F70] flex items-center gap-1.5 pt-1">
+                    <i class="fa-solid fa-gift text-[#A97E3B]"></i> Encomende direto com a Vivi pelo WhatsApp
+                  </p>
+                ` : pr.hasDiscount ? `
                   <div class="flex items-center gap-2">
                     <span class="text-xs sm:text-sm text-[#AA999A] price-strike font-medium">De ${this.formatMoney(pr.originalPrice)}</span>
                     <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626]">Economize ${this.formatMoney(pr.savings)}</span>
@@ -2115,7 +2129,7 @@ const A = {
           <p class="font-semibold text-xs truncate">${this.escape(item.nome)}</p>
           <div class="flex items-baseline gap-1.5 mt-0.5">
             ${pr.hasDiscount ? `<span class="text-[10px] text-[#AA999A] price-strike">${this.formatMoney(pr.originalPrice)}</span>` : ''}
-            <span class="font-serif font-bold text-sm text-[#1D8A58]">${this.formatMoney(item.preco)}</span>
+            <span class="font-serif font-bold text-sm text-[#1D8A58]">${(item.preco || 0) <= 0 ? '<span class="text-xs text-[#A97E3B]">Sob encomenda</span>' : this.formatMoney(item.preco)}</span>
           </div>
           <div class="flex items-center gap-2 mt-2">
             <button type="button" onclick="A.updateCartQty('${id}', ${item.q - 1})" class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs" aria-label="Diminuir">-</button>
@@ -2178,7 +2192,8 @@ const A = {
     }
 
     // 2. Montar mensagem formatada com as tags dinâmicas
-    const itemsListText = this.cart.map(i => `✨ ${i.q}x *${i.nome}* — ${this.formatMoney(i.preco * i.q)}`).join('\n');
+    const hasSobEncomenda = this.cart.some(i => (i.preco || 0) <= 0);
+    const itemsListText = this.cart.map(i => `✨ ${i.q}x *${i.nome}* — ${(i.preco || 0) <= 0 ? '(Sob Encomenda / Consultar valor)' : this.formatMoney(i.preco * i.q)}`).join('\n');
     let clientInfoText = '';
     if (clientName) clientInfoText += `👤 *Cliente:* ${clientName}\n`;
     if (clientBairro) clientInfoText += `📍 *Bairro:* ${clientBairro}\n`;
@@ -2236,7 +2251,7 @@ const A = {
       .replace(/{codigo_pedido}/g, `*Pedido:* ${orderCode}\n`)
       .replace(/{nome_produto}/g, prodTitle)
       .replace(/{marca}/g, p.marca || 'Boutique')
-      .replace(/{valor_produto}/g, this.formatMoney((p.preco || 0) * q))
+      .replace(/{valor_produto}/g, (p.preco || 0) <= 0 ? 'Consulte valor / Sob encomenda' : this.formatMoney((p.preco || 0) * q))
       .replace(/{dados_cliente}/g, '');
 
     const phone = (this.settings.whatsapp_number || WA_PHONE).replace(/\D/g, '');
@@ -2330,7 +2345,12 @@ const A = {
           <span class="text-xs uppercase font-bold text-[#A97E3B]">${this.escape(p.marca || 'Boutique')}</span>
           <h2 class="font-serif font-bold text-xl">${this.escape(p.nome)}</h2>
           <div class="p-3 rounded-2xl bg-[#FCF9F7] border border-[#F0E3DC]">
-            ${pr.hasDiscount ? `
+            ${(p.preco || 0) <= 0 ? `
+              <div class="flex items-center gap-2">
+                <span class="font-serif font-bold text-xl text-[#A97E3B]">Consulte valor</span>
+                <span class="badge-tag bg-amber-50 text-amber-800 border border-amber-200 text-xs px-2 py-0.5">Sob Encomenda</span>
+              </div>
+            ` : pr.hasDiscount ? `
               <div class="flex items-center gap-2">
                 <span class="text-xs text-[#AA999A] price-strike">De ${this.formatMoney(pr.originalPrice)}</span>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#1D8A58] border border-emerald-200">Economize ${this.formatMoney(pr.savings)}</span>
@@ -3031,6 +3051,92 @@ Esta ação removerá o comentário do banco de dados.`,
     this.viewAdminProducts();
   },
 
+  toggleSelectAdminProduct(rawId, checked) {
+    const id = this.safeId(rawId);
+    if (!this.adminState.selectedIds) this.adminState.selectedIds = new Set();
+    if (checked) {
+      this.adminState.selectedIds.add(id);
+    } else {
+      this.adminState.selectedIds.delete(id);
+    }
+    this.viewAdminProducts();
+  },
+
+  toggleSelectAllAdminPage(checked, pageIds = []) {
+    if (!this.adminState.selectedIds) this.adminState.selectedIds = new Set();
+    pageIds.forEach(id => {
+      const safe = this.safeId(id);
+      if (checked) this.adminState.selectedIds.add(safe);
+      else this.adminState.selectedIds.delete(safe);
+    });
+    this.viewAdminProducts();
+  },
+
+  selectAllFilteredAdminProducts(filteredIds = []) {
+    if (!this.adminState.selectedIds) this.adminState.selectedIds = new Set();
+    filteredIds.forEach(id => this.adminState.selectedIds.add(this.safeId(id)));
+    this.showToast(`${this.adminState.selectedIds.size} produtos selecionados!`, 'info');
+    this.viewAdminProducts();
+  },
+
+  clearAdminSelections() {
+    if (this.adminState.selectedIds) this.adminState.selectedIds.clear();
+    this.viewAdminProducts();
+  },
+
+  async bulkDeleteAdminProducts() {
+    const ids = Array.from(this.adminState.selectedIds || []);
+    if (!ids.length) return;
+    const count = ids.length;
+    const ok = await this.askConfirm({
+      title: `Excluir ${count} produto${count > 1 ? 's' : ''}?`,
+      message: `Tem certeza que deseja excluir permanentemente ${count} produto${count > 1 ? 's selecionados' : ' selecionado'}?\nEsta ação removerá os itens do catálogo e do banco de dados e não pode ser desfeita.`,
+      confirmText: `Sim, excluir (${count})`
+    });
+    if (!ok) return;
+
+    try {
+      this.showToast(`Excluindo ${count} produto${count > 1 ? 's' : ''}...`, 'info');
+      const { error } = await this.sb.from('products').delete().in('id', ids);
+      if (error) throw error;
+
+      const idSet = new Set(ids);
+      this.prods = this.prods.filter(p => !idSet.has(String(p.id)));
+      ids.forEach(id => {
+        delete this.pmap[id];
+        this.saveCustomOriginalPrice(id, 0);
+      });
+      this.adminState.selectedIds.clear();
+      this.lastFetch = 0;
+      this.showToast(`${count} produto${count > 1 ? 's excluídos' : ' excluído'} com sucesso!`, 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao excluir produtos em lote:', e);
+      this.showToast('Erro ao excluir em lote: ' + (e?.message || 'erro desconhecido'), 'error');
+    }
+  },
+
+  async bulkToggleActiveAdminProducts(active) {
+    const ids = Array.from(this.adminState.selectedIds || []);
+    if (!ids.length) return;
+    const count = ids.length;
+    try {
+      const { error } = await this.sb.from('products').update({ ativo: active, data_atualizacao: new Date().toISOString() }).in('id', ids);
+      if (error) throw error;
+
+      const idSet = new Set(ids);
+      this.prods.forEach(p => {
+        if (idSet.has(String(p.id))) p.ativo = active;
+      });
+      this.lastFetch = 0;
+      this.showToast(`${count} produto${count > 1 ? 's' : ''} ${active ? 'ativados na loja' : 'inativados'}!`, 'success');
+      this.viewAdminProducts();
+    } catch (e) {
+      console.error('Erro ao atualizar status em lote:', e);
+      this.showToast('Erro ao atualizar em lote: ' + (e?.message || 'erro desconhecido'), 'error');
+    }
+  },
+
   async saveCustomOriginalPrice(id, origPrice) {
     const map = this.getCustomOriginalPrices();
     if (origPrice && origPrice > 0) map[String(id)] = Number(origPrice.toFixed(2));
@@ -3687,6 +3793,12 @@ Esta ação removerá o comentário do banco de dados.`,
     const startIdx = (st.page - 1) * st.pageSize;
     const pageItems = filtered.slice(startIdx, startIdx + st.pageSize);
 
+    if (!st.selectedIds) st.selectedIds = new Set();
+    const pageIds = pageItems.map(p => this.safeId(p.id));
+    const filteredIds = filtered.map(p => this.safeId(p.id));
+    const isAllPageSelected = pageIds.length > 0 && pageIds.every(id => st.selectedIds.has(id));
+    const selectedCount = st.selectedIds.size;
+
     // Ranking de mais desejados baseado em cliques reais
     const topWanted = this.prods
       .map(p => ({
@@ -4049,6 +4161,44 @@ Esta ação removerá o comentário do banco de dados.`,
             </div>
           </div>
 
+          <!-- Linha 4: Barra de Seleção em Lote e Controles de Marcação -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 pb-1 px-1 bg-[#FAF4F0]/60 p-3 rounded-2xl border border-[#F0E3DC]">
+            <div class="flex flex-wrap items-center gap-3">
+              <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-[#241A1B] select-none hover:text-[#A97E3B] transition-colors">
+                <input type="checkbox" 
+                       class="w-4 h-4 rounded border-[#D3C1B5] text-[#C69A55] focus:ring-[#C69A55] cursor-pointer"
+                       ${isAllPageSelected ? 'checked' : ''}
+                       onchange="A.toggleSelectAllAdminPage(this.checked, ${JSON.stringify(pageIds).replace(/"/g, '&quot;')})">
+                <span>Selecionar página (${pageItems.length})</span>
+              </label>
+
+              ${totalFiltered > pageItems.length ? `
+                <button type="button" 
+                        onclick="A.selectAllFilteredAdminProducts(${JSON.stringify(filteredIds).replace(/"/g, '&quot;')})" 
+                        class="text-[11px] font-bold text-[#A97E3B] hover:underline underline-offset-2">
+                  Selecionar todos os ${totalFiltered} produtos filtrados
+                </button>
+              ` : ''}
+
+              ${selectedCount > 0 ? `
+                <button type="button" onclick="A.clearAdminSelections()" class="text-[11px] font-semibold text-[#826F70] hover:text-[#241A1B] underline underline-offset-2">
+                  Desmarcar todos
+                </button>
+              ` : ''}
+            </div>
+
+            <div class="flex items-center gap-2">
+              ${selectedCount > 0 ? `
+                <div class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-[#FAF0EB] text-[#A97E3B] border border-[#EACCA4]">
+                  <span class="w-2 h-2 rounded-full bg-[#C69A55] animate-pulse"></span>
+                  <span>${selectedCount} selecionado${selectedCount > 1 ? 's' : ''}</span>
+                </div>
+              ` : `
+                <span class="text-[11px] text-[#826F70]">Marque para excluir ou alterar status em lote</span>
+              `}
+            </div>
+          </div>
+
           <!-- Lista de Produtos Premium -->
           <div class="divide-y divide-[#F0E3DC] border border-[#F0E3DC] rounded-2xl overflow-hidden">
             ${pageItems.length ? pageItems.map(p => {
@@ -4063,6 +4213,14 @@ Esta ação removerá o comentário do banco de dados.`,
                     
                     <!-- Foto e Dados Principais -->
                     <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                      
+                      <!-- Checkbox de Seleção Individual -->
+                      <label class="flex items-center justify-center p-1.5 cursor-pointer shrink-0 rounded-lg hover:bg-[#FAF0EB] transition-colors" onclick="event.stopPropagation()" title="Selecionar este produto para ação em lote">
+                        <input type="checkbox" 
+                               class="w-4 h-4 rounded border-[#D3C1B5] text-[#C69A55] focus:ring-[#C69A55] cursor-pointer" 
+                               ${st.selectedIds.has(pid) ? 'checked' : ''} 
+                               onchange="A.toggleSelectAdminProduct('${pid}', this.checked)">
+                      </label>
                       <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC] relative shadow-sm cursor-pointer group hover:border-[#C69A55] transition-all" onclick="${p.imagem ? `A.openImageModalById('${pid}')` : ''}" title="Clique para ampliar imagem">
                         ${p.imagem ? `
                           <img src="${this.escapeAttr(this.safeUrl(p.imagem))}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
@@ -4187,6 +4345,35 @@ Esta ação removerá o comentário do banco de dados.`,
               </div>
             `}
           </div>
+
+          <!-- Barra Flutuante de Ações em Lote -->
+          ${selectedCount > 0 ? `
+            <div class="sticky bottom-4 z-40 bg-[#241A1B] text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 border border-[#EACCA4]/30 animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div class="flex items-center gap-3 w-full sm:w-auto">
+                <span class="w-9 h-9 rounded-xl bg-[#C69A55] text-white flex items-center justify-center font-bold text-sm shadow">
+                  ${selectedCount}
+                </span>
+                <div>
+                  <p class="text-xs sm:text-sm font-bold text-white">${selectedCount} produto${selectedCount > 1 ? 's' : ''} selecionado${selectedCount > 1 ? 's' : ''}</p>
+                  <p class="text-[11px] text-[#D3C1B5]">Ações em massa para o catálogo</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                <button type="button" onclick="A.bulkToggleActiveAdminProducts(true)" class="px-3 py-2 rounded-xl bg-[#1D8A58] hover:bg-[#156e45] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Ativar selecionados na loja">
+                  <i class="fa-solid fa-eye"></i> Ativar (${selectedCount})
+                </button>
+                <button type="button" onclick="A.bulkToggleActiveAdminProducts(false)" class="px-3 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" title="Inativar selecionados na loja">
+                  <i class="fa-solid fa-eye-slash"></i> Inativar (${selectedCount})
+                </button>
+                <button type="button" onclick="A.bulkDeleteAdminProducts()" class="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm" title="Excluir produtos selecionados permanentemente">
+                  <i class="fa-solid fa-trash-can"></i> Excluir selecionados (${selectedCount})
+                </button>
+                <button type="button" onclick="A.clearAdminSelections()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors">
+                  Desmarcar
+                </button>
+              </div>
+            </div>
+          ` : ''}
 
           <!-- Controles de Paginação -->
           ${totalPages > 1 ? `
