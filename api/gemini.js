@@ -42,8 +42,8 @@ export default async function handler(req, res) {
     // gemini-2.5-flash: modelo flash híbrido de alta capacidade
     // gemini-2.0-flash: fallback robusto
     const priorityModels = model
-      ? [model, 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash']
-      : ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash'];
+      ? [model, 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview']
+      : ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview'];
     const modelsToTry = [...new Set(priorityModels)];
 
     let lastError = null;
@@ -85,12 +85,20 @@ export default async function handler(req, res) {
           lastError = new Error(errMsg);
 
           // Se modelo não foi encontrado (404), tenta o próximo modelo da lista
-          if (
+          const isRetryable =
+            response.status === 503 ||
+            response.status === 429 ||
             response.status === 404 ||
             errMsg.toLowerCase().includes('not found') ||
             errMsg.toLowerCase().includes('no longer available') ||
-            errMsg.toLowerCase().includes('deprecated')
-          ) {
+            errMsg.toLowerCase().includes('deprecated') ||
+            errMsg.toLowerCase().includes('high demand') ||
+            errMsg.toLowerCase().includes('overloaded') ||
+            errMsg.toLowerCase().includes('resource has been exhausted') ||
+            errMsg.toLowerCase().includes('rate limit');
+
+          if (isRetryable) {
+            console.warn(`Modelo ${m} temporariamente indisponível ou em alta demanda (${errMsg}). Tentando próximo modelo...`);
             continue;
           }
 

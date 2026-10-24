@@ -3449,14 +3449,22 @@ Esta ação removerá o comentário do banco de dados.`,
       if (proxyErr.name === 'AbortError') {
         throw new Error('Tempo limite esgotado ao consultar a IA (12s). Tente novamente.');
       }
-      if (proxyErr.message && !proxyErr.message.includes('404') && !proxyErr.message.includes('Failed to fetch')) {
+      if (
+        proxyErr.message &&
+        !proxyErr.message.includes('404') &&
+        !proxyErr.message.includes('Failed to fetch') &&
+        !proxyErr.message.includes('high demand') &&
+        !proxyErr.message.includes('overloaded') &&
+        !proxyErr.message.includes('503') &&
+        !proxyErr.message.includes('429')
+      ) {
         throw proxyErr;
       }
       console.warn('Proxy /api/gemini indisponível, tentando conexão direta:', proxyErr.message);
     }
 
     // 2. Conexão direta de contingência
-    const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash'];
+    const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview'];
     let lastError = null;
 
     for (const model of models) {
@@ -3490,12 +3498,18 @@ Esta ação removerá o comentário do banco de dados.`,
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
           const msg = errData?.error?.message || `HTTP ${res.status}`;
-          if (
+          const isRetryable =
             res.status === 404 ||
+            res.status === 429 ||
+            res.status === 503 ||
             msg.toLowerCase().includes('not found') ||
             msg.toLowerCase().includes('no longer available') ||
-            msg.toLowerCase().includes('deprecated')
-          ) {
+            msg.toLowerCase().includes('deprecated') ||
+            msg.toLowerCase().includes('high demand') ||
+            msg.toLowerCase().includes('overloaded') ||
+            msg.toLowerCase().includes('resource has been exhausted');
+
+          if (isRetryable) {
             lastError = new Error(msg);
             continue;
           }
