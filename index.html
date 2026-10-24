@@ -3456,7 +3456,7 @@ Esta ação removerá o comentário do banco de dados.`,
     }
 
     // 2. Conexão direta de contingência
-    const models = ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+    const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash'];
     let lastError = null;
 
     for (const model of models) {
@@ -3490,7 +3490,12 @@ Esta ação removerá o comentário do banco de dados.`,
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
           const msg = errData?.error?.message || `HTTP ${res.status}`;
-          if (res.status === 404 || msg.toLowerCase().includes('not found')) {
+          if (
+            res.status === 404 ||
+            msg.toLowerCase().includes('not found') ||
+            msg.toLowerCase().includes('no longer available') ||
+            msg.toLowerCase().includes('deprecated')
+          ) {
             lastError = new Error(msg);
             continue;
           }

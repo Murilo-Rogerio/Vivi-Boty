@@ -42,8 +42,8 @@ export default async function handler(req, res) {
     // gemini-2.5-flash: modelo flash híbrido de alta capacidade
     // gemini-2.0-flash: fallback robusto
     const priorityModels = model
-      ? [model, 'gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash']
-      : ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+      ? [model, 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash']
+      : ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash'];
     const modelsToTry = [...new Set(priorityModels)];
 
     let lastError = null;
@@ -85,7 +85,12 @@ export default async function handler(req, res) {
           lastError = new Error(errMsg);
 
           // Se modelo não foi encontrado (404), tenta o próximo modelo da lista
-          if (response.status === 404 || errMsg.toLowerCase().includes('not found')) {
+          if (
+            response.status === 404 ||
+            errMsg.toLowerCase().includes('not found') ||
+            errMsg.toLowerCase().includes('no longer available') ||
+            errMsg.toLowerCase().includes('deprecated')
+          ) {
             continue;
           }
 
