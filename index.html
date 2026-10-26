@@ -1075,6 +1075,16 @@ const A = {
 
   handleRoute() {
     this.migrateHash();
+    const spInitial = new URLSearchParams(this.getCurrentSearch());
+    if (spInitial.has('admin')) {
+      const adminVal = spInitial.get('admin');
+      const targetAdmin = (adminVal && adminVal !== '1') ? `/admin/${adminVal}` : '/admin';
+      this._virtualPath = targetAdmin;
+      this._virtualSearch = '';
+      try {
+        history.replaceState(null, '', targetAdmin);
+      } catch {}
+    }
     const rawPath = this._virtualPath !== null ? this._virtualPath : location.pathname;
     this.path = (rawPath.replace(/\/+$/, '') || '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3551,7 +3561,42 @@ Esta ação removerá o comentário do banco de dados.`,
     }
   },
 
+  playSuccessChime() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const createTone = (freq, start, duration) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.04, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + duration + 0.05);
+      };
+      createTone(698.46, now, 0.22); // F5
+      createTone(880.00, now + 0.08, 0.28); // A5
+      setTimeout(() => ctx.close().catch(() => {}), 600);
+    } catch {}
+  },
+
+  triggerHapticFeedback() {
+    try {
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        navigator.vibrate([35, 50, 35]);
+      }
+    } catch {}
+  },
+
   highlightFilledFields(fieldIds) {
+    this.playSuccessChime();
+    this.triggerHapticFeedback();
     fieldIds.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -3861,6 +3906,69 @@ Retorne EXCLUSIVAMENTE em formato JSON:
       console.error('Erro ao buscar dados oficiais pelo nome:', e);
       this.showToast('Não encontramos dados para este nome. Verifique a grafia ou preencha manualmente.', 'error');
       this.setAiStatus('Não foi possível carregar os dados pelo nome informado.', true);
+    } finally {
+      this.setAiLoading(false);
+    }
+  },
+
+  async aiEnhanceDescription() {
+    if (this.aiBusy) {
+      this.showToast('Aguarde a consulta em andamento...', 'info');
+      return;
+    }
+
+    const key = await this.getGeminiApiKey();
+    if (!key) return;
+
+    const nameEl = document.getElementById('form-name');
+    const brandEl = document.getElementById('form-brand');
+    const descEl = document.getElementById('form-desc');
+
+    const curName = (nameEl?.value || '').trim();
+    if (!curName) {
+      this.showToast('Digite o nome do produto para buscar a descrição oficial!', 'info');
+      nameEl?.focus();
+      return;
+    }
+
+    const curBrand = brandEl?.value || '';
+    this.setAiLoading(true, 'name');
+    this.setAiStatus(`Consultando pirâmide olfativa e detalhes de "${curName}" com o Gemini...`);
+
+    try {
+      const promptText = `Você é uma especialista em cosméticos e perfumaria brasileira (O Boticário, Natura e Eudora).
+Forneça a descrição oficial completa, elegante e detalhada do produto: "${curName}"${curBrand ? ` da marca ${curBrand}` : ''}.
+- Para perfumes: Família olfativa e pirâmide olfativa (notas de saída/topo, corpo/coração e fundo).
+- Para cabelos: Tecnologia capilar, ativos e modo de usar.
+- Para cremes corporais: Ativos, sensorial, benefícios na pele e modo de usar.
+- Para presentes/kits: Itens inclusos e volumetrias.
+
+Retorne EXCLUSIVAMENTE em formato JSON:
+{
+  "descricao": "string"
+}`;
+
+      const rawJson = await this.callGeminiApi(key, [
+        {
+          parts: [{ text: promptText }]
+        }
+      ]);
+
+      const res = this.parseGeminiJson(rawJson);
+      if (!res || !res.descricao) throw new Error('Não foi possível obter a descrição da IA.');
+
+      if (descEl) {
+        descEl.value = res.descricao;
+        this.highlightFilledFields(['form-desc']);
+      }
+
+      this.showToast('✨ Descrição e notas olfativas oficiais carregadas com sucesso!', 'success');
+      this.setAiStatus('Descrição oficial atualizada com sucesso!');
+      setTimeout(() => this.setAiStatus(''), 4000);
+    } catch (e) {
+      console.error('Erro ao buscar descrição oficial:', e);
+      this.showToast('Não foi possível obter a descrição oficial agora.', 'error');
+      this.setAiStatus('Não foi possível carregar a descrição.', true);
     } finally {
       this.setAiLoading(false);
     }
@@ -5270,7 +5378,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="block text-xs font-bold uppercase" for="form-desc">Descrição</label>
-              <button type="button" id="btn-ai-desc" onclick="A.aiFillFromName()" class="text-[11px] font-bold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1 transition-colors" title="Puxar descrição e notas olfativas oficiais da marca">
+              <button type="button" id="btn-ai-desc" onclick="A.aiEnhanceDescription()" class="text-[11px] font-bold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1 transition-colors" title="Puxar descrição e notas olfativas oficiais da marca">
                 <i class="fa-solid fa-sparkles text-[10px]"></i> Puxar descrição oficial
               </button>
             </div>
@@ -5289,7 +5397,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
                    class="w-24 h-24 rounded-2xl bg-[#FAF0EB] border-2 border-dashed border-[#E5D7D0] hover:border-[#C69A55] overflow-hidden flex items-center justify-center shrink-0 relative group cursor-pointer shadow-sm transition-all"
                    title="Clique para ampliar a imagem">
                 ${p.imagem ? `
-                  <img src="${this.escapeAttr(this.safeUrl(p.imagem))}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                  <img src="${this.escapeAttr(this.safeUrl(p.imagem))}" crossorigin="anonymous" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 backdrop-blur-[1px]">
                     <i class="fa-solid fa-magnifying-glass-plus text-lg"></i>
                     <span class="text-[9px] font-bold uppercase tracking-wider">Ampliar</span>

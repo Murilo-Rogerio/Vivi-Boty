@@ -51,8 +51,8 @@ export default async function handler(req, res) {
     let lastError = null;
     let lastStatusCode = 500;
 
-    // Timeout por tentativa de modelo: 18s para multimodal/imagem, 14s para texto simples
-    const timeoutPerModel = hasImage ? 18000 : 14000;
+    // Timeout por tentativa de modelo: 12s para multimodal/imagem, 9s para texto simples
+    const timeoutPerModel = hasImage ? 12000 : 9000;
 
     for (const m of modelsToTry) {
       const controller = new AbortController();
