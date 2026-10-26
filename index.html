@@ -8,6 +8,9 @@
 <link rel="icon" type="image/png" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.png">
 <link rel="apple-touch-icon" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/Vivi%20Boty.png">
 <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Vivi Carvalho Boty">
 <meta name="theme-color" content="#241A1B">
 <meta name="description" content="Boutique digital de perfumes, cosméticos e presentes originais O Boticário, Natura e Eudora. Atendimento humanizado direto pelo WhatsApp.">
 <meta name="keywords" content="Vivi Carvalho Boty, Vivi Carvalho, perfumes, O Boticário, Natura, Eudora, cosméticos, presentes">
@@ -688,11 +691,11 @@ h1, h2, h3, h4, .font-serif {
   </div>
 
     <!-- BOTÃO FLUTUANTE VOLTAR AO TOPO -->
-  <button id="back-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo da página" class="fixed bottom-16 md:bottom-8 left-4 z-40 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-md text-[#A97E3B] hover:text-[#C69A55] hover:border-[#DBC3B7] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center opacity-0 pointer-events-none translate-y-4">
+  <button id="back-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo da página" class="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-8 left-4 z-40 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-md text-[#A97E3B] hover:text-[#C69A55] hover:border-[#DBC3B7] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center opacity-0 pointer-events-none translate-y-4">
     <i class="fa-solid fa-arrow-up text-xs" aria-hidden="true"></i>
   </button>
 
-  <div id="wa-widget-container" class="fixed bottom-16 md:bottom-8 right-4 md:right-6 z-40 flex flex-col items-end gap-2">
+  <div id="wa-widget-container" class="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-8 right-4 md:right-6 z-40 flex flex-col items-end gap-2">
     <div id="wa-tooltip" class="opacity-0 pointer-events-none transition-all duration-300 bg-white text-[#241A1B] text-xs font-semibold px-3.5 py-2 rounded-2xl shadow-xl border border-[#F0E3DC] flex items-center gap-2 relative max-w-[210px]">
       <span>👋 Dúvidas sobre presentes ou fragrâncias? Fale comigo!</span>
       <button type="button" onclick="A.closeWhatsAppTooltip(event)" class="text-[#AA999A] hover:text-[#241A1B] ml-1 text-sm font-bold" aria-label="Fechar aviso">×</button>
@@ -1794,7 +1797,7 @@ const A = {
             ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Crect%20fill%3D%22%23FAF4F0%22%20width%3D%22400%22%20height%3D%22400%22%2F%3E%3Cpath%20d%3D%22M200%20140c-16.5%200-30%2013.5-30%2030v10h-10c-11%200-20%209-20%2020v60c0%2011%209%2020%2020%2020h80c11%200%2020-9%2020-20v-60c0-11-9-20-20-20h-10v-10c0-16.5-13.5-30-30-30zm-15%2030c0-8.3%206.7-15%2015-15s15%206.7%2015%2015v10h-30v-10zm-15%2030h60c5.5%200%2010%204.5%2010%2010v60c0%205.5-4.5%2010-10%2010h-60c-5.5%200-10-4.5-10-10v-60c0-5.5%204.5-10%2010-10z%22%20fill%3D%22%23C69A55%22%20opacity%3D%220.5%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22310%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%23AA999A%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3EVivi%20Carvalho%20Boty%3C%2Ftext%3E%3C%2Fsvg%3E';">`
             : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
           ${photoBadge ? `<div class="absolute top-2 left-2 pointer-events-none z-10">${photoBadge}</div>` : ''}
-          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-90" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2 right-2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-90" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
             <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs" aria-hidden="true"></i>
           </button>
           <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1843,11 +1846,11 @@ const A = {
               `}
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="event.stopPropagation(); A.addToCart('${id}')" class="h-8.5 px-3 rounded-full ${inBag ? 'bg-[#1D8A58] text-white' : 'bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white'} transition-all active:scale-95 flex items-center gap-1.5 text-xs font-bold" title="Adicionar à sacola" aria-label="Adicionar ${this.escapeAttr(p.nome)} à sacola">
+              <button type="button" onclick="event.stopPropagation(); A.addToCart('${id}')" class="h-9 px-3.5 rounded-full ${inBag ? 'bg-[#1D8A58] text-white' : 'bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white'} transition-all active:scale-95 flex items-center gap-1.5 text-xs font-bold" title="Adicionar à sacola" aria-label="Adicionar ${this.escapeAttr(p.nome)} à sacola">
                 <i class="fa-solid ${inBag ? 'fa-check' : 'fa-plus'} text-[10px]" aria-hidden="true"></i>
                 <span class="hidden sm:inline text-[11px]">${inBag ? 'Na sacola' : 'Sacola'}</span>
               </button>
-              <button type="button" onclick="event.stopPropagation(); A.orderWhatsAppDirect('${id}')" class="w-8.5 h-8.5 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white transition-all active:scale-90 flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir ${this.escapeAttr(p.nome)} no WhatsApp">
+              <button type="button" onclick="event.stopPropagation(); A.orderWhatsAppDirect('${id}')" class="w-9 h-9 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white transition-all active:scale-90 flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir ${this.escapeAttr(p.nome)} no WhatsApp">
                 <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i>
               </button>
             </div>
@@ -2171,9 +2174,9 @@ const A = {
             <span class="font-serif font-bold text-sm text-[#1D8A58]">${(item.preco || 0) <= 0 ? '<span class="text-xs text-[#A97E3B]">Sob encomenda</span>' : this.formatMoney(item.preco)}</span>
           </div>
           <div class="flex items-center gap-2 mt-2">
-            <button type="button" onclick="A.updateCartQty('${id}', ${item.q - 1})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] active:scale-95 flex items-center justify-center text-xs font-semibold bg-white transition-all" aria-label="Diminuir quantidade de ${this.escapeAttr(item.nome)}">-</button>
+            <button type="button" onclick="A.updateCartQty('${id}', ${item.q - 1})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] active:scale-95 flex items-center justify-center text-xs font-semibold bg-white transition-all" aria-label="Diminuir quantidade de ${this.escapeAttr(item.nome)}">-</button>
             <span class="text-xs font-bold w-5 text-center">${item.q}</span>
-            <button type="button" onclick="A.updateCartQty('${id}', ${item.q + 1})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] active:scale-95 flex items-center justify-center text-xs font-semibold bg-white transition-all" aria-label="Aumentar quantidade de ${this.escapeAttr(item.nome)}">+</button>
+            <button type="button" onclick="A.updateCartQty('${id}', ${item.q + 1})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] active:scale-95 flex items-center justify-center text-xs font-semibold bg-white transition-all" aria-label="Aumentar quantidade de ${this.escapeAttr(item.nome)}">+</button>
             <button type="button" onclick="A.updateCartQty('${id}', 0)" class="ml-auto text-[#715F60] hover:text-[#E53E3E] text-xs p-2 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg hover:bg-[#FEE2E2]/40 transition-colors" aria-label="Remover ${this.escapeAttr(item.nome)} da sacola"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
           </div>
         </div>

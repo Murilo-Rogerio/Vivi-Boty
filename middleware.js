@@ -1,6 +1,6 @@
 export const config = { matcher: ['/produto/:path*', '/admin', '/admin/:path*'] };
 
-const BOT_UA = /facebookexternalhit|WhatsApp|Instagram|Twitterbot|linkedinbot|Slackbot|TelegramBot|Discordbot|Pinterest|Googlebot/i;
+const BOT_UA = /facebookexternalhit|WhatsApp|Instagram|Twitterbot|linkedinbot|Slackbot|TelegramBot|Discordbot|Pinterest|Googlebot|Applebot|SkypeUriPreview/i;
 const SUPABASE_URL = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcWJ1aHJobWVmcWl3cnB6dnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzE4MDEsImV4cCI6MjA5NzkwNzgwMX0._Yu2nE4AKgNfEM6x7c3uaMPBjj01KMGJ9cxRVqdWw7w';
 const FALLBACK_IMAGE = 'https://ifqbuhrhmefqiwrpzvsh.supabase.co/storage/v1/object/public/site-assets/preview-whatsapp.jpeg';
@@ -48,7 +48,7 @@ export default async function middleware(request) {
   let product = null;
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(productId)}&ativo=eq.true&select=nome,descricao,imagem,preco,marca,ativo,destaque,promocao`,
+      `${SUPABASE_URL}/rest/v1/products?id=eq.${encodeURIComponent(productId)}&ativo=eq.true&select=nome,descricao,imagem,preco,preco_original,marca,ativo,destaque,promocao`,
       {
         headers: {
           apikey: SUPABASE_ANON_KEY,
@@ -65,8 +65,9 @@ export default async function middleware(request) {
   }
 
   const priceNum = Number(product?.preco || 0);
-  const hasPromo = Boolean(product && priceNum > 0 && (product.destaque || product.promocao));
-  const origPrice = hasPromo ? (Math.ceil(priceNum / 0.8) - 0.10) : priceNum;
+  const dbOrigPrice = Number(product?.preco_original || 0);
+  const hasPromo = Boolean(product && priceNum > 0 && (product.destaque || product.promocao || dbOrigPrice > priceNum));
+  const origPrice = dbOrigPrice > priceNum ? dbOrigPrice : (hasPromo ? (Math.ceil(priceNum / 0.8) - 0.10) : priceNum);
 
   const title = product?.nome
     ? `${product.nome}${priceNum > 0 ? ` — ${hasPromo ? `De ${formatBRL(origPrice)} por ` : ''}${formatBRL(priceNum)}` : ''} | Vivi Carvalho Boty`
