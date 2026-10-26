@@ -6,6 +6,7 @@
   "scripts": {
     "build": "echo 'Static build complete'",
     "qa": "node scripts/site-health-qa-audit.js",
-    "audit:ui": "node scripts/audit-ui-ux.js"
+    "audit:ui": "node scripts/audit-ui-ux.js",
+    "test:e2e": "node scripts/run-e2e-suite.js"
   }
 }

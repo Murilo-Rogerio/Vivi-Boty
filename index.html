@@ -160,10 +160,10 @@ h1, h2, h3, h4, .font-serif {
   100% { transform: scale(1); }
 }
 
-.page-anim { animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.float-subtle { animation: floatGentle 5s ease-in-out infinite; }
+.page-anim { animation: fadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; will-change: transform, opacity; }
+.float-subtle { animation: floatGentle 5s ease-in-out infinite; will-change: transform; }
 .wa-glow { animation: pulseGold 2.5s infinite; }
-.bag-pulse { animation: bagPulse 0.45s ease; }
+.bag-pulse { animation: bagPulse 0.45s ease; will-change: transform; }
 
 .skeleton-lux {
   background: linear-gradient(90deg, #F3EAE4 25%, #FAF4F0 50%, #F3EAE4 75%);
@@ -313,8 +313,10 @@ h1, h2, h3, h4, .font-serif {
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
   background: rgba(36, 26, 27, 0.45);
   backdrop-filter: blur(4px);
+  will-change: opacity;
 }
 .drawer-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+#image-modal-dialog, #testimonial-modal-dialog, #confirm-modal-dialog { will-change: transform, opacity; }
 #image-modal.open #image-modal-dialog { transform: scale(1); opacity: 1; }
 #testimonial-modal.open #testimonial-modal-dialog { transform: scale(1); opacity: 1; }
 #confirm-modal.open #confirm-modal-dialog { transform: scale(1); opacity: 1; }
@@ -330,11 +332,12 @@ h1, h2, h3, h4, .font-serif {
   border-color: var(--accent-gold);
 }
 .drawer-panel {
-  transform: translateX(100%);
+  transform: translate3d(100%, 0, 0);
+  will-change: transform;
   visibility: hidden;
   transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.38s;
 }
-.drawer-panel.open { transform: translateX(0); visibility: visible; }
+.drawer-panel.open { transform: translate3d(0, 0, 0); visibility: visible; }
 
 .lux-input {
   width: 100%;

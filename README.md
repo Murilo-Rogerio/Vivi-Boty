@@ -139,7 +139,10 @@ viviboty/
 │   └── gemini.js              # Serverless Function proxy para Google Gemini API
 ├── scripts/
 │   ├── site-health-qa-audit.js # Suite de auditoria funcional, estética, segurança e autocura
-│   └── audit-ui-ux.js          # Auditoria aprofundada de UI/UX, A11Y (WCAG AA) e Core Web Vitals
+│   ├── audit-ui-ux.js          # Auditoria aprofundada de UI/UX, A11Y (WCAG AA) e Core Web Vitals
+│   └── run-e2e-suite.js        # Executador da suite E2E de jornada de compra, RLS e animações
+├── tests/
+│   └── e2e-playwright.spec.js  # Testes ponta a ponta oficiais Playwright (Microsoft standards)
 ├── index.html                 # Ponto de entrada SPA, catálogo, sacola e painel administrativo
 ├── styles.css                 # Folha de estilos compilada
 ├── input.css                  # Diretivas base do Tailwind CSS
@@ -148,6 +151,7 @@ viviboty/
 ├── robots.txt                 # Diretrizes para indexadores de busca
 ├── sitemap.xml                # Mapa do site para SEO
 ├── vercel.json                # Configuração de rewrites, headers e segurança Vercel
+├── supabase_schema.sql        # Esquema DDL PostgreSQL, índices otimizados e políticas RLS
 ├── seed_catalog.sql           # Carga SQL inicial do banco de dados
 └── README.md                  # Documentação oficial do projeto
 ```
@@ -180,10 +184,11 @@ viviboty/
 3. **Acesse no navegador:**
    Abra `http://localhost:3000` (ou `http://localhost:8000`).
 
-4. **Executar auditoria de saúde e acessibilidade:**
+4. **Executar auditorias e testes:**
    ```bash
-   npm run qa         # Executa a suite de saúde, segurança e autocura
+   npm run qa         # Executa a suite de saúde, segurança e autocura (19 verificações)
    npm run audit:ui   # Executa a auditoria de UI/UX, WCAG 2.1 AA e Core Web Vitals
+   npm run test:e2e   # Executa a suite E2E de jornada do cliente, checkout e RLS
    ```
 
 ---
