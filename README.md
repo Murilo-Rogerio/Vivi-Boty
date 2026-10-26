@@ -18,14 +18,17 @@ Vitrine digital moderna de perfumes, cosméticos e presentes com inteligência a
 
 - [Visão Geral](#-visão-geral)
 - [Funcionalidades & Fluxo de Conversão](#-funcionalidades--fluxo-de-conversão)
+- [Design, Identidade Visual & Mobile First](#-design-identidade-visual--mobile-first)
+- [Destaques vs. Ofertas Relâmpago](#-destaques-vs-ofertas-relâmpago)
 - [Inteligência Artificial & Catálogo Ágil](#-inteligência-artificial--catálogo-ágil)
 - [Controle de Estoque & Encomendas](#-controle-de-estoque--encomendas)
 - [Painel Administrativo (/admin)](#-painel-administrativo-admin)
+- [Edge Middleware, Open Graph & Roteamento](#-edge-middleware-open-graph--roteamento)
 - [Automação de QA, Performance & Segurança (6 em 6 horas)](#-automação-de-qa-performance--segurança-6-em-6-horas)
-- [Arquitetura & Decisões Técnicas](#-arquitetura--decisões-técnicas)
+- [Banco de Dados & Segurança (Supabase RLS)](#-banco-de-dados--segurança-supabase-rls)
 - [Stack Tecnológica](#-stack-tecnológica)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Como Executar Localmente](#-como-executar-localmente)
+- [Como Executar Localmente & Testes](#-como-executar-localmente--testes)
 - [Licença](#-licença)
 
 ---
@@ -34,7 +37,7 @@ Vitrine digital moderna de perfumes, cosméticos e presentes com inteligência a
 
 Solução de comércio eletrônico desenvolvida para a boutique **Vivi Carvalho Boty**, consultora oficial de marcas consagradas como **O Boticário**, **Natura** e **Eudora**.
 
-O projeto combina uma experiência de compra fluida e acolhedora para o cliente com uma central administrativa ágil e intuitiva para a lojista. A cliente visualiza fragrâncias e cosméticos em alta definição com selos de desconto inteligentes ("De / Por"), monta a sacola com cálculo de economia em tempo real e finaliza o pedido em um clique no WhatsApp, com mensagem estruturada contendo endereço, forma de pagamento e status de disponibilidade dos itens.
+O projeto combina uma experiência de compra acolhedora e refinada para a cliente com uma central administrativa ágil e intuitiva para a lojista. A cliente visualiza fragrâncias e cosméticos em alta definição com selos de desconto inteligentes ("De / Por"), monta a sacola com cálculo de economia em tempo real e finaliza o pedido em um clique no WhatsApp, com mensagem estruturada contendo endereço, forma de pagamento e status de disponibilidade dos itens.
 
 ---
 
@@ -42,39 +45,70 @@ O projeto combina uma experiência de compra fluida e acolhedora para o cliente 
 
 - 🔍 **Busca Rápida no Hero:** Pesquisa instantânea em tempo real por nome, fragrância, notas olfativas ou marcas.
 - 🛍️ **Categorias Otimizadas:** Divisão clara entre *Perfumes*, *Cabelos & Capilar*, *Cremes Corporais*, *Banho & Sabonetes*, *Maquiagem* e *Presentes*.
-- 🎁 **Kits & Presentes:** Seção temática dedicada a estojos prontos e combos promocionais para presentear.
-- ⭐ **Depoimentos & Prova Social:** Avaliações de clientes reais fortalecendo a credibilidade e segurança da compra.
+- 🚚 **Badges de Confiança (Trust Badges):** Destaque para *Pronta entrega* (`fa-solid fa-truck-fast`), *Para presentear* (`fa-solid fa-gift`), *Sem cadastro* (WhatsApp) e *Garantia real* (Marcas oficiais).
+- 🎁 **Kits & Presentes:** Seção temática dedicada a estojos prontos e combos promocionais para presentear com sacolas oficiais.
+- ⭐ **Depoimentos & Prova Social:** Avaliações de clientes reais fortalecendo a credibilidade e segurança da compra, com modal para envio de novas recomendações.
 - 💳 **Seletor de Pagamento:** Escolha facilitada de modalidade (Pix, Cartão, Dinheiro) incluída automaticamente no texto do pedido.
 - 🛒 **Sacola Click-to-Chat:** Funil de compra zero-friction sem necessidade de cadastros demorados, senhas ou carrinhos abandonados.
-- 📱 **PWA & Compartilhamento Rico:** Metatags Open Graph dinâmicas geradas no Edge para cards visuais impecáveis no WhatsApp, Instagram e Facebook.
+- 📱 **PWA & Compartilhamento Rico:** Metatags Open Graph dinâmicas geradas no Edge para cards visuais impecáveis no WhatsApp, Instagram, Facebook e iMessage.
+
+---
+
+## 🎨 Design, Identidade Visual & Mobile First
+
+- **Nome e Marca Centralizados:** No topo da página (navbar), o bloco de identidade oficial (*Vivi Carvalho Boty* e *PERFUMARIA & PRESENTES*) possui centralização matemática balanceada no mobile e desktop.
+- **Paleta Warm Luxury:** Cores nobres baseadas em café profundo (`#241A1B`), ouro acetinado (`#C69A55` / `#A97E3B`), champagne (`#E8A7A1`) e fundo suave off-white (`#FCF9F7`).
+- **Touch Targets Acessíveis (WCAG 2.5.5):** Botões de favoritar (`w-8 h-8`), controles de quantidade na sacola (`w-8 h-8`) e botões de ação rápida com dimensões mínimas para toque sem falhas em celulares (360px a 390px).
+- **Safe Area no iOS:** Espaçamentos com `env(safe-area-inset-bottom)` no botão flutuante do WhatsApp, botão Voltar ao Topo e barra de navegação inferior, eliminando qualquer colisão com a barra de gestos do iPhone.
+- **Animações 60 FPS na GPU:** Gaveta da sacola e modais com aceleração de hardware via `translate3d(100%, 0, 0)` e `will-change: transform, opacity`.
+- **Acessibilidade:** Suporte total à preferência do sistema `@media (prefers-reduced-motion: reduce)`.
+
+---
+
+## 🏷️ Destaques vs. Ofertas Relâmpago
+
+Para eliminar ambiguidades e dar total controle à lojista, as áreas da vitrine foram claramente especializadas:
+
+1. **⭐ Destaques mais desejados (Queridinhos da Boutique):**
+   - Curadoria nobre das fragrâncias e produtos clássicos mais procurados e amados da loja.
+   - Exibido no topo da página inicial com o selo `👑 Queridinhos da Boutique`.
+   - Ativado pelo switch `[x] ⭐ Destaque` no painel administrativo.
+
+2. **🔥 Ofertas Relâmpago & Queima de Estoque:**
+   - Vitrine exclusiva para itens com preços promocionais reduzidos, descontos agressivos e queima de unidades a pronta entrega.
+   - Exibido com fundo temático rosado e selo `🔥 Ofertas Relâmpago`.
+   - Ativado pelo switch `[x] 🔥 Oferta Relâmpago` no painel administrativo.
+
+> **Controle Total:** No cadastro ou edição do produto, a lojista escolhe livremente se o produto entra em *Destaques*, em *Ofertas Relâmpago*, em ambos ou em nenhum.
 
 ---
 
 ## 🤖 Inteligência Artificial & Catálogo Ágil
 
-O painel administrativo conta com integração direta com a **Google Gemini API** para acelerar o cadastro de novos itens sem perder o tom humano de boutique:
+O painel administrativo conta com integração com a **Google Gemini API** para acelerar o cadastro de novos itens sem perder o tom humano de boutique:
 
-- **Modelo Homologado:** Operação nativa no modelo multimodal estável de última geração **`gemini-3.8-flash`**, com fallback automático e resiliente em cascata para **`gemini-3.5-flash-lite`** e **`gemini-3.6-flash`**.
-- **Otimização para Redes Móveis (4G/5G):** Compressão inteligente no cliente para fotos de até 800px max (redução de 75% no payload de dados móveis) e timeout generoso e adaptativo (35s para imagens e 22s para texto).
-- **Fallback Suave de Contingência:** Caso o proxy serverless da Vercel sofra instabilidade ou fila, a aplicação aciona automaticamente a conexão direta com o Google Generative Language sem abortar nem travar o painel.
-- **Estética Humanizada ("Anti-Cara de IA"):** Interface limpa sem termos frios de engenharia (como *prompt*, *modelo LLM*, *alucinação* ou timeouts brutos). O sistema opera como um assistente de catálogo elegante da consultora.
+- **Modelo Homologado:** Operação nativa no modelo multimodal estável de última geração **`gemini-3.8-flash`**, com fallback automático e resiliente em cascata para **`gemini-3.5-flash-lite`**, **`gemini-3.6-flash`** e **`gemini-3-flash-preview`**.
+- **Otimização para Redes Móveis (4G/5G):** Compressão inteligente no cliente para fotos de até 800px max (qualidade 0.78 JPEG) e sincronização de timeouts no serverless (12s para fotos, 9s para texto), evitando erros 504 da Vercel.
+- **Proteção Canvas Tainted:** Imagens de produtos carregadas do Supabase Storage utilizam `crossorigin="anonymous"`, permitindo reanálise por foto sem bloqueio de segurança do navegador.
+- **Fallback Suave de Contingência:** Caso o proxy serverless sofra instabilidade ou fila, a aplicação aciona automaticamente a conexão direta com o Google Generative Language sem abortar nem travar o painel.
+- **Estética Humanizada ("Anti-Cara de IA"):** Interface 100% humanizada sem termos frios de engenharia. O sistema opera como um assistente de catálogo elegante da consultora.
 - **Três Gatilhos Minimalistas:**
   - 📷 **Identificar pela Foto:** Analisa fotos tiradas com o celular, reconhecendo o frasco, a linha e o nome oficial da marca.
-  - 🪄 **Puxar pelo Nome:** Pesquisa as informações oficiais da marca a partir do nome digitado e corrige termos automaticamente.
-  - ✨ **Puxar Descrição Oficial:** Elabora descrições comerciais envolventes incluindo pirâmide olfativa (saída, corpo e fundo), benefícios e modo de uso.
-- **Feedback Sensorial Completo:** Quando o preenchimento automático termina, o sistema aciona:
-  - ✨ *Destaque dourado pulsante* nos campos preenchidos.
-  - 🔔 *Sinal sonoro suave* (duplo acorde sintetizado via Web Audio API, sem arquivos pesados de áudio).
-  - 📳 *Vibração háptica* no smartphone da lojista.
+  - 🪄 **Puxar pelo Nome:** Pesquisa as informações oficiais da marca a partir do nome digitado e preenche campos comerciais.
+  - ✨ **Puxar Descrição Oficial (`A.aiEnhanceDescription`):** Extrai exclusivamente a pirâmide olfativa (saída, corpo e fundo), ativos e modo de uso, **sem sobrescrever** nome, marca ou preço já digitados.
+- **Feedback Sensorial Completo:**
+  - ✨ *Destaque dourado com transição suave* nos campos preenchidos.
+  - 🔔 *Sinal sonoro suave* (duplo acorde Fá5/Lá5 sintetizado via Web Audio API, sem arquivos pesados de áudio).
+  - 📳 *Vibração háptica* no smartphone da lojista (`navigator.vibrate`).
 
 ---
 
 ## 📦 Controle de Estoque & Encomendas
 
-A gestão de disponibilidade foi unificada e simplificada para eliminar configurações confusas:
+A gestão de disponibilidade é automática e transparente:
 
 - **Estoque Maior que 0:** O produto recebe automaticamente o selo verde **Pronta Entrega** e entra no filtro de envio imediato.
-- **Estoque Igual a 0:** O produto é marcado automaticamente como **Disponível para Encomenda** (com prazo de retirada combinado via WhatsApp), permitindo que a lojista nunca perca vendas de itens sob pedido.
+- **Estoque Igual a 0:** O produto é marcado automaticamente como **Disponível para Encomenda** (com prazo de retirada combinado via WhatsApp), garantindo que a lojista nunca perca vendas de itens sob pedido.
 
 ---
 
@@ -82,37 +116,51 @@ A gestão de disponibilidade foi unificada e simplificada para eliminar configur
 
 - 🔒 **Acesso Protegido:** Autenticação via Supabase Auth com Row Level Security (RLS) no PostgreSQL.
 - ⚡ **Google API Pill:** Botão minimalista no topo para visualização e troca rápida da chave Gemini.
-- 📝 **Switches Simplificados:**
-  1. *Produto visível na loja* (ativação imediata no catálogo).
-  2. *Destaque & Promoção (Oferta)* (unificado: insere selo de desconto, preço riscado "De / Por" e presença na vitrine da home).
+- 📝 **Switches Independentes:**
+  1. *Ativo na Loja* (visibilidade para clientes).
+  2. *⭐ Destaque* (presença na vitrine nobre do topo da home).
+  3. *🔥 Oferta Relâmpago* (presença na área de promoções e queima de estoque).
 - 📋 **Ações em Lote (Bulk Actions):** Seleção múltipla de produtos com barra flutuante para ativação, inativação ou exclusão em massa com segurança.
 - ✏️ **Edição Rápida Inline:** Ajuste de preço, preço 'De', estoque e ofertas direto na listagem sem abrir o formulário completo.
 - 🚗 **Gerador de Rota de Entregas:** Exportação formatada para o WhatsApp com os pedidos pendentes e bairros para roteiro de entregas em Assis/SP.
 
 ---
 
-## 🛡️ Automação de QA, Performance & Segurança (6 em 6 horas)
+## 🌐 Edge Middleware, Open Graph & Roteamento
 
-Para garantir que a boutique opere com estabilidade máxima, segurança contra invasões e excelência visual 24 horas por dia, foi implementada uma suite automatizada de auto-cura (*self-healing*):
-
-- **Script de Testes e Auditoria:** [`scripts/site-health-qa-audit.js`](file:///c:/Users/murilo.carvalho/Documents/viviboty/scripts/site-health-qa-audit.js) executa 19 verificações estruturadas:
-  1. **Integridade Funcional & Bugs:** Equilíbrio sintático de tags `<script>` e `<style>`, verificação de todos os manipuladores de eventos (`onclick="A.*"`), validação da serialização de sacola e das regras de estoque.
-  2. **Estética Humana & Identidade:** Varredura estrita contra vazamentos de jargões robóticos de IA na interface do cliente ou administradora, validação da paleta de luxo e do branding oficial *Vivi Carvalho Boty*.
-  3. **Performance & Resiliência:** Verificação de redimensionamento de imagens (maxDim 800px), preconnect com `crossorigin` para o CDN de imagens, timeouts adaptativos e configuração de `maxDuration` no Vercel Functions.
-  4. **Segurança & Vulnerabilidades:** Validação de sanitização XSS (`escape`, `escapeAttr`), varredura contra vazamento de segredos/chaves mestras no frontend e headers HTTP de segurança (CSP, HSTS, X-Frame-Options, X-Content-Type-Options: nosniff).
-  5. **Acessibilidade (WCAG 2.1 AA) & UI/UX Impecável:** 100% dos formulários e filtros com labels/aria-labels, botões de ícone com nomes acessíveis para leitores de tela, feedback de toque tátil (`active:scale`) e contraste tipográfico harmonizado.
-- **Sidecar Agendado:** O robô autônomo executa a cada 6 horas (`CRON_TZ=America/Sao_Paulo 0 */6 * * *`). Caso identifique qualquer regressão ou falha, aplica o patch corretivo no código, valida novamente a suite e realiza commit/push automaticamente.
+- **Detecção Completa de Crawlers (`middleware.js`):** Intercepta bots de redes sociais (`WhatsApp`, `Applebot/iMessage`, `Facebook`, `Twitter`, `Telegram`, `LinkedIn`, `Discord`, `Googlebot`), entregando HTML ultraleve (< 1KB) com metatags Open Graph completas:
+  - `og:title`: Título oficial com ancoragem de desconto (*"De R$ X por R$ Y"*).
+  - `og:image`: Imagem de 1200x630px em alta resolução.
+  - `og:site_name`: "Vivi Carvalho Boty".
+  - `twitter:card`: summary_large_image.
+- **Sincronia do Preço Original:** Seleciona `preco_original` diretamente do banco de dados, alinhando os cartões de compartilhamento com a vitrine.
+- **Roteamento `/admin` Sem Tela Preta:** O Edge Middleware redireciona (302) para `/?admin=1`, e o roteador SPA abre diretamente o painel de administração, eliminando qualquer tela preta ou erro 404 da Vercel.
+- **SEO Canônico Padronizado:** URLs canônicas alinhadas em `https://www.vivicarvalhoboty.com.br/` em todo o HTML, Sitemap e Robots.txt.
 
 ---
 
-## 🏛️ Arquitetura & Decisões Técnicas
+## 🛡️ Automação de QA, Performance & Segurança (6 em 6 horas)
 
-- **Edge Middleware para Open Graph & Resiliência de Rotas (`middleware.js`):**
-  - Intercepta crawlers em rotas `/produto/:id` e entrega metadados dinâmicos para visualização rica em redes sociais.
-  - Captura acessos diretos a rotas administrativas (`/admin`, `/admin/*`) e redireciona com `HTTP 302` para a raiz (`/?admin=...`), eliminando totalmente as telas pretas de 404 da Vercel.
-  - Restaura sessões autenticadas suavemente sem atritos de recarregamento.
-- **Proxy Serverless Seguro (`/api/gemini`):** Endpoint serverless na Vercel com CORS configurado, timeouts estritos via `AbortController` (18s por modelo, maxDuration 45s) e cascata de modelos para garantir respostas ultra-rápidas e seguras sem expor tokens ou ser bloqueado por navegadores como o Brave.
-- **Single-Page Application Nativa:** Construída com JavaScript moderno (ES6+), Tailwind CSS e History API nativa sem complexidade de bundlers pesados.
+Para garantir que a boutique opere com estabilidade máxima, segurança contra invasões e excelência visual 24 horas por dia, foi implementada uma suite automatizada de auto-cura (*self-healing*) que roda a cada 6 horas:
+
+- **1. Auditoria Geral de Saúde (`scripts/site-health-qa-audit.js`):** 19 verificações cobrindo integridade funcional, equilíbrio de tags, regras de estoque, paleta de luxo, sanitização XSS e ausência de jargões robóticos.
+- **2. Auditoria de UI/UX & Acessibilidade (`scripts/audit-ui-ux.js`):** Validação de WCAG 2.1 AA, proporções de aspecto em imagens, display de fontes e microinterações.
+- **3. Suíte E2E Oficial Playwright (`scripts/run-e2e-suite.js` & `tests/e2e-playwright.spec.js`):** 14 testes cobrindo a jornada de compra, cálculo financeiro da sacola, formatação UTF-8 do WhatsApp, políticas RLS e animações na GPU.
+- **4. Teste em Produção ao Vivo (`scripts/test-live-production.js`):** Validação real contra `https://www.vivicarvalhoboty.com.br/` confirmando status 200 OK, redirecionamento Edge 302, metatags Open Graph e headers de segurança HTTP (CSP, HSTS, X-Frame-Options, nosniff).
+- **Autocura Autônoma:** Em caso de regressão, o robô sidecar aplica o patch, executa as suítes novamente e realiza commit/push automaticamente.
+
+---
+
+## 🗄️ Banco de Dados & Segurança (Supabase RLS)
+
+Arquivo de referência: [`supabase_schema.sql`](file:///c:/Users/murilo.carvalho/Documents/viviboty/supabase_schema.sql)
+
+| Tabela | Chave Primária | Política de Segurança (RLS) |
+| :--- | :--- | :--- |
+| **`products`** | `UUID` | Leitura pública para itens ativos (`ativo = true`); CRUD restrito a administradores. |
+| **`orders`** | `UUID` | **INSERT anônimo permitido** (para finalização do pedido); **SELECT proibido para anônimos** (proteção total dos dados dos clientes). |
+| **`site_testimonials`** | `UUID` | Leitura pública para depoimentos aprovados; inserção pública para novas avaliações; moderação restrita ao admin. |
+| **`store_settings`** | `TEXT` | Chave Gemini e configurações sensíveis visíveis apenas para a administradora autenticada. |
 
 ---
 
@@ -121,13 +169,13 @@ Para garantir que a boutique opere com estabilidade máxima, segurança contra i
 | Camada | Tecnologia | Descrição |
 | :--- | :--- | :--- |
 | **Frontend** | HTML5 Semântico + JS Vanilla (ES6+) | SPA client-side ultra-rápida, modular e sem overhead de frameworks |
-| **Estilização** | Tailwind CSS + CSS3 Animations | Paleta luxo dourada, design responsivo mobile-first e tipografia refinada |
-| **Inteligência Artificial** | Google Gemini 3.8 Flash | Modelo oficial multimodal para extração estruturada de catálogo |
-| **Backend & Auth** | Supabase (PostgreSQL + RLS) | Persistência de produtos, pedidos, depoimentos e autenticação administrativa |
-| **Armazenamento** | Supabase Storage CDN | Hospedagem otimizada de imagens e banners de produtos |
-| **Edge & Serverless** | Vercel (Edge Middleware + Serverless Functions) | Roteamento, Open Graph dinâmico e proxy seguro de IA (maxDuration 45s) |
+| **Estilização** | Tailwind CSS + CSS3 GPU Transitions | Paleta luxo dourada, design responsivo mobile-first e tipografia refinada |
+| **Inteligência Artificial** | Google Gemini 3.8 Flash | Modelo oficial multimodal com fallback em cascata para extração de catálogo |
+| **Backend & Auth** | Supabase (PostgreSQL 15 + RLS) | Persistência de produtos, pedidos, depoimentos e autenticação administrativa |
+| **Armazenamento** | Supabase Storage CDN | Hospedagem otimizada de imagens e banners de produtos com CORS anônimo |
+| **Edge & Serverless** | Vercel (Edge Middleware + Functions) | Roteamento, Open Graph dinâmico e proxy seguro de IA (maxDuration 45s) |
 | **Qualidade & Segurança** | Self-Healing QA Suite (6 em 6 horas) | Auditoria automática de integridade funcional, performance e proteção XSS |
-| **PWA / SEO** | Web App Manifest & Sitemap XML | Instalável como aplicativo no celular e indexação avançada no Google |
+| **PWA / SEO** | Web App Manifest & Sitemap XML | Instalável no Android/iOS e indexação avançada no Google |
 
 ---
 
@@ -140,7 +188,8 @@ viviboty/
 ├── scripts/
 │   ├── site-health-qa-audit.js # Suite de auditoria funcional, estética, segurança e autocura
 │   ├── audit-ui-ux.js          # Auditoria aprofundada de UI/UX, A11Y (WCAG AA) e Core Web Vitals
-│   └── run-e2e-suite.js        # Executador da suite E2E de jornada de compra, RLS e animações
+│   ├── run-e2e-suite.js        # Executador da suite E2E de jornada de compra, RLS e animações
+│   └── test-live-production.js # Validador de requisições reais contra o site em produção
 ├── tests/
 │   └── e2e-playwright.spec.js  # Testes ponta a ponta oficiais Playwright (Microsoft standards)
 ├── index.html                 # Ponto de entrada SPA, catálogo, sacola e painel administrativo
@@ -158,11 +207,11 @@ viviboty/
 
 ---
 
-## 🚀 Como Executar Localmente
+## 🚀 Como Executar Localmente & Testes
 
 ### Pré-requisitos
+- Node.js instalado (v18+).
 - Navegador web moderno (Chrome, Edge, Brave, Firefox, Safari).
-- Servidor estático local simples (`npx serve`, extensão Live Server do VS Code ou Python).
 
 ### Passo a Passo
 
@@ -184,11 +233,16 @@ viviboty/
 3. **Acesse no navegador:**
    Abra `http://localhost:3000` (ou `http://localhost:8000`).
 
-4. **Executar auditorias e testes:**
+4. **Executar a suíte de auditorias e testes:**
    ```bash
    npm run qa         # Executa a suite de saúde, segurança e autocura (19 verificações)
    npm run audit:ui   # Executa a auditoria de UI/UX, WCAG 2.1 AA e Core Web Vitals
    npm run test:e2e   # Executa a suite E2E de jornada do cliente, checkout e RLS
+   ```
+
+5. **Testar ambiente de produção:**
+   ```bash
+   node scripts/test-live-production.js
    ```
 
 ---
