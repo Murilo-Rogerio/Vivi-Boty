@@ -2,7 +2,10 @@
   "name": "vivi-boty",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "echo 'Static build complete'"
+    "build": "echo 'Static build complete'",
+    "qa": "node scripts/site-health-qa-audit.js",
+    "audit:ui": "node scripts/audit-ui-ux.js"
   }
 }

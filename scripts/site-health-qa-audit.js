@@ -262,7 +262,69 @@ function auditSecurityAndVulnerabilities() {
 }
 
 // -------------------------------------------------------------
-// 5. Execução Completa & Relatório
+// 5. Auditoria de Acessibilidade (WCAG 2.1 AA) & UI/UX Impecável
+// -------------------------------------------------------------
+function auditAccessibilityAndUIUX() {
+  console.log('\n--- 5. AUDITORIA DE ACESSIBILIDADE (WCAG 2.1 AA) & UI/UX IMPECÁVEL ---');
+  const html = fs.readFileSync(indexPath, 'utf-8');
+
+  // Preconnect com crossorigin para Supabase CDN (otimização LCP)
+  if (html.includes('rel="preconnect" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co" crossorigin')) {
+    logPass('Preconnect otimizado com crossorigin para Supabase CDN (LCP acelerado).');
+  } else {
+    logWarn('Preconnect para CDN de imagens sem crossorigin.');
+  }
+
+  // Acessibilidade em formulários: inputs com label ou aria-label
+  const inputMatches = html.matchAll(/<input\b([^>]*)>/gi);
+  let unlabelledInputs = 0;
+  for (const m of inputMatches) {
+    const attrs = m[1];
+    const typeMatch = /type=["']?([^"'\s>]+)/i.exec(attrs);
+    const type = typeMatch ? typeMatch[1].toLowerCase() : 'text';
+    if (['hidden', 'submit', 'button', 'image', 'file'].includes(type)) continue;
+    const idMatch = /id=["']?([^"'\s>]+)/i.exec(attrs);
+    const id = idMatch ? idMatch[1] : null;
+    const hasAria = /aria-label\s*=|aria-labelledby\s*=/i.test(attrs);
+    const hasLabel = id && new RegExp(`<label\\b[^>]*for=["']${id}["']`, 'i').test(html);
+    if (!hasAria && !hasLabel) {
+      unlabelledInputs++;
+    }
+  }
+  if (unlabelledInputs === 0) {
+    logPass('100% dos campos de formulário e filtros possuem identificador acessível (WCAG 2.1 AA).');
+  } else {
+    logFail(`${unlabelledInputs} campo(s) de formulário sem label ou aria-label.`);
+  }
+
+  // Botões somente com ícones devem ter aria-label
+  const buttonMatches = html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/gi);
+  let unlabelledButtons = 0;
+  for (const m of buttonMatches) {
+    const attrs = m[1];
+    const body = m[2].trim();
+    const isIconOnly = /^(\s*<i\b[^>]*><\/i>\s*|\s*<svg\b[^>]*>[\s\S]*?<\/svg>\s*)+$/i.test(body);
+    const hasAccessibleName = /aria-label\s*=|title\s*=/i.test(attrs) || /aria-labelledby\s*=/i.test(attrs);
+    if (isIconOnly && !hasAccessibleName) {
+      unlabelledButtons++;
+    }
+  }
+  if (unlabelledButtons === 0) {
+    logPass('Todos os botões de ícone possuem nome acessível (aria-label/title) para leitores de tela.');
+  } else {
+    logFail(`${unlabelledButtons} botão(ões) de ícone sem nome acessível.`);
+  }
+
+  // Microinterações táteis e feedback visual
+  if (html.includes('active:scale-90') || html.includes('active:scale-95')) {
+    logPass('Microinterações táteis (active:scale) ativas para feedback em telas touch mobile.');
+  } else {
+    logWarn('Botões principais sem feedback tátil de clique.');
+  }
+}
+
+// -------------------------------------------------------------
+// 6. Execução Completa & Relatório
 // -------------------------------------------------------------
 export function runHealthCheck() {
   console.log(`\n=============================================================`);
@@ -274,6 +336,7 @@ export function runHealthCheck() {
   auditHumanTouchAndAesthetic();
   auditPerformanceAndResilience();
   auditSecurityAndVulnerabilities();
+  auditAccessibilityAndUIUX();
 
   console.log(`\n=============================================================`);
   console.log(`RESUMO:`);

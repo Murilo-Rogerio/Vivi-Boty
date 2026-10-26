@@ -27,7 +27,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co">
+<link rel="preconnect" href="https://ifqbuhrhmefqiwrpzvsh.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link rel="dns-prefetch" href="https://wa.me">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -493,15 +493,15 @@ h1, h2, h3, h4, .font-serif {
               <span class="text-[11px] text-[#826F70] block leading-tight mt-0.5">Avisamos a Vivi para caprichar na embalagem especial.</span>
             </div>
           </div>
-          <input type="checkbox" id="gift-checkbox" class="w-4 h-4 rounded text-[#C69A55] focus:ring-[#C69A55] border-[#DBC3B7] cursor-pointer">
+          <input type="checkbox" id="gift-checkbox" aria-label="Embalar pedido para presente" class="w-4 h-4 rounded text-[#C69A55] focus:ring-[#C69A55] border-[#DBC3B7] cursor-pointer">
         </label>
 
         <!-- Nome e Bairro para Entrega -->
         <div class="space-y-1.5">
           <span class="text-[10px] font-bold uppercase tracking-wider text-[#826F70]">Dados para entrega (opcional)</span>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="client-name-input" placeholder="Seu nome" class="lux-input text-xs py-2 px-3 rounded-xl" maxlength="60">
-            <input type="text" id="client-bairro-input" placeholder="Seu bairro" class="lux-input text-xs py-2 px-3 rounded-xl" maxlength="60">
+            <input type="text" id="client-name-input" aria-label="Seu nome para identificação na entrega" placeholder="Seu nome" class="lux-input text-xs py-2 px-3 rounded-xl" maxlength="60">
+            <input type="text" id="client-bairro-input" aria-label="Seu bairro para entrega" placeholder="Seu bairro" class="lux-input text-xs py-2 px-3 rounded-xl" maxlength="60">
           </div>
         </div>
 
@@ -619,11 +619,11 @@ h1, h2, h3, h4, .font-serif {
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-[#241A1B] mb-2">Sua nota:</label>
           <div class="flex items-center gap-2" id="star-rating-container">
-            <button type="button" onclick="A.setTestimonialRating(1)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="1" aria-label="1 estrela"><i class="fa-solid fa-star"></i></button>
-            <button type="button" onclick="A.setTestimonialRating(2)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="2" aria-label="2 estrelas"><i class="fa-solid fa-star"></i></button>
-            <button type="button" onclick="A.setTestimonialRating(3)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="3" aria-label="3 estrelas"><i class="fa-solid fa-star"></i></button>
-            <button type="button" onclick="A.setTestimonialRating(4)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="4" aria-label="4 estrelas"><i class="fa-solid fa-star"></i></button>
-            <button type="button" onclick="A.setTestimonialRating(5)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-1 focus:outline-none" data-star="5" aria-label="5 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(1)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-2 min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none" data-star="1" aria-label="1 estrela"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(2)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-2 min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none" data-star="2" aria-label="2 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(3)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-2 min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none" data-star="3" aria-label="3 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(4)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-2 min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none" data-star="4" aria-label="4 estrelas"><i class="fa-solid fa-star"></i></button>
+            <button type="button" onclick="A.setTestimonialRating(5)" class="star-btn text-2xl text-amber-400 hover:scale-125 transition-transform p-2 min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none" data-star="5" aria-label="5 estrelas"><i class="fa-solid fa-star"></i></button>
             <span id="star-rating-label" class="text-xs font-semibold text-[#A97E3B] ml-2">Excelente (5/5)</span>
           </div>
           <input type="hidden" id="testimonial-rating" value="5">
@@ -1374,7 +1374,7 @@ const A = {
               <div class="max-w-xl mx-auto lg:mx-0">
                 <form onsubmit="A.handleHomeSearch(event)" class="relative flex items-center shadow-md rounded-2xl overflow-hidden border-2 border-[#F0E3DC] focus-within:border-[#C69A55] bg-white transition-all">
                   <i class="fa-solid fa-magnifying-glass absolute left-4 text-[#AA999A] text-base" aria-hidden="true"></i>
-                  <input type="search" id="home-search-input" placeholder="O que você procura hoje? (ex: Malbec, Lily, Kaiak...)" class="w-full py-3.5 pl-11 pr-24 text-sm sm:text-base outline-none text-[#241A1B] placeholder-[#AA999A]" autocomplete="off">
+                  <input type="search" id="home-search-input" aria-label="Buscar fragrâncias, cosméticos ou presentes" placeholder="O que você procura hoje? (ex: Malbec, Lily, Kaiak...)" class="w-full py-3.5 pl-11 pr-24 text-sm sm:text-base outline-none text-[#241A1B] placeholder-[#AA999A]" autocomplete="off">
                   <button type="submit" class="absolute right-1.5 py-2 px-4 rounded-xl bg-[#241A1B] hover:bg-[#A97E3B] text-white text-xs font-bold transition-colors">
                     Buscar
                   </button>
@@ -1382,7 +1382,7 @@ const A = {
 
                 <!-- ATALHOS RÁPIDOS DE BUSCA -->
                 <div class="flex items-center justify-center lg:justify-start gap-1.5 flex-wrap mt-3 text-xs text-[#826F70]">
-                  <span class="font-semibold text-[#AA999A]">Mais buscados:</span>
+                  <span class="font-semibold text-[#715F60]">Mais buscados:</span>
                   <a href="#/produtos?q=Malbec" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🔥 Malbec</a>
                   <a href="#/produtos?q=Lily" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🌸 Lily</a>
                   <a href="#/produtos?q=Kaiak" data-link class="px-2.5 py-1 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] hover:text-[#A97E3B] transition-colors">🌊 Kaiak</a>
@@ -1781,7 +1781,7 @@ const A = {
             ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Crect%20fill%3D%22%23FAF4F0%22%20width%3D%22400%22%20height%3D%22400%22%2F%3E%3Cpath%20d%3D%22M200%20140c-16.5%200-30%2013.5-30%2030v10h-10c-11%200-20%209-20%2020v60c0%2011%209%2020%2020%2020h80c11%200%2020-9%2020-20v-60c0-11-9-20-20-20h-10v-10c0-16.5-13.5-30-30-30zm-15%2030c0-8.3%206.7-15%2015-15s15%206.7%2015%2015v10h-30v-10zm-15%2030h60c5.5%200%2010%204.5%2010%2010v60c0%205.5-4.5%2010-10%2010h-60c-5.5%200-10-4.5-10-10v-60c0-5.5%204.5-10%2010-10z%22%20fill%3D%22%23C69A55%22%20opacity%3D%220.5%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22310%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%23AA999A%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3EVivi%20Carvalho%20Boty%3C%2Ftext%3E%3C%2Fsvg%3E';">`
             : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-3xl"></i></div>`}
           ${photoBadge ? `<div class="absolute top-2 left-2 pointer-events-none z-10">${photoBadge}</div>` : ''}
-          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
+          <button type="button" onclick="event.stopPropagation(); A.toggleFav('${id}')" class="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 text-[#241A1B] hover:text-[#E8A7A1] shadow-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-90" aria-label="${isFav ? 'Remover dos favoritos' : 'Salvar nos favoritos'}">
             <i class="${isFav ? 'fa-solid text-[#E53E3E]' : 'fa-regular'} fa-heart text-xs" aria-hidden="true"></i>
           </button>
           <div class="absolute inset-x-2 bottom-2 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1793,7 +1793,7 @@ const A = {
         <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between gap-1 mb-1">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-[#AA999A] truncate">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#715F60] truncate">
                 ${this.escape(p.marca || 'Boutique')}${p.genero ? ` • ${this.escape(p.genero)}` : ''}
               </span>
               ${(p.estoque || 0) > 0
@@ -1814,7 +1814,7 @@ const A = {
                 <span class="text-[10px] text-[#826F70] block leading-none mt-1">Consulte valor</span>
               ` : pr.hasDiscount ? `
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="text-[11px] text-[#AA999A] price-strike font-medium leading-none">De ${this.formatMoney(pr.originalPrice)}</span>
+                  <span class="text-[11px] text-[#715F60] price-strike font-medium leading-none">De ${this.formatMoney(pr.originalPrice)}</span>
                 </div>
                 <div class="flex items-baseline gap-1 mt-0.5">
                   <span class="text-[10px] font-bold uppercase text-[#1D8A58]">Por</span>
@@ -1824,17 +1824,17 @@ const A = {
                   <i class="fa-solid fa-tag text-[8px]" aria-hidden="true"></i> Economize ${this.formatMoney(pr.savings)}
                 </span>
               ` : `
-                <span class="text-[10px] text-[#AA999A] block leading-none">Preço</span>
+                <span class="text-[10px] text-[#715F60] block leading-none font-medium">Preço</span>
                 <span class="font-serif font-bold text-sm sm:text-base text-[#241A1B]">${this.formatMoney(pr.finalPrice)}</span>
                 <span class="text-[10px] text-[#826F70] block leading-none mt-1">Pix ou Cartão</span>
               `}
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="event.stopPropagation(); A.addToCart('${id}')" class="h-8 px-2.5 rounded-full ${inBag ? 'bg-[#1D8A58] text-white' : 'bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white'} transition-all flex items-center gap-1 text-xs font-bold" title="Adicionar à sacola" aria-label="Adicionar ${this.escapeAttr(p.nome)} à sacola">
+              <button type="button" onclick="event.stopPropagation(); A.addToCart('${id}')" class="h-8.5 px-3 rounded-full ${inBag ? 'bg-[#1D8A58] text-white' : 'bg-[#FAF0EB] text-[#A97E3B] hover:bg-[#C69A55] hover:text-white'} transition-all active:scale-95 flex items-center gap-1.5 text-xs font-bold" title="Adicionar à sacola" aria-label="Adicionar ${this.escapeAttr(p.nome)} à sacola">
                 <i class="fa-solid ${inBag ? 'fa-check' : 'fa-plus'} text-[10px]" aria-hidden="true"></i>
                 <span class="hidden sm:inline text-[11px]">${inBag ? 'Na sacola' : 'Sacola'}</span>
               </button>
-              <button type="button" onclick="event.stopPropagation(); A.orderWhatsAppDirect('${id}')" class="w-8 h-8 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white transition-all flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir ${this.escapeAttr(p.nome)} no WhatsApp">
+              <button type="button" onclick="event.stopPropagation(); A.orderWhatsAppDirect('${id}')" class="w-8.5 h-8.5 rounded-full bg-[#25D366]/15 text-[#1D8A58] hover:bg-[#25D366] hover:text-white transition-all active:scale-90 flex items-center justify-center" title="Pedir no WhatsApp" aria-label="Pedir ${this.escapeAttr(p.nome)} no WhatsApp">
                 <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i>
               </button>
             </div>
@@ -1962,9 +1962,9 @@ const A = {
               <div class="flex items-center gap-3">
                 <span class="text-xs font-bold uppercase tracking-wider text-[#826F70]">Quantidade:</span>
                 <div class="inline-flex items-center rounded-xl border border-[#F0E3DC] bg-[#FCF9F7] p-1">
-                  <button type="button" onclick="A.changeDetailQty(-1)" class="w-8 h-8 rounded-lg hover:bg-white text-[#241A1B] font-bold text-sm flex items-center justify-center transition-colors" aria-label="Diminuir quantidade">-</button>
+                  <button type="button" onclick="A.changeDetailQty(-1)" class="w-8 h-8 rounded-lg hover:bg-white active:scale-90 text-[#241A1B] font-bold text-sm flex items-center justify-center transition-all" aria-label="Diminuir quantidade">-</button>
                   <span id="detail-qty-val" class="w-9 text-center font-bold text-sm text-[#241A1B]">1</span>
-                  <button type="button" onclick="A.changeDetailQty(1)" class="w-8 h-8 rounded-lg hover:bg-white text-[#241A1B] font-bold text-sm flex items-center justify-center transition-colors" aria-label="Aumentar quantidade">+</button>
+                  <button type="button" onclick="A.changeDetailQty(1)" class="w-8 h-8 rounded-lg hover:bg-white active:scale-90 text-[#241A1B] font-bold text-sm flex items-center justify-center transition-all" aria-label="Aumentar quantidade">+</button>
                 </div>
               </div>
               <div class="flex flex-col sm:flex-row gap-3">
@@ -2149,7 +2149,7 @@ const A = {
       const safeImg = this.safeUrl(item.img || item.imagem);
       return `<div class="flex gap-3 py-3 border-b border-[#F0E3DC] items-center">
         <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#FAF0EB] shrink-0 border border-[#F0E3DC]">
-          ${safeImg ? `<img src="${this.escapeAttr(safeImg)}" alt="" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>`}
+          ${safeImg ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(item.nome)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>`}
         </div>
         <div class="flex-1 min-w-0">
           <p class="font-semibold text-xs truncate">${this.escape(item.nome)}</p>
@@ -2158,10 +2158,10 @@ const A = {
             <span class="font-serif font-bold text-sm text-[#1D8A58]">${(item.preco || 0) <= 0 ? '<span class="text-xs text-[#A97E3B]">Sob encomenda</span>' : this.formatMoney(item.preco)}</span>
           </div>
           <div class="flex items-center gap-2 mt-2">
-            <button type="button" onclick="A.updateCartQty('${id}', ${item.q - 1})" class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs" aria-label="Diminuir">-</button>
+            <button type="button" onclick="A.updateCartQty('${id}', ${item.q - 1})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] active:scale-95 flex items-center justify-center text-xs font-semibold bg-white transition-all" aria-label="Diminuir quantidade de ${this.escapeAttr(item.nome)}">-</button>
             <span class="text-xs font-bold w-5 text-center">${item.q}</span>
-            <button type="button" onclick="A.updateCartQty('${id}', ${item.q + 1})" class="w-6 h-6 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] flex items-center justify-center text-xs" aria-label="Aumentar">+</button>
-            <button type="button" onclick="A.updateCartQty('${id}', 0)" class="ml-auto text-[#AA999A] hover:text-[#E53E3E] text-xs p-1" aria-label="Remover item"><i class="fa-solid fa-trash-can"></i></button>
+            <button type="button" onclick="A.updateCartQty('${id}', ${item.q + 1})" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#F0E3DC] hover:border-[#C69A55] active:scale-95 flex items-center justify-center text-xs font-semibold bg-white transition-all" aria-label="Aumentar quantidade de ${this.escapeAttr(item.nome)}">+</button>
+            <button type="button" onclick="A.updateCartQty('${id}', 0)" class="ml-auto text-[#715F60] hover:text-[#E53E3E] text-xs p-2 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg hover:bg-[#FEE2E2]/40 transition-colors" aria-label="Remover ${this.escapeAttr(item.nome)} da sacola"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
           </div>
         </div>
       </div>`;
@@ -2350,7 +2350,7 @@ const A = {
         </button>
         <div class="flex items-center gap-1.5">
           <button type="button" onclick="A.addToCart('${id}')" class="btn-gold py-1.5 px-3 text-xs"><i class="fa-solid fa-plus"></i> Sacola</button>
-          <button type="button" onclick="A.toggleFav('${id}')" class="text-[#AA999A] hover:text-[#E53E3E] p-1.5" aria-label="Remover"><i class="fa-solid fa-trash-can text-xs"></i></button>
+          <button type="button" onclick="A.toggleFav('${id}')" class="text-[#715F60] hover:text-[#E53E3E] p-2 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors" aria-label="Remover ${this.escapeAttr(p.nome)} dos favoritos"><i class="fa-solid fa-trash-can text-xs"></i></button>
         </div>
       </div>`;
     }).join('');
@@ -4026,10 +4026,10 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           </div>
 
           <div class="relative w-full sm:w-72">
-            <input type="text" placeholder="Buscar por código, cliente ou bairro..." value="${this.escapeAttr(st.orderSearch || '')}" oninput="A.handleAdminOrderSearch(this.value)" class="lux-input text-xs py-2 pl-9 pr-8 rounded-xl border-[#F0E3DC] w-full">
+            <input type="text" id="admin-order-search-input" aria-label="Buscar pedidos por código, cliente ou bairro" placeholder="Buscar por código, cliente ou bairro..." value="${this.escapeAttr(st.orderSearch || '')}" oninput="A.handleAdminOrderSearch(this.value)" class="lux-input text-xs py-2 pl-9 pr-8 rounded-xl border-[#F0E3DC] w-full">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#826F70]"></i>
             ${st.orderSearch ? `
-              <button type="button" onclick="A.handleAdminOrderSearch('')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#826F70] hover:text-[#241A1B]">
+              <button type="button" onclick="A.handleAdminOrderSearch('')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#826F70] hover:text-[#241A1B] p-2 min-w-[32px] min-h-[32px] flex items-center justify-center" aria-label="Limpar busca de pedidos">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             ` : ''}
@@ -4104,7 +4104,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
                     ${items.map(it => `
                       <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#F0E3DC] shadow-xs">
                         <div class="w-10 h-10 rounded-lg overflow-hidden bg-[#FAF4F0] border border-[#F0E3DC] shrink-0">
-                          ${it.imagem ? `<img src="${this.escapeAttr(it.imagem)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-bag-shopping"></i></div>`}
+                          ${it.imagem ? `<img src="${this.escapeAttr(it.imagem)}" alt="${this.escapeAttr(it.nome || 'Produto')}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-bag-shopping"></i></div>`}
                         </div>
                         <div class="min-w-0 flex-1 text-xs">
                           <p class="font-bold text-[#241A1B] truncate">${this.escape(it.nome)}</p>
@@ -4183,16 +4183,16 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           
           <!-- Número de WhatsApp -->
           <div class="bg-[#FCF9F7] p-5 rounded-2xl border border-[#F0E3DC] space-y-3">
-            <label class="block font-bold text-sm text-[#241A1B]">
+            <label for="setting-whatsapp-number" class="block font-bold text-sm text-[#241A1B]">
               <i class="fa-brands fa-whatsapp text-[#1D8A58] text-base mr-1"></i> Número de WhatsApp de Destino:
             </label>
             <p class="text-xs text-[#826F70]">Digite o número com DDD (ex: 5518997871211). É para este número que os clientes enviarão os pedidos.</p>
-            <input type="text" id="setting-whatsapp-number" value="${this.escapeAttr(s.whatsapp_number || '5518997871211')}" class="lux-input text-sm py-2.5 px-4 max-w-sm" placeholder="Ex: 5518997871211" required>
+            <input type="text" id="setting-whatsapp-number" aria-label="Número de WhatsApp de Destino" value="${this.escapeAttr(s.whatsapp_number || '5518997871211')}" class="lux-input text-sm py-2.5 px-4 max-w-sm" placeholder="Ex: 5518997871211" required>
           </div>
 
           <!-- Template do Carrinho / Sacola -->
           <div class="space-y-3">
-            <label class="block font-bold text-sm text-[#241A1B]">
+            <label for="setting-template-cart" class="block font-bold text-sm text-[#241A1B]">
               <i class="fa-solid fa-cart-shopping text-[#C69A55] mr-1"></i> Mensagem Automática ao Finalizar a Sacola:
             </label>
             <p class="text-xs text-[#826F70]">
@@ -4208,7 +4208,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
           <!-- Template de Pedido Direto do Produto -->
           <div class="space-y-3">
-            <label class="block font-bold text-sm text-[#241A1B]">
+            <label for="setting-template-single" class="block font-bold text-sm text-[#241A1B]">
               <i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Mensagem ao Clicar em Pedir pelo WhatsApp no Produto:
             </label>
             <p class="text-xs text-[#826F70]">
@@ -4224,7 +4224,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           <!-- Chave da API Google Gemini (IA no Cadastro) -->
           <div class="bg-[#FCF9F7] p-5 rounded-2xl border border-[#F0E3DC] space-y-3">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <label class="block font-bold text-sm text-[#241A1B]">
+              <label for="setting-gemini-key" class="block font-bold text-sm text-[#241A1B]">
                 <i class="fa-solid fa-wand-magic-sparkles text-[#C69A55] text-base mr-1"></i> Chave de API Google Gemini (IA no Cadastro):
               </label>
               <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-[#A97E3B] hover:underline flex items-center gap-1.5">
@@ -4236,8 +4236,8 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             </p>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-xl">
               <div class="relative flex-1">
-                <input type="password" id="setting-gemini-key" value="${this.escapeAttr(s.gemini_api_key || localStorage.getItem('gemini_api_key') || '')}" class="lux-input text-xs py-2.5 px-4 font-mono w-full" placeholder="AIzaSy...">
-                <button type="button" onclick="A.togglePasswordVisibility('setting-gemini-key')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA999A] hover:text-[#241A1B] text-xs" title="Exibir/Ocultar chave">
+                <input type="password" id="setting-gemini-key" aria-label="Chave da API Google Gemini" value="${this.escapeAttr(s.gemini_api_key || localStorage.getItem('gemini_api_key') || '')}" class="lux-input text-xs py-2.5 px-4 font-mono w-full" placeholder="AIzaSy...">
+                <button type="button" onclick="A.togglePasswordVisibility('setting-gemini-key')" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#715F60] hover:text-[#241A1B] text-xs p-2 min-w-[32px] min-h-[32px] flex items-center justify-center" aria-label="Exibir ou ocultar chave da API" title="Exibir/Ocultar chave">
                   <i class="fa-solid fa-eye"></i>
                 </button>
               </div>
@@ -4360,10 +4360,10 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
           <!-- Busca Rápida -->
           <div class="relative w-full sm:w-72">
-            <input type="text" placeholder="Buscar por cliente, produto ou texto..." value="${this.escapeAttr(st.testimSearch || '')}" oninput="A.handleAdminTestimSearch(this.value)" class="lux-input text-xs py-2 pl-9 pr-8 rounded-xl border-[#F0E3DC] w-full">
+            <input type="text" id="admin-testim-search-input" aria-label="Buscar depoimentos por cliente, produto ou texto" placeholder="Buscar por cliente, produto ou texto..." value="${this.escapeAttr(st.testimSearch || '')}" oninput="A.handleAdminTestimSearch(this.value)" class="lux-input text-xs py-2 pl-9 pr-8 rounded-xl border-[#F0E3DC] w-full">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#826F70]"></i>
             ${st.testimSearch ? `
-              <button type="button" onclick="A.handleAdminTestimSearch('')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#826F70] hover:text-[#241A1B]" title="Limpar busca">
+              <button type="button" onclick="A.handleAdminTestimSearch('')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[#826F70] hover:text-[#241A1B] p-2 min-w-[32px] min-h-[32px] flex items-center justify-center" aria-label="Limpar busca de depoimentos" title="Limpar busca">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             ` : ''}
@@ -4910,7 +4910,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
             <div class="relative w-full sm:max-w-md">
               <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[#AA999A] text-sm pointer-events-none"></i>
-              <input type="search" id="admin-search-input" value="${this.escape(st.search)}" placeholder="Buscar por nome, fragrância ou marca..." oninput="A.handleAdminSearch(this.value)" class="lux-input pl-10 pr-4 py-2.5 text-xs rounded-xl border-[#F0E3DC] w-full">
+              <input type="search" id="admin-search-input" aria-label="Buscar produtos no catálogo administrativo por nome, fragrância ou marca" value="${this.escape(st.search)}" placeholder="Buscar por nome, fragrância ou marca..." oninput="A.handleAdminSearch(this.value)" class="lux-input pl-10 pr-4 py-2.5 text-xs rounded-xl border-[#F0E3DC] w-full">
             </div>
 
             <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
@@ -4918,7 +4918,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
                 Exibindo <strong>${totalFiltered}</strong> produto${totalFiltered === 1 ? '' : 's'}
               </span>
               
-              <select onchange="A.setAdminSort(this.value)" class="lux-input text-xs py-2 px-3 rounded-xl border-[#F0E3DC] bg-white cursor-pointer w-auto">
+              <select aria-label="Ordenar produtos" onchange="A.setAdminSort(this.value)" class="lux-input text-xs py-2 px-3 rounded-xl border-[#F0E3DC] bg-white cursor-pointer w-auto">
                 <option value="name_asc" ${st.sort === 'name_asc' ? 'selected' : ''}>Nome (A-Z)</option>
                 <option value="name_desc" ${st.sort === 'name_desc' ? 'selected' : ''}>Nome (Z-A)</option>
                 <option value="price_asc" ${st.sort === 'price_asc' ? 'selected' : ''}>Menor Preço</option>
@@ -4934,6 +4934,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             <div class="flex flex-wrap items-center gap-3">
               <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-[#241A1B] select-none hover:text-[#A97E3B] transition-colors">
                 <input type="checkbox" 
+                       aria-label="Selecionar todos os produtos desta página"
                        class="w-4 h-4 rounded border-[#D3C1B5] text-[#C69A55] focus:ring-[#C69A55] cursor-pointer"
                        ${isAllPageSelected ? 'checked' : ''}
                        onchange="A.toggleSelectAllAdminPage(this.checked, ${JSON.stringify(pageIds).replace(/"/g, '&quot;')})">
@@ -4985,6 +4986,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
                       <!-- Checkbox de Seleção Individual -->
                       <label class="flex items-center justify-center p-1.5 cursor-pointer shrink-0 rounded-lg hover:bg-[#FAF0EB] transition-colors" onclick="event.stopPropagation()" title="Selecionar este produto para ação em lote">
                         <input type="checkbox" 
+                               aria-label="Selecionar produto ${this.escapeAttr(p.nome)}" 
                                class="w-4 h-4 rounded border-[#D3C1B5] text-[#C69A55] focus:ring-[#C69A55] cursor-pointer" 
                                ${st.selectedIds.has(pid) ? 'checked' : ''} 
                                onchange="A.toggleSelectAdminProduct('${pid}', this.checked)">
@@ -5065,30 +5067,30 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
                       <div class="flex items-center gap-2">
                         <label class="text-xs text-[#826F70] font-medium" for="quick-orig-price-${pid}">Preço 'De' Riscado:</label>
-                        <input type="number" step="0.01" min="0" id="quick-orig-price-${pid}" value="${customOrig}" placeholder="Auto (${this.formatMoney(pr.originalPrice)})" class="lux-input text-xs py-1.5 px-3 w-32 rounded-lg">
+                        <input type="number" step="0.01" min="0" id="quick-orig-price-${pid}" aria-label="Preço original de tabela de ${this.escapeAttr(p.nome)}" value="${customOrig}" placeholder="Auto (${this.formatMoney(pr.originalPrice)})" class="lux-input text-xs py-1.5 px-3 w-32 rounded-lg">
                       </div>
 
                       <div class="flex items-center gap-2">
                         <label class="text-xs text-[#826F70] font-medium" for="quick-price-${pid}">Preço Real 'Por' (R$):</label>
-                        <input type="number" step="0.01" min="0" id="quick-price-${pid}" value="${p.preco}" class="lux-input text-xs py-1.5 px-3 w-28 rounded-lg">
+                        <input type="number" step="0.01" min="0" id="quick-price-${pid}" aria-label="Preço real de venda de ${this.escapeAttr(p.nome)}" value="${p.preco}" class="lux-input text-xs py-1.5 px-3 w-28 rounded-lg">
                       </div>
 
                       <div class="flex items-center gap-2">
                         <label class="text-xs text-[#826F70] font-medium" for="quick-stock-${pid}">Estoque:</label>
-                        <input type="number" min="0" id="quick-stock-${pid}" value="${p.estoque}" class="lux-input text-xs py-1.5 px-3 w-20 rounded-lg">
+                        <input type="number" min="0" id="quick-stock-${pid}" aria-label="Quantidade em estoque de ${this.escapeAttr(p.nome)}" value="${p.estoque}" class="lux-input text-xs py-1.5 px-3 w-20 rounded-lg">
                       </div>
 
                       <div class="flex flex-wrap items-center gap-3">
                         <label class="text-xs text-[#826F70] font-medium flex items-center gap-1.5 cursor-pointer">
-                          <input type="checkbox" id="quick-feat-${pid}" ${p.destaque ? 'checked' : ''} class="w-4 h-4 accent-[#C69A55] rounded">
+                          <input type="checkbox" id="quick-feat-${pid}" aria-label="Marcar ${this.escapeAttr(p.nome)} como destaque" ${p.destaque ? 'checked' : ''} class="w-4 h-4 accent-[#C69A55] rounded">
                           <span>⭐ Destaque</span>
                         </label>
                         <label class="text-xs text-[#826F70] font-medium flex items-center gap-1.5 cursor-pointer">
-                          <input type="checkbox" id="quick-promo-${pid}" ${p.promocao ? 'checked' : ''} class="w-4 h-4 accent-[#E53E3E] rounded">
+                          <input type="checkbox" id="quick-promo-${pid}" aria-label="Marcar ${this.escapeAttr(p.nome)} como promoção" ${p.promocao ? 'checked' : ''} class="w-4 h-4 accent-[#E53E3E] rounded">
                           <span>🔥 Promoção</span>
                         </label>
                         <label class="text-xs text-[#826F70] font-medium flex items-center gap-1.5 cursor-pointer">
-                          <input type="checkbox" id="quick-active-${pid}" ${p.ativo ? 'checked' : ''} class="w-4 h-4 accent-[#1D8A58] rounded">
+                          <input type="checkbox" id="quick-active-${pid}" aria-label="Ativar ${this.escapeAttr(p.nome)} na loja" ${p.ativo ? 'checked' : ''} class="w-4 h-4 accent-[#1D8A58] rounded">
                           <span>Ativo na loja</span>
                         </label>
                       </div>

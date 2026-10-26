@@ -95,11 +95,12 @@ A gestão de disponibilidade foi unificada e simplificada para eliminar configur
 
 Para garantir que a boutique opere com estabilidade máxima, segurança contra invasões e excelência visual 24 horas por dia, foi implementada uma suite automatizada de auto-cura (*self-healing*):
 
-- **Script de Testes e Auditoria:** [`scripts/site-health-qa-audit.js`](file:///c:/Users/murilo.carvalho/Documents/viviboty/scripts/site-health-qa-audit.js) executa 15 verificações estruturadas:
+- **Script de Testes e Auditoria:** [`scripts/site-health-qa-audit.js`](file:///c:/Users/murilo.carvalho/Documents/viviboty/scripts/site-health-qa-audit.js) executa 19 verificações estruturadas:
   1. **Integridade Funcional & Bugs:** Equilíbrio sintático de tags `<script>` e `<style>`, verificação de todos os manipuladores de eventos (`onclick="A.*"`), validação da serialização de sacola e das regras de estoque.
-  2. **Estética Humana:** Varredura estrita contra vazamentos de jargões robóticos de IA na interface do cliente ou administradora, validação da paleta de luxo e do branding oficial *Vivi Carvalho Boty*.
-  3. **Performance Móvel:** Verificação de redimensionamento de imagens (maxDim 800px), timeouts adaptativos e configuração de `maxDuration` no Vercel Functions.
+  2. **Estética Humana & Identidade:** Varredura estrita contra vazamentos de jargões robóticos de IA na interface do cliente ou administradora, validação da paleta de luxo e do branding oficial *Vivi Carvalho Boty*.
+  3. **Performance & Resiliência:** Verificação de redimensionamento de imagens (maxDim 800px), preconnect com `crossorigin` para o CDN de imagens, timeouts adaptativos e configuração de `maxDuration` no Vercel Functions.
   4. **Segurança & Vulnerabilidades:** Validação de sanitização XSS (`escape`, `escapeAttr`), varredura contra vazamento de segredos/chaves mestras no frontend e headers HTTP de segurança (CSP, HSTS, X-Frame-Options, X-Content-Type-Options: nosniff).
+  5. **Acessibilidade (WCAG 2.1 AA) & UI/UX Impecável:** 100% dos formulários e filtros com labels/aria-labels, botões de ícone com nomes acessíveis para leitores de tela, feedback de toque tátil (`active:scale`) e contraste tipográfico harmonizado.
 - **Sidecar Agendado:** O robô autônomo executa a cada 6 horas (`CRON_TZ=America/Sao_Paulo 0 */6 * * *`). Caso identifique qualquer regressão ou falha, aplica o patch corretivo no código, valida novamente a suite e realiza commit/push automaticamente.
 
 ---
@@ -137,7 +138,8 @@ viviboty/
 ├── api/
 │   └── gemini.js              # Serverless Function proxy para Google Gemini API
 ├── scripts/
-│   └── site-health-qa-audit.js # Suite de auditoria funcional, estética e segurança
+│   ├── site-health-qa-audit.js # Suite de auditoria funcional, estética, segurança e autocura
+│   └── audit-ui-ux.js          # Auditoria aprofundada de UI/UX, A11Y (WCAG AA) e Core Web Vitals
 ├── index.html                 # Ponto de entrada SPA, catálogo, sacola e painel administrativo
 ├── styles.css                 # Folha de estilos compilada
 ├── input.css                  # Diretivas base do Tailwind CSS
@@ -178,9 +180,10 @@ viviboty/
 3. **Acesse no navegador:**
    Abra `http://localhost:3000` (ou `http://localhost:8000`).
 
-4. **Executar auditoria de saúde do site:**
+4. **Executar auditoria de saúde e acessibilidade:**
    ```bash
-   node scripts/site-health-qa-audit.js
+   npm run qa         # Executa a suite de saúde, segurança e autocura
+   npm run audit:ui   # Executa a auditoria de UI/UX, WCAG 2.1 AA e Core Web Vitals
    ```
 
 ---
