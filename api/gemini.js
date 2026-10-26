@@ -37,10 +37,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // Modelos rápidos e diretos na v1beta:
-    // gemini-2.5-flash-lite: altíssima velocidade (< 1.5s), ideal para extração de dados e JSON
-    // gemini-2.5-flash: modelo flash híbrido de alta capacidade
-    // gemini-2.0-flash: fallback robusto
+    // Detecta se a requisição contém imagem (multimodal)
+    const hasImage = contents.some(c =>
+      Array.isArray(c?.parts) && c.parts.some(p => p.inline_data || p.inlineData)
+    );
+
+    // Lista de modelos suportados com fallback em cascata
     const priorityModels = model
       ? [model, 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview']
       : ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview'];
@@ -49,9 +51,12 @@ export default async function handler(req, res) {
     let lastError = null;
     let lastStatusCode = 500;
 
+    // Timeout por tentativa de modelo: 18s para multimodal/imagem, 14s para texto simples
+    const timeoutPerModel = hasImage ? 18000 : 14000;
+
     for (const m of modelsToTry) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 9500); // 9.5s por modelo para nunca exceder limite da Vercel
+      const timeoutId = setTimeout(() => controller.abort(), timeoutPerModel);
 
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`;
@@ -84,7 +89,6 @@ export default async function handler(req, res) {
           lastStatusCode = response.status;
           lastError = new Error(errMsg);
 
-          // Se modelo não foi encontrado (404), tenta o próximo modelo da lista
           const isRetryable =
             response.status === 503 ||
             response.status === 429 ||
@@ -102,7 +106,7 @@ export default async function handler(req, res) {
             continue;
           }
 
-          // Erro de autenticação/chave inválida (400) ou cota (429) retorna de imediato
+          // Se for erro definitivo (chave inválida ou não autorizada), retorna de imediato
           return res.status(response.status).json(data);
         }
 
@@ -111,14 +115,16 @@ export default async function handler(req, res) {
         clearTimeout(timeoutId);
         lastError = err;
         if (err.name === 'AbortError') {
-          lastError = new Error(`Tempo limite esgotado ao consultar modelo ${m}.`);
+          console.warn(`Tempo limite excedido no modelo ${m} (${timeoutPerModel / 1000}s). Tentando próximo modelo...`);
+          lastError = new Error(`Tempo limite esgotado no modelo ${m}.`);
+          continue;
         }
       }
     }
 
     return res.status(lastStatusCode).json({
       error: {
-        message: lastError ? lastError.message : 'Falha ao comunicar com os modelos do Google Gemini.'
+        message: lastError ? lastError.message : 'Não foi possível consultar os dados do produto no momento. Tente novamente.'
       }
     });
   } catch (e) {

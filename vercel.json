@@ -3,6 +3,11 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "cleanUrls": true,
+  "functions": {
+    "api/gemini.js": {
+      "maxDuration": 45
+    }
+  },
   "rewrites": [
     {
       "source": "/api/:path*",
