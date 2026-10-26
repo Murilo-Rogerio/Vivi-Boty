@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/*
 
-Sitemap: https://vivicarvalhoboty.com.br/sitemap.xml
+Sitemap: https://www.vivicarvalhoboty.com.br/sitemap.xml
