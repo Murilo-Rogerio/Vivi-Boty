@@ -1,14 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import middleware from '../middleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const indexPath = path.resolve(__dirname, '../index.html');
 const schemaPath = path.resolve(__dirname, '../supabase_schema.sql');
+const geminiPath = path.resolve(__dirname, '../api/gemini.js');
 
 const html = fs.readFileSync(indexPath, 'utf-8');
 const schema = fs.existsSync(schemaPath) ? fs.readFileSync(schemaPath, 'utf-8') : '';
+const geminiCode = fs.existsSync(geminiPath) ? fs.readFileSync(geminiPath, 'utf-8') : '';
 
 console.log('=============================================================');
 console.log('🧪 SUITE E2E & ARQUITETURA: VIVI CARVALHO BOTY');
@@ -141,7 +144,64 @@ assertTest('Easing natural cubic-bezier presente nas transições de modal e dra
   html.includes('cubic-bezier(0.16, 1, 0.3, 1)'));
 
 // ----------------------------------------------------------------------------
-// 5. RESUMO
+// 5. RESILIÊNCIA DA IA: BUSCA, PREENCHIMENTO & FALLBACKS EM CASCATA
+// ----------------------------------------------------------------------------
+console.log('\n--- 5. IA & RESILIÊNCIA: MODELO GEMINI-3.8-FLASH & CASCATA ---');
+
+assertTest('Modelo gemini-3.8-flash prioritário em api/gemini.js com fallbacks',
+  geminiCode.includes("'gemini-3.8-flash'") &&
+  geminiCode.includes("'gemini-3.5-flash-lite'") &&
+  geminiCode.includes("'gemini-3.6-flash'") &&
+  geminiCode.includes("'gemini-3-flash-preview'"));
+
+assertTest('Modelo gemini-3.8-flash prioritário na contingência direta de index.html',
+  html.includes("const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview'];"));
+
+assertTest('Chamada proxy cliente passa gemini-3.8-flash explicitamente',
+  html.includes("model: 'gemini-3.8-flash'"));
+
+assertTest('Timeout adaptativo para mobile 4G configurado (foto: 35s, texto: 22s)',
+  html.includes('const clientTimeoutMs = hasImage ? 35000 : 22000;'));
+
+assertTest('Timeout por modelo configurado no serverless api/gemini.js',
+  geminiCode.includes('const timeoutPerModel = hasImage ? 12000 : 9000;'));
+
+// ----------------------------------------------------------------------------
+// 6. EDGE MIDDLEWARE: CARDS WHATSAPP & REDIRECIONAMENTO /admin SEM TELA PRETA
+// ----------------------------------------------------------------------------
+console.log('\n--- 6. EDGE MIDDLEWARE: CARDS WHATSAPP & REDIRECIONAMENTO /admin ---');
+
+const reqAdmin = new Request('https://www.vivicarvalhoboty.com.br/admin');
+const resAdmin = await middleware(reqAdmin);
+assertTest('Redirecionamento HTTP 302 na rota /admin para evitar tela preta na Vercel',
+  resAdmin.status === 302 && (resAdmin.headers.get('location') || '').includes('/?admin=1'));
+
+const reqAdminSub = new Request('https://www.vivicarvalhoboty.com.br/admin/pedidos');
+const resAdminSub = await middleware(reqAdminSub);
+assertTest('Redirecionamento HTTP 302 preserva sub-rotas de administração (ex: /admin/pedidos)',
+  resAdminSub.status === 302 && (resAdminSub.headers.get('location') || '').includes('/?admin=pedidos'));
+
+const reqCrawler = new Request('https://www.vivicarvalhoboty.com.br/produto/prod-123', {
+  headers: { 'user-agent': 'WhatsApp/2.21.12.21 i' }
+});
+const resCrawler = await middleware(reqCrawler);
+const crawlerHtml = await resCrawler.text();
+assertTest('WhatsApp crawler recebe resposta 200 com metatags dinâmicas Open Graph',
+  resCrawler.status === 200 &&
+  crawlerHtml.includes('og:title') &&
+  crawlerHtml.includes('og:image') &&
+  crawlerHtml.includes('og:description') &&
+  crawlerHtml.includes('twitter:card'));
+
+const reqHuman = new Request('https://www.vivicarvalhoboty.com.br/produto/prod-123', {
+  headers: { 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)' }
+});
+const resHuman = await middleware(reqHuman);
+assertTest('Usuário humano acessando /produto/:id é redirecionado via 302 para SPA sem erro 404',
+  resHuman.status === 302 && (resHuman.headers.get('location') || '').includes('/?p=prod-123'));
+
+// ----------------------------------------------------------------------------
+// 7. RESUMO
 // ----------------------------------------------------------------------------
 console.log('\n=============================================================');
 console.log(`RESUMO DA SUITE E2E:`);

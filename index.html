@@ -3452,7 +3452,7 @@ Esta ação removerá o comentário do banco de dados.`,
       const proxyRes = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey, contents, systemInstruction }),
+        body: JSON.stringify({ apiKey, contents, systemInstruction, model: 'gemini-3.8-flash' }),
         signal: controller.signal
       });
       clearTimeout(timeoutId);

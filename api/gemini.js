@@ -42,10 +42,14 @@ export default async function handler(req, res) {
       Array.isArray(c?.parts) && c.parts.some(p => p.inline_data || p.inlineData)
     );
 
-    // Lista de modelos suportados com fallback em cascata
-    const priorityModels = model
-      ? [model, 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview']
-      : ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3-flash-preview'];
+    // Lista de modelos suportados com fallback em cascata (gemini-3.8-flash prioritário)
+    const priorityModels = [
+      'gemini-3.8-flash',
+      ...(model && model !== 'gemini-3.8-flash' ? [model] : []),
+      'gemini-3.5-flash-lite',
+      'gemini-3.6-flash',
+      'gemini-3-flash-preview'
+    ];
     const modelsToTry = [...new Set(priorityModels)];
 
     let lastError = null;
