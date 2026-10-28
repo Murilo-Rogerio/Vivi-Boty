@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import middleware from '../middleware.js';
+import geminiHandler from '../api/gemini.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -166,6 +167,63 @@ assertTest('Timeout adaptativo para mobile 4G configurado (foto: 35s, texto: 22s
 assertTest('Timeout por modelo configurado no serverless api/gemini.js',
   geminiCode.includes('const timeoutPerModel = hasImage ? 12000 : 9000;'));
 
+// Execução real da cascata de fallback do Gemini
+const originalFetch = globalThis.fetch;
+const modelCalls = [];
+globalThis.fetch = async (url) => {
+  modelCalls.push(url);
+  if (url.includes('gemini-3.8-flash')) {
+    return new Response(JSON.stringify({ error: { message: 'High demand on gemini-3.8-flash' } }), { status: 503 });
+  }
+  return new Response(JSON.stringify({
+    candidates: [{ content: { parts: [{ text: '{"status":"ok","modelo":"fallback"}' }] } }]
+  }), { status: 200 });
+};
+
+let resStatus = 0;
+let resData = null;
+const mockRes = {
+  setHeader: () => {},
+  status: (s) => {
+    resStatus = s;
+    return {
+      json: (d) => { resData = d; return mockRes; },
+      end: () => mockRes
+    };
+  }
+};
+
+await geminiHandler({
+  method: 'POST',
+  body: { apiKey: 'AIzaFakeKey123', contents: [{ parts: [{ text: 'test' }] }] }
+}, mockRes);
+
+globalThis.fetch = originalFetch;
+
+assertTest('Execução real de fallback: gemini-3.8-flash tenta primeiro e cascata para gemini-3.5-flash-lite em 503',
+  modelCalls.length >= 2 &&
+  modelCalls[0].includes('gemini-3.8-flash') &&
+  modelCalls[1].includes('gemini-3.5-flash-lite') &&
+  resStatus === 200 &&
+  resData?.candidates?.[0]?.content?.parts?.[0]?.text?.includes('fallback'));
+
+// Validação de segurança e integridade do endpoint api/gemini.js
+let missingKeyStatus = 0;
+await geminiHandler({ method: 'POST', body: {} }, {
+  setHeader: () => {},
+  status: (s) => { missingKeyStatus = s; return { json: () => {}, end: () => {} }; }
+});
+assertTest('Endpoint /api/gemini rejeita requisições sem chave com HTTP 400 amigável',
+  missingKeyStatus === 400);
+
+let getMethodStatus = 0;
+await geminiHandler({ method: 'GET' }, {
+  setHeader: () => {},
+  status: (s) => { getMethodStatus = s; return { json: () => {}, end: () => {} }; }
+});
+assertTest('Endpoint /api/gemini rejeita métodos não permitidos com HTTP 405',
+  getMethodStatus === 405);
+
 // ----------------------------------------------------------------------------
 // 6. EDGE MIDDLEWARE: CARDS WHATSAPP & REDIRECIONAMENTO /admin SEM TELA PRETA
 // ----------------------------------------------------------------------------
@@ -193,12 +251,47 @@ assertTest('WhatsApp crawler recebe resposta 200 com metatags dinâmicas Open Gr
   crawlerHtml.includes('og:description') &&
   crawlerHtml.includes('twitter:card'));
 
+// Teste de card WhatsApp com metatags dinâmicas para produto em promoção
+const origFetchMid = globalThis.fetch;
+globalThis.fetch = async (url) => {
+  if (url.includes('/rest/v1/products')) {
+    return new Response(JSON.stringify([{
+      nome: 'Elysée Eau de Parfum 50ml',
+      descricao: 'Fragrância feminina sofisticada e marcante.',
+      preco: 229.90,
+      preco_original: 299.90,
+      promocao: true,
+      imagem: 'https://cdn.viviboty.com.br/elysee.jpg'
+    }]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }
+  return origFetchMid(url);
+};
+
+const reqPromoCrawler = new Request('https://www.vivicarvalhoboty.com.br/produto/elysee-50ml', {
+  headers: { 'user-agent': 'WhatsApp/2.21.12.21 i' }
+});
+const resPromoCrawler = await middleware(reqPromoCrawler);
+const promoHtml = await resPromoCrawler.text();
+globalThis.fetch = origFetchMid;
+
+assertTest('WhatsApp crawler renderiza card com título, preço promocional ("De ... por ...") e imagem dinâmica',
+  resPromoCrawler.status === 200 &&
+  promoHtml.includes('Elysée Eau de Parfum 50ml — De R$ 299,90 por R$ 229,90') &&
+  promoHtml.includes('https://cdn.viviboty.com.br/elysee.jpg') &&
+  promoHtml.includes('https://www.vivicarvalhoboty.com.br/?p=elysee-50ml'));
+
 const reqHuman = new Request('https://www.vivicarvalhoboty.com.br/produto/prod-123', {
   headers: { 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)' }
 });
 const resHuman = await middleware(reqHuman);
 assertTest('Usuário humano acessando /produto/:id é redirecionado via 302 para SPA sem erro 404',
   resHuman.status === 302 && (resHuman.headers.get('location') || '').includes('/?p=prod-123'));
+
+assertTest('Cliente SPA processa parâmetro ?admin da rota redirecionada sem tela preta',
+  html.includes("spInitial.has('admin')") && html.includes("targetAdmin = (adminVal && adminVal !== '1') ? `/admin/${adminVal}` : '/admin'"));
+
+assertTest('Cliente SPA processa deep link de produto ?p= ou ?produto= via quickview',
+  html.includes("sp.get('p') || sp.get('produto')") && html.includes("openQuickView(pid)"));
 
 // ----------------------------------------------------------------------------
 // 7. RESUMO
