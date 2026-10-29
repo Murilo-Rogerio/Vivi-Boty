@@ -6,7 +6,7 @@
 [![IA](https://img.shields.io/badge/IA-Google%20Gemini%203.8%20Flash-4285F4?logo=google&style=flat-square)]()
 [![Auditoria](https://img.shields.io/badge/QA%20%26%20Security-Auto--Healer%20(6h)-success?style=flat-square)]()
 [![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&style=flat-square)](https://www.vivicarvalhoboty.com.br/)
-[![Licença](https://img.shields.io/badge/Licen%C3%A7a-MIT-violet?style=flat-square)]()
+[![Licença](https://img.shields.io/badge/Licen%C3%A7a-MIT-violet?style=flat-square)](LICENSE)
 
 Vitrine digital moderna de perfumes, cosméticos e presentes com inteligência artificial para catálogo rápido, funil de vendas zero-friction e fechamento de pedidos direto pelo WhatsApp.
 
