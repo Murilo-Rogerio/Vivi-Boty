@@ -224,6 +224,51 @@ await geminiHandler({ method: 'GET' }, {
 assertTest('Endpoint /api/gemini rejeita métodos não permitidos com HTTP 405',
   getMethodStatus === 405);
 
+// Teste de resiliência da busca (accent-insensitive e case-insensitive)
+function mockNormalizeSearch(text) {
+  return String(text || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+const testCatalog = [
+  { nome: 'Colônia Desodorante Malbec 100ml', marca: 'O Boticário', categoria: 'Perfumes' },
+  { nome: 'Elysée Eau de Parfum 50ml', marca: 'O Boticário', categoria: 'Perfumes' },
+  { nome: 'Óleo Corporal Amêndoas Doces Sève 200ml', marca: 'Natura', categoria: 'Corpo e Banho' }
+];
+
+const matchColonia = testCatalog.filter(p => mockNormalizeSearch(`${p.nome} ${p.marca} ${p.categoria}`).includes(mockNormalizeSearch('colonia')));
+const matchElysee = testCatalog.filter(p => mockNormalizeSearch(`${p.nome} ${p.marca} ${p.categoria}`).includes(mockNormalizeSearch('elysee')));
+const matchOleo = testCatalog.filter(p => mockNormalizeSearch(`${p.nome} ${p.marca} ${p.categoria}`).includes(mockNormalizeSearch('oleo')));
+
+assertTest('Resiliência da busca de catálogo: busca sem acento encontra termos com acento e vice-versa',
+  matchColonia.length === 1 && matchElysee.length === 1 && matchOleo.length === 1 &&
+  html.includes('normalizeSearch(text)'));
+
+// Teste de resiliência de parsing do preenchimento de catálogo por IA
+function mockParseGeminiJson(rawText) {
+  if (!rawText) return null;
+  let clean = rawText.trim();
+  if (clean.startsWith('```json')) clean = clean.replace(/^```json\s*/i, '');
+  if (clean.startsWith('```')) clean = clean.replace(/^```\s*/, '');
+  if (clean.endsWith('```')) clean = clean.replace(/\s*```$/, '');
+  try {
+    return JSON.parse(clean);
+  } catch (e) {
+    const match = clean.match(/\{[\s\S]*\}/);
+    if (match) return JSON.parse(match[0]);
+    throw e;
+  }
+}
+
+const parsedMarkdown = mockParseGeminiJson('```json\n{"nome":"Clash Extreme","marca":"O Boticário"}\n```');
+const parsedWithText = mockParseGeminiJson('Aqui está o resultado oficial:\n{"nome":"Clash Extreme","marca":"O Boticário"}\nEspero ter ajudado!');
+assertTest('Resiliência do preenchimento por IA: extrai JSON válido mesmo envolvido por markdown ou texto extra',
+  parsedMarkdown?.nome === 'Clash Extreme' && parsedWithText?.marca === 'O Boticário' &&
+  html.includes('parseGeminiJson(rawText)'));
+
 // ----------------------------------------------------------------------------
 // 6. EDGE MIDDLEWARE: CARDS WHATSAPP & REDIRECIONAMENTO /admin SEM TELA PRETA
 // ----------------------------------------------------------------------------

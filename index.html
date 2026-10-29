@@ -970,6 +970,14 @@ const A = {
     }
   },
 
+  normalizeSearch(text) {
+    return String(text || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  },
+
   handleHomeSearch(e) {
     e.preventDefault();
     const val = document.getElementById('home-search-input')?.value.trim();
@@ -1750,11 +1758,11 @@ const A = {
   },
 
   getFilteredProds(f = this.catalogFilters()) {
-    const q = (f.q || '').toLowerCase();
+    const q = this.normalizeSearch(f.q);
     let list = this.prods.filter(p => {
       if (p.ativo === false) return false;
       if (q) {
-        const hay = `${p.nome || ''} ${p.marca || ''} ${p.descricao || ''} ${p.categoria || ''}`.toLowerCase();
+        const hay = this.normalizeSearch(`${p.nome || ''} ${p.marca || ''} ${p.descricao || ''} ${p.categoria || ''}`);
         if (!hay.includes(q)) return false;
       }
       if (f.cat && p.categoria !== f.cat) return false;
@@ -4061,7 +4069,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     const avgTicket = totalOrders ? totalOrdersValue / (this.orders.filter(o => o.status !== 'cancelado').length || 1) : 0;
     
     const filter = st.orderFilter || 'all';
-    const search = (st.orderSearch || '').toLowerCase().trim();
+    const search = this.normalizeSearch(st.orderSearch);
 
     let list = (this.orders || []).slice();
     if (filter !== 'all') {
@@ -4069,7 +4077,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     }
     if (search) {
       list = list.filter(o => 
-        `${o.codigo || ''} ${o.cliente_nome || ''} ${o.cliente_bairro || ''} ${o.forma_pagamento || ''}`.toLowerCase().includes(search)
+        this.normalizeSearch(`${o.codigo || ''} ${o.cliente_nome || ''} ${o.cliente_bairro || ''} ${o.forma_pagamento || ''}`).includes(search)
       );
     }
 
@@ -4408,7 +4416,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     const visibleTestim = (this.testimonials || []).filter(t => t.aprovado !== false).length;
     const hiddenTestim = totalTestim - visibleTestim;
     const filter = st.testimFilter || 'all';
-    const search = (st.testimSearch || '').toLowerCase().trim();
+    const search = this.normalizeSearch(st.testimSearch);
 
     let list = (this.testimonials || []).slice();
     if (filter === 'visible') list = list.filter(t => t.aprovado !== false);
@@ -4416,7 +4424,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
     if (search) {
       list = list.filter(t => 
-        `${t.nome || ''} ${t.cidade || ''} ${t.comentario || ''} ${t.produto_mencionado || ''}`.toLowerCase().includes(search)
+        this.normalizeSearch(`${t.nome || ''} ${t.cidade || ''} ${t.comentario || ''} ${t.produto_mencionado || ''}`).includes(search)
       );
     }
 
@@ -4656,8 +4664,8 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
     // Busca por texto
     if (st.search) {
-      const q = st.search.toLowerCase();
-      filtered = filtered.filter(p => `${p.nome} ${p.marca} ${p.categoria}`.toLowerCase().includes(q));
+      const q = this.normalizeSearch(st.search);
+      filtered = filtered.filter(p => this.normalizeSearch(`${p.nome} ${p.marca} ${p.categoria}`).includes(q));
     }
 
     // Ordenação
