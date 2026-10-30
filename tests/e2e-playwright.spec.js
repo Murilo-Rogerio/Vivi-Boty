@@ -27,12 +27,12 @@ test.describe('🛍️ Catálogo, Vitrine & Navegação', () => {
     await searchInput.fill('Malbec');
     await page.getByRole('button', { name: 'Buscar' }).click();
 
-    await expect(page).toHaveURL(/.*#\/produtos\?q=Malbec/);
+    await expect(page).toHaveURL(/.*(\/|#\/)produtos\?q=Malbec/);
     await expect(page.getByRole('heading', { name: /Catálogo de produtos/i })).toBeVisible();
   });
 
   test('deve filtrar por pronta entrega e verificar exibição correta de disponibilidade', async ({ page }) => {
-    await page.goto(`${BASE_URL}/#/produtos`);
+    await page.goto(`${BASE_URL}/produtos`);
     const prontaEntregaChip = page.getByRole('button', { name: /Pronta entrega/i });
     await expect(prontaEntregaChip).toBeVisible();
     await prontaEntregaChip.click();
