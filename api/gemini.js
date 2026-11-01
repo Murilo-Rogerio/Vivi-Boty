@@ -94,7 +94,7 @@ export default async function handler(req, res) {
           lastError = new Error(errMsg);
 
           const isRetryable =
-            response.status === 503 ||
+            response.status >= 500 ||
             response.status === 429 ||
             response.status === 404 ||
             errMsg.toLowerCase().includes('not found') ||
@@ -123,6 +123,7 @@ export default async function handler(req, res) {
           lastError = new Error(`Tempo limite esgotado no modelo ${m}.`);
           continue;
         }
+        console.warn(`Falha na requisição ao modelo ${m} (${err?.message || 'erro de rede'}). Tentando próximo modelo...`);
       }
     }
 
