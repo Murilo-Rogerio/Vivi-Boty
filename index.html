@@ -3523,9 +3523,9 @@ Esta ação removerá o comentário do banco de dados.`,
           const errData = await res.json().catch(() => ({}));
           const msg = errData?.error?.message || `HTTP ${res.status}`;
           const isRetryable =
+            res.status >= 500 ||
             res.status === 404 ||
             res.status === 429 ||
-            res.status === 503 ||
             msg.toLowerCase().includes('not found') ||
             msg.toLowerCase().includes('no longer available') ||
             msg.toLowerCase().includes('deprecated') ||

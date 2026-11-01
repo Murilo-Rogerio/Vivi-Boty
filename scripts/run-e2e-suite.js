@@ -207,6 +207,43 @@ assertTest('Execução real de fallback: gemini-3.8-flash tenta primeiro e casca
   resStatus === 200 &&
   resData?.candidates?.[0]?.content?.parts?.[0]?.text?.includes('fallback'));
 
+// Execução real de fallback em erro HTTP 500 (falha interna transitória do modelo upstream)
+const modelCalls500 = [];
+globalThis.fetch = async (url) => {
+  modelCalls500.push(url);
+  if (url.includes('gemini-3.8-flash')) {
+    return new Response(JSON.stringify({ error: { message: 'Internal error on gemini-3.8-flash' } }), { status: 500 });
+  }
+  return new Response(JSON.stringify({
+    candidates: [{ content: { parts: [{ text: '{"status":"ok","modelo":"fallback-500"}' }] } }]
+  }), { status: 200 });
+};
+
+let resStatus500 = 0;
+let resData500 = null;
+await geminiHandler({
+  method: 'POST',
+  body: { apiKey: 'AIzaFakeKey123', contents: [{ parts: [{ text: 'test-500' }] }] }
+}, {
+  setHeader: () => {},
+  status: (s) => {
+    resStatus500 = s;
+    return {
+      json: (d) => { resData500 = d; },
+      end: () => {}
+    };
+  }
+});
+
+globalThis.fetch = originalFetch;
+
+assertTest('Execução real de fallback: cascata para próximo modelo em caso de erro 500 upstream',
+  modelCalls500.length >= 2 &&
+  modelCalls500[0].includes('gemini-3.8-flash') &&
+  modelCalls500[1].includes('gemini-3.5-flash-lite') &&
+  resStatus500 === 200 &&
+  resData500?.candidates?.[0]?.content?.parts?.[0]?.text?.includes('fallback-500'));
+
 // Validação de segurança e integridade do endpoint api/gemini.js
 let missingKeyStatus = 0;
 await geminiHandler({ method: 'POST', body: {} }, {
