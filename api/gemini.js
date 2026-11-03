@@ -103,7 +103,8 @@ export default async function handler(req, res) {
             errMsg.toLowerCase().includes('high demand') ||
             errMsg.toLowerCase().includes('overloaded') ||
             errMsg.toLowerCase().includes('resource has been exhausted') ||
-            errMsg.toLowerCase().includes('rate limit');
+            errMsg.toLowerCase().includes('rate limit') ||
+            errMsg.toLowerCase().includes('quota');
 
           if (isRetryable) {
             console.warn(`Modelo ${m} temporariamente indisponível ou em alta demanda (${errMsg}). Tentando próximo modelo...`);

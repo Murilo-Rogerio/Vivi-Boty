@@ -295,16 +295,26 @@ function mockParseGeminiJson(rawText) {
     return JSON.parse(clean);
   } catch (e) {
     const match = clean.match(/\{[\s\S]*\}/);
-    if (match) return JSON.parse(match[0]);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (_) {
+        const sanitized = match[0].replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(sanitized);
+      }
+    }
     throw e;
   }
 }
 
 const parsedMarkdown = mockParseGeminiJson('```json\n{"nome":"Clash Extreme","marca":"O Boticário"}\n```');
 const parsedWithText = mockParseGeminiJson('Aqui está o resultado oficial:\n{"nome":"Clash Extreme","marca":"O Boticário"}\nEspero ter ajudado!');
+const parsedTrailingComma = mockParseGeminiJson('```json\n{"nome":"Clash Extreme","marca":"O Boticário",}\n```');
 assertTest('Resiliência do preenchimento por IA: extrai JSON válido mesmo envolvido por markdown ou texto extra',
   parsedMarkdown?.nome === 'Clash Extreme' && parsedWithText?.marca === 'O Boticário' &&
   html.includes('parseGeminiJson(rawText)'));
+assertTest('Resiliência do preenchimento por IA: extrai JSON válido mesmo com vírgula sobressalente (trailing comma)',
+  parsedTrailingComma?.nome === 'Clash Extreme' && parsedTrailingComma?.marca === 'O Boticário');
 
 // ----------------------------------------------------------------------------
 // 6. EDGE MIDDLEWARE: CARDS WHATSAPP & REDIRECIONAMENTO /admin SEM TELA PRETA
