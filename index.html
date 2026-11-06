@@ -51,10 +51,25 @@
   "currenciesAccepted": "BRL",
   "address": {
     "@type": "PostalAddress",
+    "streetAddress": "Rua Major João Fogaça, 232",
     "addressLocality": "Assis",
     "addressRegion": "SP",
     "addressCountry": "BR"
   },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "17:00",
+      "closes": "22:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday", "Sunday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    }
+  ],
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "5.0",
@@ -834,10 +849,23 @@ h1, h2, h3, h4, .font-serif {
         <p class="text-sm text-[#A89C98] leading-relaxed max-w-md">
           Consultoria autorizada de perfumaria e beleza em Assis/SP. Produtos 100% originais e lacrados das marcas O Boticário, Natura e Eudora, com pronta entrega na cidade e consultoria olfativa direta com a Vivi.
         </p>
-        <div class="space-y-1.5 text-xs text-[#8C7D79] pt-1">
-          <p class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-[#C69A55]" aria-hidden="true"></i> Assis - SP e Região (entrega expressa local)</p>
-          <p class="flex items-center gap-2"><i class="fa-solid fa-clock text-[#C69A55]" aria-hidden="true"></i> Segunda a Sábado: 08:30 às 19:00</p>
-          <p class="flex items-center gap-2"><i class="fa-brands fa-whatsapp text-[#25D366]" aria-hidden="true"></i> WhatsApp direto: (18) 99787-1211</p>
+        <div class="space-y-2 text-xs text-[#8C7D79] pt-1">
+          <p class="flex items-start gap-2">
+            <i class="fa-solid fa-location-dot text-[#C69A55] mt-0.5" aria-hidden="true"></i>
+            <span><strong class="text-[#D8CECA]">Endereço:</strong> Rua Major João Fogaça, 232 — Assis / SP</span>
+          </p>
+          <div class="flex items-start gap-2">
+            <i class="fa-solid fa-clock text-[#C69A55] mt-0.5" aria-hidden="true"></i>
+            <div>
+              <p class="font-semibold text-[#D8CECA]">Horários de Atendimento:</p>
+              <p class="text-[#A89C98]">Segunda a Sexta: 17:00 às 22:00</p>
+              <p class="text-[#A89C98]">Sábado e Domingo: 09:00 às 18:00</p>
+            </div>
+          </div>
+          <p class="flex items-center gap-2">
+            <i class="fa-brands fa-whatsapp text-[#25D366]" aria-hidden="true"></i>
+            <span><strong class="text-[#D8CECA]">WhatsApp direto:</strong> (18) 99787-1211</span>
+          </p>
         </div>
         <div class="flex items-center gap-4 text-lg pt-2">
           <a href="https://wa.me/5518997871211" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors" aria-label="WhatsApp da Vivi"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
