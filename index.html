@@ -319,10 +319,11 @@ h1, h2, h3, h4, .font-serif {
   will-change: opacity;
 }
 .drawer-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
-#image-modal-dialog, #testimonial-modal-dialog, #confirm-modal-dialog { will-change: transform, opacity; }
+#image-modal-dialog, #testimonial-modal-dialog, #confirm-modal-dialog, #quiz-modal-dialog { will-change: transform, opacity; }
 #image-modal.open #image-modal-dialog { transform: scale(1); opacity: 1; }
 #testimonial-modal.open #testimonial-modal-dialog { transform: scale(1); opacity: 1; }
 #confirm-modal.open #confirm-modal-dialog { transform: scale(1); opacity: 1; }
+#quiz-modal.open #quiz-modal-dialog { transform: scale(1); opacity: 1; }
 .price-strike {
   text-decoration: line-through;
   text-decoration-color: rgba(229, 62, 62, 0.65);
@@ -399,7 +400,7 @@ h1, h2, h3, h4, .font-serif {
     <span class="opacity-40 hidden sm:inline">•</span>
     <span class="hidden sm:inline"><i class="fa-solid fa-gift text-[#E8A7A1] mr-1" aria-hidden="true"></i> Embalagem de presente inclusa</span>
     <span class="opacity-40 hidden md:inline">•</span>
-    <span class="hidden md:inline"><i class="fa-solid fa-truck-fast text-[#25D366] mr-1" aria-hidden="true"></i> Pronta entrega Assis e região</span>
+    <span class="hidden md:inline"><i class="fa-solid fa-truck-fast text-[#25D366] mr-1" aria-hidden="true"></i> Frete Grátis Assis e Região</span>
   </aside>
 
   <header id="navbar" class="sticky top-0 z-40 glass transition-all duration-300">
@@ -425,11 +426,14 @@ h1, h2, h3, h4, .font-serif {
         <a href="#/" data-link class="nav-link hover:text-[#C69A55] transition-colors">Início</a>
         <a href="#/produtos" data-link class="nav-link hover:text-[#C69A55] transition-colors">Catálogo</a>
         <a href="#/produtos?destaque=1" data-link class="nav-link hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#A97E3B]">
-          <i class="fa-solid fa-sparkles text-xs" aria-hidden="true"></i> Destaques em Oferta
+          <i class="fa-solid fa-sparkles text-xs" aria-hidden="true"></i> Destaques
         </a>
         <a href="#/produtos?promo=1" data-link class="nav-link hover:text-[#E53E3E] transition-colors flex items-center gap-1.5 text-[#E53E3E]">
           <i class="fa-solid fa-fire text-xs" aria-hidden="true"></i> Promoções
         </a>
+        <button type="button" onclick="A.openQuizModal()" class="nav-link hover:text-[#C69A55] transition-colors flex items-center gap-1.5 text-[#241A1B] font-bold">
+          <i class="fa-solid fa-spray-can-sparkles text-[#C69A55] text-xs" aria-hidden="true"></i> Consultoria Olfativa
+        </button>
       </nav>
 
       <div class="flex items-center gap-2 sm:gap-3">
@@ -472,22 +476,33 @@ h1, h2, h3, h4, .font-serif {
 
     <!-- ÁREA ROLÁVEL COM OS PRODUTOS E AS OPÇÕES DE ENTREGA/PRESENTE -->
     <div id="cart-scroll-area" class="flex-1 overflow-y-auto overscroll-contain">
-      <!-- BENEFÍCIO: ENTREGA GRÁTIS EM TODA ASSIS/SP -->
-      <div id="cart-delivery-badge" class="px-4 py-2 bg-gradient-to-r from-emerald-50 via-[#F0FDF4] to-[#FAF4F0] border-b border-[#F0E3DC] flex items-center gap-2.5 text-xs">
-        <div class="w-7 h-7 rounded-full bg-emerald-100 text-[#1D8A58] flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-truck-fast text-[11px]" aria-hidden="true"></i>
+      <!-- DESTAQUE EXCLUSIVO: FRETE GRÁTIS PARA ASSIS E REGIÃO -->
+      <div id="cart-delivery-badge" class="px-4 py-3 bg-gradient-to-r from-emerald-50 via-[#F0FDF4] to-[#FAF4F0] border-b border-[#F0E3DC] flex items-center gap-3 text-xs">
+        <div class="w-9 h-9 rounded-2xl bg-emerald-100 text-[#1D8A58] flex items-center justify-center shrink-0 shadow-sm border border-emerald-200">
+          <i class="fa-solid fa-truck-fast text-sm" aria-hidden="true"></i>
         </div>
         <div class="min-w-0 flex-1">
-          <p class="font-bold text-[#1D8A58] text-[11px] leading-tight flex items-center gap-1.5">
-            <span>Entrega Grátis em toda Assis/SP</span>
-            <span class="text-[9px] px-1.5 py-0.5 bg-emerald-200/80 text-emerald-900 rounded font-semibold uppercase">Cortesia</span>
-          </p>
-          <p class="text-[10px] text-[#826F70] leading-tight mt-0.5">Sem valor mínimo • Levamos até você com todo carinho</p>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-[#1D8A58] text-xs leading-tight">Frete Grátis para Assis e Região</span>
+            <span class="text-[9px] px-2 py-0.5 bg-emerald-600 text-white rounded-full font-bold uppercase tracking-wider shadow-xs">Garantido</span>
+          </div>
+          <p class="text-[11px] text-[#61746B] leading-tight mt-0.5">Entrega expressa sem custo adicional levada direto pela consultora Vivi</p>
         </div>
       </div>
 
       <!-- Lista de Itens da Sacola -->
       <div id="cart-items-container" class="p-4 sm:p-5 space-y-3"></div>
+
+      <!-- ORDER BUMP: COMPRE JUNTO COM 1 CLIQUE -->
+      <div id="cart-order-bump" class="hidden mx-4 sm:mx-5 my-2 p-3 rounded-2xl bg-[#FFF9F6] border border-[#F0E3DC] space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-[#A97E3B] flex items-center gap-1.5">
+            <i class="fa-solid fa-sparkles text-[#C69A55]" aria-hidden="true"></i> Aproveite e leve junto:
+          </span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold uppercase">Mais Vendido</span>
+        </div>
+        <div id="order-bump-content" class="flex items-center justify-between gap-3"></div>
+      </div>
 
       <!-- Dados de Entrega e Opções: rolam naturalmente sob os produtos sem cobri-los -->
       <div id="cart-customization-section" class="px-4 sm:px-5 pb-5 pt-2 space-y-3 border-t border-[#F0E3DC]/70">
@@ -532,7 +547,7 @@ h1, h2, h3, h4, .font-serif {
       </div>
     </div>
 
-    <!-- RODAPÉ FIXO MINIMALISTA: TOTAL + BOTÃO WHATSAPP -->
+    <!-- RODAPÉ FIXO: TOTAL + FRETE GRÁTIS + BOTÃO WHATSAPP -->
     <div id="cart-footer-container" class="p-3.5 sm:p-4 border-t border-[#F0E3DC] bg-[#FCF9F7] shrink-0 space-y-2">
       <div id="cart-savings-box" class="hidden mb-1.5 p-2 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-between text-xs">
         <span class="font-semibold text-[#1D8A58] flex items-center gap-1 text-[11px]">
@@ -540,8 +555,18 @@ h1, h2, h3, h4, .font-serif {
         </span>
         <span id="cart-savings-value" class="font-bold text-[#1D8A58] text-xs">- R$ 0,00</span>
       </div>
-      <div class="flex justify-between items-baseline">
-        <span class="text-xs font-semibold text-[#826F70]">Total com desconto:</span>
+      <div class="space-y-1 py-1.5 border-b border-[#F0E3DC]/70">
+        <div class="flex justify-between items-center text-xs text-[#826F70]">
+          <span>Subtotal dos produtos:</span>
+          <span id="cart-subtotal-price" class="font-medium text-[#241A1B]">R$ 0,00</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-[#826F70] flex items-center gap-1.5 font-medium"><i class="fa-solid fa-truck-fast text-[#1D8A58]" aria-hidden="true"></i> Frete (Assis e Região):</span>
+          <span class="font-bold text-[#1D8A58] uppercase text-[11px] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">Grátis</span>
+        </div>
+      </div>
+      <div class="flex justify-between items-baseline pt-0.5">
+        <span class="text-xs font-semibold text-[#826F70]">Total a pagar:</span>
         <div class="text-right">
           <span id="cart-original-total" class="text-xs text-[#AA999A] price-strike mr-1.5 hidden">R$ 0,00</span>
           <span id="cart-total-price" class="font-serif font-bold text-xl text-[#1D8A58]">R$ 0,00</span>
@@ -551,9 +576,14 @@ h1, h2, h3, h4, .font-serif {
         <i class="fa-brands fa-whatsapp text-lg" aria-hidden="true"></i>
         <span>Finalizar pedido no WhatsApp</span>
       </button>
-      <button type="button" onclick="A.clearCart()" class="w-full text-center text-[11px] font-medium text-[#826F70] hover:text-[#E53E3E] transition-colors py-0.5">
-        Esvaziar sacola
-      </button>
+      <div class="flex items-center justify-between gap-2 pt-0.5">
+        <button type="button" onclick="A.shareCart()" class="text-xs font-semibold text-[#A97E3B] hover:text-[#241A1B] flex items-center gap-1.5 py-0.5 transition-colors">
+          <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Enviar sacola para alguém pagar
+        </button>
+        <button type="button" onclick="A.clearCart()" class="text-right text-[11px] font-medium text-[#826F70] hover:text-[#E53E3E] transition-colors py-0.5">
+          Esvaziar sacola
+        </button>
+      </div>
     </div>
   </aside>
 
@@ -693,6 +723,60 @@ h1, h2, h3, h4, .font-serif {
     </div>
   </div>
 
+  <!-- Modal do Quiz Consultoria Olfativa Express da Vivi -->
+  <div id="quiz-modal" class="drawer-overlay fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" onclick="A.closeQuizModal()" role="dialog" aria-modal="true" aria-labelledby="quiz-modal-title">
+    <div id="quiz-modal-dialog" class="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-[#F0E3DC] flex flex-col relative transition-all duration-300 scale-95 opacity-0" onclick="event.stopPropagation()">
+      <div class="px-6 py-4 border-b border-[#F0E3DC] flex items-center justify-between bg-gradient-to-r from-[#FAF4F0] via-[#FCF9F7] to-[#FAF4F0]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center text-lg shadow-sm border border-[#F0E3DC]">
+            <i class="fa-solid fa-spray-can-sparkles text-[#C69A55]" aria-hidden="true"></i>
+          </div>
+          <div>
+            <h3 id="quiz-modal-title" class="font-serif font-bold text-lg text-[#241A1B] leading-tight">Consultoria de Fragrâncias • Vivi Carvalho</h3>
+            <p class="text-xs text-[#826F70]">Descubra a combinação olfativa ideal para você ou para presentear</p>
+          </div>
+        </div>
+        <button type="button" onclick="A.closeQuizModal()" class="w-9 h-9 rounded-full bg-white border border-[#F0E3DC] text-[#826F70] hover:text-[#241A1B] flex items-center justify-center transition-colors" aria-label="Fechar Quiz">
+          <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div id="quiz-content" class="p-6 space-y-6"></div>
+    </div>
+  </div>
+
+  <!-- Notificação Flutuante de Prova Social em Tempo Real (Live Social Proof) -->
+  <div id="live-social-proof" class="fixed bottom-20 md:bottom-8 left-4 z-40 max-w-xs sm:max-w-sm bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-xl rounded-2xl p-3 flex items-center gap-3 transition-all duration-500 opacity-0 translate-y-6 pointer-events-none" role="status" aria-live="polite">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FAF0EB] to-[#F5E6DC] text-[#A97E3B] flex items-center justify-center text-sm shrink-0 border border-[#F0E3DC]">
+      <i class="fa-solid fa-bag-shopping text-[#C69A55]" id="lsp-icon" aria-hidden="true"></i>
+    </div>
+    <div class="min-w-0 flex-1">
+      <p id="lsp-text" class="text-xs text-[#241A1B] font-semibold leading-snug"></p>
+      <span id="lsp-time" class="text-[10px] text-[#826F70] flex items-center gap-1 mt-0.5"><i class="fa-solid fa-circle-check text-emerald-600 text-[9px]" aria-hidden="true"></i> Pedido verificado • Assis/SP</span>
+    </div>
+    <button type="button" onclick="A.closeSocialProof()" class="text-[#AA999A] hover:text-[#241A1B] text-xs p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg" aria-label="Fechar notificação">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Barra Flutuante de Compra Rápida no Mobile (Sticky Bottom Buy Bar) -->
+  <div id="sticky-buy-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-[#F0E3DC] p-3 flex items-center justify-between gap-3 shadow-2xl transition-all duration-300 translate-y-full opacity-0 pointer-events-none md:hidden">
+    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+      <img id="sticky-buy-img" src="" alt="Produto selecionado" class="w-10 h-10 rounded-xl object-cover border border-[#F0E3DC] shrink-0 bg-[#FAF4F0]">
+      <div class="min-w-0">
+        <p id="sticky-buy-name" class="font-bold text-xs text-[#241A1B] truncate"></p>
+        <p id="sticky-buy-price" class="font-serif font-bold text-xs text-[#1D8A58]"></p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button type="button" id="sticky-buy-cart-btn" class="h-9 px-3 rounded-xl bg-[#241A1B] text-white text-xs font-bold active:scale-95 flex items-center gap-1.5" aria-label="Adicionar produto à sacola">
+        <i class="fa-solid fa-bag-shopping text-xs text-[#C69A55]" aria-hidden="true"></i> <span>Sacola</span>
+      </button>
+      <button type="button" id="sticky-buy-wa-btn" class="h-9 px-3 rounded-xl bg-[#25D366] text-white text-xs font-bold active:scale-95 flex items-center gap-1.5" aria-label="Pedir produto no WhatsApp">
+        <i class="fa-brands fa-whatsapp text-sm" aria-hidden="true"></i> <span>Pedir</span>
+      </button>
+    </div>
+  </div>
+
     <!-- BOTÃO FLUTUANTE VOLTAR AO TOPO -->
   <button id="back-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo da página" class="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-8 left-4 z-40 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md border border-[#F0E3DC] shadow-md text-[#A97E3B] hover:text-[#C69A55] hover:border-[#DBC3B7] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center opacity-0 pointer-events-none translate-y-4">
     <i class="fa-solid fa-arrow-up text-xs" aria-hidden="true"></i>
@@ -748,28 +832,33 @@ h1, h2, h3, h4, .font-serif {
           <span class="font-serif font-bold text-2xl text-white">Vivi Carvalho Boty</span>
         </div>
         <p class="text-sm text-[#A89C98] leading-relaxed max-w-md">
-          Consultora de beleza e bem-estar. Seleção de fragrâncias, cosméticos e kits para presente, com agilidade e carinho no atendimento.
+          Consultoria autorizada de perfumaria e beleza em Assis/SP. Produtos 100% originais e lacrados das marcas O Boticário, Natura e Eudora, com pronta entrega na cidade e consultoria olfativa direta com a Vivi.
         </p>
+        <div class="space-y-1.5 text-xs text-[#8C7D79] pt-1">
+          <p class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-[#C69A55]" aria-hidden="true"></i> Assis - SP e Região (entrega expressa local)</p>
+          <p class="flex items-center gap-2"><i class="fa-solid fa-clock text-[#C69A55]" aria-hidden="true"></i> Segunda a Sábado: 08:30 às 19:00</p>
+          <p class="flex items-center gap-2"><i class="fa-brands fa-whatsapp text-[#25D366]" aria-hidden="true"></i> WhatsApp direto: (18) 99787-1211</p>
+        </div>
         <div class="flex items-center gap-4 text-lg pt-2">
-          <a href="https://wa.me/5518997871211" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
-          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors" aria-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
+          <a href="https://wa.me/5518997871211" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#25D366] text-white flex items-center justify-center transition-colors" aria-label="WhatsApp da Vivi"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61591208489955" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1877F2] text-white flex items-center justify-center transition-colors" aria-label="Facebook da Vivi"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
         </div>
       </div>
       <div class="space-y-3">
-        <h4 class="font-serif font-bold text-white tracking-wide">Marcas</h4>
+        <h4 class="font-serif font-bold text-white tracking-wide">Marcas Originais</h4>
         <ul class="text-sm space-y-2 text-[#A89C98]">
           <li><a href="#/produtos?marca=O%20Botic%C3%A1rio" data-link class="hover:text-[#D4A864] transition-colors">O Boticário</a></li>
           <li><a href="#/produtos?marca=Natura" data-link class="hover:text-[#D4A864] transition-colors">Natura</a></li>
           <li><a href="#/produtos?marca=Eudora" data-link class="hover:text-[#D4A864] transition-colors">Eudora</a></li>
-          <li><span class="text-xs text-[#706461]">100% originais e lacrados</span></li>
+          <li><span class="text-xs text-[#706461]">100% lacrados de fábrica</span></li>
         </ul>
       </div>
       <div class="space-y-3">
-        <h4 class="font-serif font-bold text-white tracking-wide">Como funciona</h4>
+        <h4 class="font-serif font-bold text-white tracking-wide">Pagamento & Entrega</h4>
         <div class="text-xs text-[#A89C98] space-y-2 leading-relaxed">
-          <p><strong>1. Escolha:</strong> navegue e monte a sacola.</p>
-          <p><strong>2. WhatsApp:</strong> envie o orçamento com um toque.</p>
-          <p><strong>3. Receba:</strong> a Vivi confirma entrega e disponibilidade.</p>
+          <p><strong>Pix:</strong> Confirmação imediata e desconto à vista.</p>
+          <p><strong>Cartão na Entrega:</strong> Levamos a maquininha até você em Assis (Crédito ou Débito).</p>
+          <p><strong>Embalagem:</strong> Sacola oficial e laço de presente inclusos.</p>
         </div>
       </div>
     </div>
@@ -831,6 +920,12 @@ const A = {
   },
   settingsLoaded: false,
   detailQty: 1,
+  quizState: {
+    step: 1,
+    target: '',
+    mood: '',
+    budget: ''
+  },
   _confirmResolver: null,
   _virtualPath: null,
   _virtualSearch: '',
@@ -1008,6 +1103,7 @@ const A = {
     this.updateCartUI();
     this.updateFavUI();
     this.showWhatsAppTooltip();
+    this.initSocialProof();
     this.handleRoute();
   },
 
@@ -1067,6 +1163,7 @@ const A = {
       this.closeImageModal();
       this.closeTestimonialModal();
       this.closeConfirmModal(false);
+      this.closeQuizModal();
     });
   },
 
@@ -1111,6 +1208,40 @@ const A = {
         this.ensureProds().then(() => {
           if (this.pmap && this.pmap[pid]) {
             setTimeout(() => this.openQuickView(pid), 200);
+          }
+        });
+      }
+      if (sp.has('quiz')) {
+        setTimeout(() => this.openQuizModal(), 250);
+      }
+      if (sp.has('bag')) {
+        const bagData = sp.get('bag');
+        this.ensureProds().then(() => {
+          try {
+            const parts = bagData.split(',');
+            let addedCount = 0;
+            parts.forEach(part => {
+              const [rawId, qStr] = part.split(':');
+              const safeId = this.safeId(rawId);
+              const q = Math.max(1, Math.min(20, parseInt(qStr, 10) || 1));
+              const p = this.pmap[safeId];
+              if (p) {
+                const existing = this.cart.find(i => String(i.id) === safeId);
+                if (existing) {
+                  existing.q = Math.min(20, existing.q + q);
+                } else {
+                  this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, marca: p.marca || '', img: p.imagem, imagem: p.imagem, q });
+                }
+                addedCount++;
+              }
+            });
+            if (addedCount > 0) {
+              this.saveCart();
+              this.showToast('🛍️ Sacola compartilhada carregada com sucesso!', 'success');
+              setTimeout(() => this.toggleCart(true), 350);
+            }
+          } catch (e) {
+            console.warn('Erro ao restaurar sacola compartilhada:', e);
           }
         });
       }
@@ -1303,12 +1434,17 @@ const A = {
     </div>`;
   },
 
+  retryFetch() {
+    this.lastFetch = 0;
+    this.renderPage();
+  },
+
   errorHtml(msg) {
     return `<div class="page-anim text-center py-24 px-4">
       <div class="w-16 h-16 rounded-full bg-[#FAF0EB] text-[#A97E3B] flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-wifi"></i></div>
       <h2 class="font-serif font-bold text-2xl mb-2">Não foi possível carregar o catálogo</h2>
       <p class="text-sm text-[#826F70] mb-6">${this.escape(msg || 'Verifique sua conexão e tente novamente.')}</p>
-      <button type="button" onclick="A.lastFetch=0;A.renderPage()" class="btn-gold">Tentar novamente</button>
+      <button type="button" onclick="A.retryFetch()" class="btn-gold">Tentar novamente</button>
     </div>`;
   },
 
@@ -1356,7 +1492,7 @@ const A = {
       <div class="page-anim text-center py-24 px-4">
         <p class="text-sm font-bold tracking-widest text-[#A97E3B] mb-2">404</p>
         <h1 class="font-serif font-bold text-3xl mb-3">Essa página não existe</h1>
-        <p class="text-[#826F70] mb-6">Que tal voltar ao catálogo e escolher um mimo?</p>
+        <p class="text-[#826F70] mb-6">Que tal voltar ao catálogo e escolher um presente ou fragrância?</p>
         <a href="#/produtos" data-link class="btn-gold">Ver catálogo</a>
       </div>`;
   },
@@ -1390,11 +1526,11 @@ const A = {
               </div>
 
               <h1 class="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#241A1B] leading-[1.15] tracking-tight">
-                Beleza original com o carinho do atendimento <span class="italic text-[#A97E3B]">personalizado</span>.
+                Perfumaria e cosméticos originais em Assis com a consultora <span class="italic text-[#A97E3B]">Vivi Carvalho</span>.
               </h1>
 
               <p class="text-base sm:text-lg text-[#826F70] leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Fragrâncias consagradas, cuidados corporais e kits prontos para presentear. Escolha seus favoritos e feche direto no WhatsApp com a Vivi — rápido, seguro e sem cadastro.
+                O Boticário, Natura e Eudora a pronta entrega com frete cortesia em toda Assis/SP. Escolha seus produtos com calma na sacola e combine a entrega direto no WhatsApp.
               </p>
 
               <!-- BARRA DE BUSCA RÁPIDA NA HOME -->
@@ -1433,7 +1569,7 @@ const A = {
                   <p class="text-[11px] text-[#826F70] font-medium leading-tight">Originais & lacrados</p>
                 </div>
                 <div>
-                  <p class="font-serif font-bold text-lg text-[#241A1B]">Pronta Entrega</p>
+                  <p class="font-serif font-bold text-lg text-[#1D8A58]">Frete Grátis</p>
                   <p class="text-[11px] text-[#826F70] font-medium leading-tight">Assis/SP & Região</p>
                 </div>
                 <div>
@@ -1469,15 +1605,33 @@ const A = {
         <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             ${[
-              ['fa-solid fa-truck-fast','#FBF4E8','#A97E3B','Pronta entrega','Envio ágil e cuidadoso'],
-              ['fa-solid fa-gift','#FCE7F3','#9D174D','Para presentear','Kits com sacolas lindas'],
-              ['fa-brands fa-whatsapp','#DCFCE7','#1D8A58','Sem cadastro','Compra direto no chat'],
-              ['fa-solid fa-shield-halved','#FEF3C7','#D97706','Garantia real','Marcas oficiais']
+              ['fa-solid fa-truck-fast','#DCFCE7','#1D8A58','Frete Grátis Assis e Região','Entrega expressa sem custo adicional'],
+              ['fa-solid fa-gift','#FCE7F3','#9D174D','Embalagem de presente','Sacola oficial, laço e papel de seda'],
+              ['fa-brands fa-whatsapp','#DCFCE7','#1D8A58','Atendimento direto','Sem senhas: fale direto com a Vivi'],
+              ['fa-solid fa-certificate','#FEF3C7','#D97706','100% Originais','Lotes novos e lacrados de fábrica']
             ].map(([icon,bg,color,t,s]) => `
               <div class="bg-white p-5 rounded-2xl border border-[#F0E3DC] shadow-sm flex items-center gap-3.5">
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0" style="background:${bg};color:${color}"><i class="${icon}" aria-hidden="true"></i></div>
                 <div><p class="font-bold text-sm">${t}</p><p class="text-xs text-[#826F70]">${s}</p></div>
               </div>`).join('')}
+          </div>
+        </section>
+
+        <!-- BANNER DE CONSULTORIA EXPRESS / QUIZ INTERATIVO -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
+          <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#241A1B] via-[#382628] to-[#241A1B] text-white p-6 sm:p-8 shadow-xl border border-[#C69A55]/30 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-2 text-center md:text-left">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C69A55]/20 border border-[#C69A55]/40 text-[#EACCA4] text-xs font-bold">
+                <i class="fa-solid fa-spray-can-sparkles text-[#C69A55]" aria-hidden="true"></i> Consultoria de Fragrâncias da Vivi
+              </div>
+              <h3 class="font-serif font-bold text-2xl sm:text-3xl text-white">Na dúvida de qual perfume ou presente escolher?</h3>
+              <p class="text-xs sm:text-sm text-[#D8CECA] max-w-xl">
+                Responda 3 perguntinhas rápidas sobre seu estilo e receba indicações certeiras da nossa seleção a pronta entrega!
+              </p>
+            </div>
+            <button type="button" onclick="A.openQuizModal()" class="btn-gold py-3.5 px-7 shadow-lg shrink-0 flex items-center gap-2.5 text-xs sm:text-sm font-bold active:scale-95" aria-label="Abrir Consultoria de Fragrâncias">
+              <i class="fa-solid fa-spray-can-sparkles" aria-hidden="true"></i> Encontrar Minha Fragrância Ideal
+            </button>
           </div>
         </section>
 
@@ -1489,7 +1643,7 @@ const A = {
               <h2 class="text-2xl font-serif font-bold mt-0.5">Compre por categoria ou orçamento</h2>
             </div>
             <div class="flex flex-wrap items-center gap-2 text-xs">
-              <a href="#/produtos?max=60" data-link class="px-3 py-1.5 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] font-semibold text-[#241A1B] transition-colors">💝 Mimos até R$ 60</a>
+              <a href="#/produtos?max=60" data-link class="px-3 py-1.5 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] font-semibold text-[#241A1B] transition-colors">🎁 Presentes até R$ 60</a>
               <a href="#/produtos?min=60&max=130" data-link class="px-3 py-1.5 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] font-semibold text-[#241A1B] transition-colors">🎁 De R$ 60 a R$ 130</a>
               <a href="#/produtos?min=130" data-link class="px-3 py-1.5 rounded-full bg-white border border-[#F0E3DC] hover:border-[#C69A55] font-semibold text-[#241A1B] transition-colors">✨ Perfumaria Premium</a>
             </div>
@@ -1530,15 +1684,20 @@ const A = {
         ${promos.length ? `
           <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
             <div class="p-6 sm:p-10 rounded-3xl bg-gradient-to-r from-[#FFF5F5] via-[#FFF8F6] to-[#FAF0EB] border border-[#FEE2E2]">
-              <div class="flex items-center justify-between mb-6 gap-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
                 <div class="flex items-center gap-3">
                   <span class="w-10 h-10 rounded-full bg-[#E53E3E] text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-fire" aria-hidden="true"></i></span>
                   <div>
-                    <h2 class="font-serif font-bold text-xl sm:text-2xl">Ofertas relâmpago & queima de estoque</h2>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <h2 class="font-serif font-bold text-xl sm:text-2xl">Ofertas relâmpago & queima de estoque</h2>
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 text-[11px] font-bold">
+                        <i class="fa-regular fa-clock" aria-hidden="true"></i> Encerra em: <span id="flash-countdown-timer">00h 00m 00s</span>
+                      </span>
+                    </div>
                     <p class="text-xs sm:text-sm text-[#826F70]">Preços reduzidos enquanto durarem as unidades a pronta entrega</p>
                   </div>
                 </div>
-                <a href="#/produtos?promo=1" data-link class="btn-secondary text-xs sm:text-sm">Ver todas</a>
+                <a href="#/produtos?promo=1" data-link class="btn-secondary text-xs sm:text-sm self-start sm:self-auto">Ver todas</a>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">${promos.map(p => this.renderCard(p, true)).join('')}</div>
             </div>
@@ -1585,19 +1744,25 @@ const A = {
 
         <!-- DÚVIDAS FREQUENTES -->
         <section class="max-w-3xl mx-auto px-4 sm:px-6 pb-20">
-          <h2 class="text-2xl font-serif font-bold mb-6 text-center">Dúvidas frequentes</h2>
+          <div class="text-center mb-8">
+            <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Tire suas dúvidas</span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-[#241A1B] mt-1">Como funciona comprar na Vivi Boty</h2>
+          </div>
           <div class="space-y-3">
             ${[
-              ['Os produtos são originais?', 'Sim. Tudo é original, lacrado e das marcas oficiais O Boticário, Natura e Eudora.'],
-              ['Como faço o pedido?', 'Adicione os itens na sacola e toque em finalizar. O WhatsApp abre com o orçamento pronto para a Vivi confirmar.'],
-              ['Posso pedir embalagem de presente?', 'Pode. Marque a opção na sacola ou avise no chat que é para presente.']
-            ].map(([q,a]) => `<details class="faq-item bg-white border border-[#F0E3DC] rounded-2xl p-4">
-              <summary class="cursor-pointer font-semibold text-sm flex items-center justify-between">${q}<i class="fa-solid fa-chevron-down text-xs text-[#AA999A] transition-transform" aria-hidden="true"></i></summary>
-              <p class="text-sm text-[#826F70] mt-3 leading-relaxed">${a}</p>
+              ['Como funciona a entrega em Assis/SP e cidades vizinhas?', 'Fazemos entrega com frete cortesia em todos os bairros de Assis/SP, sem valor mínimo de pedido. Para cidades vizinhas como Cândido Mota, Tarumã e Palmital, combinamos o envio ágil no WhatsApp. Você também pode combinar para retirar se preferir!'],
+              ['Os perfumes e cosméticos são originais e lacrados?', 'Sim, 100%! A Vivi é consultora cadastrada e oficial das marcas O Boticário, Natura e Eudora. Todos os produtos vêm com lote, validade em dia e embalagem original lacrada de fábrica diretamente das distribuidoras.'],
+              ['Quais são as formas de pagamento aceitas?', 'O pagamento é feito com total comodidade: Pix (com confirmação na hora), Cartão de Crédito ou Débito na maquininha móvel na entrega (com opção de parcelamento), ou em dinheiro com troco.'],
+              ['Posso pedir para entregar embalado para presente com cartão?', 'Com certeza! Preparamos a sacola oficial da marca com papel de seda perfumado, laço de cetim e podemos incluir um cartãozinho com a mensagem que você desejar. Basta marcar a opção de presente na sacola ou nos avisar no WhatsApp.'],
+              ['Preciso fazer cadastro ou criar senha no site?', 'Não precisa de nenhum cadastro demorado. Você navega pelo catálogo, adiciona o que quiser na sacola e clica em finalizar: seu pedido abre pronto e formatado no WhatsApp direto com a Vivi. Rápido, seguro e sem complicação!']
+            ].map(([q,a]) => `<details class="faq-item bg-white border border-[#F0E3DC] rounded-2xl p-4 sm:p-5 shadow-xs">
+              <summary class="cursor-pointer font-bold text-sm text-[#241A1B] flex items-center justify-between">${q}<i class="fa-solid fa-chevron-down text-xs text-[#AA999A] transition-transform" aria-hidden="true"></i></summary>
+              <p class="text-xs sm:text-sm text-[#826F70] mt-3 leading-relaxed">${a}</p>
             </details>`).join('')}
           </div>
         </section>
       </div>`;
+    this.startFlashTimer();
   },
 
   catalogFilters() {
@@ -1670,6 +1835,7 @@ const A = {
         </div>
 
         <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-3">
+          <button type="button" onclick="A.openQuizModal()" class="filter-chip bg-[#FAF0EB] text-[#A97E3B] border-[#C69A55]/40 hover:bg-[#C69A55] hover:text-white transition-all font-bold shrink-0" aria-label="Abrir Quiz de Fragrâncias"><i class="fa-solid fa-wand-magic-sparkles text-[#C69A55]" aria-hidden="true"></i> Quiz Perfumes</button>
           <button type="button" onclick="A.setCatalogFilters({cat:'',promo:false,destaque:false,ready:false,min:0,max:0})" class="filter-chip ${!f.cat && !f.promo && !f.destaque && !f.ready && !f.min && !f.max ? 'active' : ''}">Todos</button>
           <button type="button" onclick="A.setCatalogFilters({promo:!A.catalogFilters().promo,cat:''})" class="filter-chip ${f.promo ? 'active' : ''}"><i class="fa-solid fa-tag text-[#E53E3E]" aria-hidden="true"></i> Promoções</button>
           <button type="button" onclick="A.setCatalogFilters({destaque:!A.catalogFilters().destaque})" class="filter-chip ${f.destaque ? 'active' : ''}"><i class="fa-solid fa-sparkles text-[#C69A55]" aria-hidden="true"></i> Destaques (-% OFF)</button>
@@ -2011,6 +2177,7 @@ const A = {
         </div>
         ${related.length ? `<div class="mt-4"><h2 class="font-serif font-bold text-2xl mb-6">Você também pode gostar</h2><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">${related.map(r => this.renderCard(r)).join('')}</div></div>` : ''}
       </div>`;
+    this.setupStickyBuyBar(p, pr);
   },
 
   setDialogOpen(ids, open) {
@@ -2024,8 +2191,339 @@ const A = {
   },
 
   anyDialogOpen() {
-    return ['cart-drawer', 'quickview-overlay', 'fav-overlay', 'image-modal', 'testimonial-modal', 'confirm-modal']
+    return ['cart-drawer', 'quickview-overlay', 'fav-overlay', 'image-modal', 'testimonial-modal', 'confirm-modal', 'quiz-modal']
       .some(id => document.getElementById(id)?.classList.contains('open'));
+  },
+
+  playChime(type = 'add') {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const createTone = (freq, start, duration, toneType = 'sine', maxGain = 0.05) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = toneType;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(maxGain, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + duration + 0.05);
+      };
+      if (type === 'add') {
+        createTone(659.25, now, 0.18, 'sine', 0.04);
+        createTone(880.00, now + 0.06, 0.22, 'sine', 0.04);
+      } else if (type === 'success' || type === 'celebrate') {
+        createTone(523.25, now, 0.15, 'triangle', 0.05);
+        createTone(659.25, now + 0.08, 0.18, 'triangle', 0.05);
+        createTone(783.99, now + 0.16, 0.26, 'triangle', 0.05);
+      }
+      setTimeout(() => ctx.close().catch(() => {}), 700);
+    } catch {}
+  },
+
+  openQuizModal() {
+    this.quizState = { step: 1, target: '', mood: '', budget: '' };
+    this.renderQuizContent();
+    this.setDialogOpen(['quiz-modal'], true);
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeQuizModal() {
+    this.setDialogOpen(['quiz-modal'], false);
+    if (!this.anyDialogOpen()) document.body.style.overflow = '';
+  },
+
+  selectQuizOption(step, val) {
+    if (step === 1) {
+      this.quizState.target = val;
+      this.quizState.step = 2;
+    } else if (step === 2) {
+      this.quizState.mood = val;
+      this.quizState.step = 3;
+    } else if (step === 3) {
+      this.quizState.budget = val;
+      this.quizState.step = 4;
+    }
+    this.playChime('add');
+    this.renderQuizContent();
+  },
+
+  restartQuiz() {
+    this.quizState = { step: 1, target: '', mood: '', budget: '' };
+    this.renderQuizContent();
+  },
+
+  prevQuizStep() {
+    if (this.quizState.step > 1) {
+      this.quizState.step--;
+      this.renderQuizContent();
+    }
+  },
+
+  renderQuizContent() {
+    const container = document.getElementById('quiz-content');
+    if (!container) return;
+    const { step, target, mood, budget } = this.quizState;
+
+    if (step === 1) {
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between text-xs text-[#826F70] font-semibold">
+            <span>Passo 1 de 3</span>
+            <span class="text-[#A97E3B]">33% concluído</span>
+          </div>
+          <div class="w-full bg-[#EADDD5] h-1.5 rounded-full overflow-hidden">
+            <div class="h-full bg-[#C69A55] rounded-full transition-all duration-300" style="width: 33%"></div>
+          </div>
+          <h4 class="font-serif font-bold text-lg text-[#241A1B]">Para quem é essa escolha especial?</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button type="button" onclick="A.selectQuizOption(1, 'feminino')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">🌸</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Para mim (Feminino)</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Fragrâncias florais, doces e corporais</p>
+              </div>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(1, 'masculino')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">💼</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Para mim (Masculino)</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Amadeirados, frescos e marcantes</p>
+              </div>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(1, 'presente_ela')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">🎀</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Presente para Ela</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Kits encantadores e perfumes clássicos</p>
+              </div>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(1, 'presente_ele')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">🎁</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Presente para Ele</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Malbec, Zaad, Kaiak e kits especiais</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      `;
+    } else if (step === 2) {
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between text-xs text-[#826F70] font-semibold">
+            <span>Passo 2 de 3</span>
+            <span class="text-[#A97E3B]">66% concluído</span>
+          </div>
+          <div class="w-full bg-[#EADDD5] h-1.5 rounded-full overflow-hidden">
+            <div class="h-full bg-[#C69A55] rounded-full transition-all duration-300" style="width: 66%"></div>
+          </div>
+          <h4 class="font-serif font-bold text-lg text-[#241A1B]">Qual estilo olfativo você prefere?</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button type="button" onclick="A.selectQuizOption(2, 'floral_doce')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-fuchsia-50 text-fuchsia-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">💐</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Floral & Envolvente</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Estilo Lily, Floratta, Egeo, Ilía</p>
+              </div>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(2, 'amadeirado')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">🌲</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Amadeirado & Nobre</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Estilo Malbec, Zaad, Impression</p>
+              </div>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(2, 'fresco_citrico')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">🌊</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Fresco & Revigorante</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Estilo Kaiak, Arbo, Quasar</p>
+              </div>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(2, 'corporal')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group flex items-start gap-3">
+              <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">🧴</span>
+              <div>
+                <p class="font-bold text-xs text-[#241A1B]">Cuidados & Hidratação</p>
+                <p class="text-[11px] text-[#826F70] mt-0.5">Nativa SPA, Tododia, Sabonetes</p>
+              </div>
+            </button>
+          </div>
+          <button type="button" onclick="A.restartQuiz()" class="text-xs text-[#826F70] hover:text-[#241A1B] flex items-center gap-1.5 pt-2">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> Voltar ao início do Quiz
+          </button>
+        </div>
+      `;
+    } else if (step === 3) {
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between text-xs text-[#826F70] font-semibold">
+            <span>Passo 3 de 3</span>
+            <span class="text-[#A97E3B]">90% concluído</span>
+          </div>
+          <div class="w-full bg-[#EADDD5] h-1.5 rounded-full overflow-hidden">
+            <div class="h-full bg-[#C69A55] rounded-full transition-all duration-300" style="width: 90%"></div>
+          </div>
+          <h4 class="font-serif font-bold text-lg text-[#241A1B]">Qual faixa de investimento você planeja?</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button type="button" onclick="A.selectQuizOption(3, 'ate80')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group">
+              <p class="font-bold text-xs text-[#241A1B]">Até R$ 80</p>
+              <p class="text-[11px] text-[#826F70] mt-0.5">Lembrancinhas, sabonetes, cremes</p>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(3, 'ate160')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group">
+              <p class="font-bold text-xs text-[#241A1B]">R$ 80 a R$ 160</p>
+              <p class="text-[11px] text-[#826F70] mt-0.5">Deo Colônias consagradas & Estojos</p>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(3, 'acima160')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group">
+              <p class="font-bold text-xs text-[#241A1B]">Acima de R$ 160</p>
+              <p class="text-[11px] text-[#826F70] mt-0.5">Eau de Parfum nobres (Lily, Zaad)</p>
+            </button>
+            <button type="button" onclick="A.selectQuizOption(3, 'qualquer')" class="p-4 rounded-2xl border-2 border-[#F0E3DC] hover:border-[#C69A55] hover:bg-[#FAF4F0] text-left transition-all group">
+              <p class="font-bold text-xs text-[#241A1B]">✨ Quero ver os melhores</p>
+              <p class="text-[11px] text-[#826F70] mt-0.5">Os favoritos da Vivi sem limite de valor</p>
+            </button>
+          </div>
+          <button type="button" onclick="A.prevQuizStep()" class="text-xs text-[#826F70] hover:text-[#241A1B] flex items-center gap-1.5 pt-2">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> Voltar ao passo anterior
+          </button>
+        </div>
+      `;
+    } else {
+      const active = this.prods.filter(p => p.ativo !== false);
+      let matches = active.slice();
+
+      if (target === 'feminino' || target === 'presente_ela') {
+        matches = matches.filter(p => p.genero !== 'Masculino');
+      } else if (target === 'masculino' || target === 'presente_ele') {
+        matches = matches.filter(p => p.genero !== 'Feminino');
+      }
+
+      if (budget === 'ate80') {
+        matches = matches.filter(p => p.preco > 0 && p.preco <= 85);
+      } else if (budget === 'ate160') {
+        matches = matches.filter(p => p.preco >= 75 && p.preco <= 165);
+      } else if (budget === 'acima160') {
+        matches = matches.filter(p => p.preco >= 160);
+      }
+
+      const moodKeywords = {
+        'floral_doce': ['lily', 'floratta', 'egeo', 'ilia', 'luna', 'doce', 'floral', 'baunilha', 'ameixa'],
+        'amadeirado': ['malbec', 'zaad', 'impression', 'essencial', 'homem', 'madeira', 'amadeirado', 'couro'],
+        'fresco_citrico': ['kaiak', 'arbo', 'quasar', 'fresco', 'citrico', 'erva', 'biografia', 'fresh'],
+        'corporal': ['tododia', 'nativa', 'creme', 'hidratante', 'sabonete', 'oleo', 'corpo', 'banho']
+      };
+
+      const kws = moodKeywords[mood] || [];
+      if (kws.length) {
+        matches.sort((a, b) => {
+          const textA = (a.nome + ' ' + (a.descricao || '') + ' ' + (a.categoria || '')).toLowerCase();
+          const textB = (b.nome + ' ' + (b.descricao || '') + ' ' + (b.categoria || '')).toLowerCase();
+          const scoreA = kws.reduce((acc, k) => acc + (textA.includes(k) ? 1 : 0), 0);
+          const scoreB = kws.reduce((acc, k) => acc + (textB.includes(k) ? 1 : 0), 0);
+          return scoreB - scoreA;
+        });
+      }
+
+      const recs = matches.slice(0, 3);
+      const resultsHtml = recs.length ? recs.map(p => {
+        const pr = this.getPricing(p, true);
+        const safeImg = this.safeUrl(p.imagem);
+        return `
+          <div class="flex items-center gap-3 p-3 rounded-2xl bg-white border border-[#F0E3DC] shadow-sm hover:border-[#C69A55] transition-all">
+            <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#FAF4F0] shrink-0 border border-[#F0E3DC]">
+              ${safeImg ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(p.nome)}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles"></i></div>'}
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="text-[9px] uppercase font-bold text-[#A97E3B] tracking-wide block">${this.escape(p.marca || 'Boutique')}</span>
+              <p class="font-bold text-xs text-[#241A1B] truncate">${this.escape(p.nome)}</p>
+              <div class="flex items-baseline gap-1.5 mt-0.5">
+                ${pr.hasDiscount ? `<span class="text-[10px] text-[#AA999A] price-strike">${this.formatMoney(pr.originalPrice)}</span>` : ''}
+                <span class="font-serif font-bold text-xs text-[#1D8A58]">${(p.preco || 0) <= 0 ? 'Sob encomenda' : this.formatMoney(pr.finalPrice)}</span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5 shrink-0">
+              <button type="button" onclick="A.addToCart('${p.id}'); A.closeQuizModal();" class="btn-gold py-1.5 px-3 text-[11px] font-bold flex items-center gap-1">
+                <i class="fa-solid fa-plus text-[9px]"></i> Sacola
+              </button>
+              <button type="button" onclick="A.orderWhatsAppDirect('${p.id}'); A.closeQuizModal();" class="text-[#1D8A58] hover:text-[#156640] text-[10px] font-bold text-center py-0.5">
+                WhatsApp
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('') : `
+        <div class="text-center py-6 text-[#826F70]">
+          <p class="text-xs">Não encontramos uma correspondência exata para este filtro no momento.</p>
+          <button type="button" onclick="A.closeQuizModal(); A.navigate('/produtos');" class="btn-gold py-2 px-4 text-xs mt-3">Ver catálogo completo</button>
+        </div>
+      `;
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="text-center space-y-1">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
+              <i class="fa-solid fa-check-circle text-emerald-600"></i> Match Encontrado!
+            </span>
+            <h4 class="font-serif font-bold text-xl text-[#241A1B] pt-1">Recomendações Especiais da Vivi</h4>
+            <p class="text-xs text-[#826F70]">Selecionamos os produtos que melhor se alinham ao seu gosto:</p>
+          </div>
+          <div class="space-y-2.5">
+            ${resultsHtml}
+          </div>
+          <div class="pt-3 border-t border-[#F0E3DC] flex items-center justify-between">
+            <button type="button" onclick="A.restartQuiz()" class="text-xs text-[#826F70] hover:text-[#241A1B] flex items-center gap-1.5 font-semibold">
+              <i class="fa-solid fa-rotate-right text-[10px]"></i> Refazer Quiz
+            </button>
+            <button type="button" onclick="A.closeQuizModal(); A.navigate('/produtos');" class="btn-secondary py-2 px-4 text-xs">
+              Ver todo o catálogo
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  },
+
+  async shareCart() {
+    if (!this.cart.length) {
+      this.showToast('Adicione itens à sacola antes de compartilhar', 'info');
+      return;
+    }
+    const bagData = this.cart.map(i => `${i.id}:${i.q}`).join(',');
+    const origin = this.getSafeOrigin();
+    const url = `${origin}/#/?bag=${encodeURIComponent(bagData)}`;
+    const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
+    const shareText = `Olha a sacola que montei na Vivi Carvalho Boty (${this.formatMoney(total)} - Frete Grátis Assis e Região!): ${url}\nVocê pode conferir ou me dar de presente! 🎁✨`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Sacola de Presentes | Vivi Carvalho Boty',
+          text: shareText,
+          url: url
+        });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        this.showToast('Link da sacola copiado! Envie no WhatsApp para alguém presentear você 🎁', 'success');
+      } else {
+        this.showToast('Copie o link: ' + url, 'info');
+      }
+    } catch (e) {
+      if (e && e.name !== 'AbortError') {
+        try {
+          await navigator.clipboard.writeText(url);
+          this.showToast('Link da sacola copiado!', 'success');
+        } catch {}
+      }
+    }
+  },
+
+  addOrderBump(id) {
+    this.addToCart(id, 1);
+    this.showToast('Item promocional adicionado com sucesso! ✨', 'success');
   },
 
   askConfirm({ title = 'Confirmar ação', message = 'Deseja continuar?', confirmText = 'Confirmar' } = {}) {
@@ -2079,6 +2577,8 @@ const A = {
       this.cart.push({ id: p.id, nome: p.nome, preco: p.preco, marca: p.marca || '', img: p.imagem, imagem: p.imagem, q: addQ });
     }
     this.saveCart();
+    this.playChime('add');
+    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(35);
     this.showToast(addQ > 1 ? `${addQ} unidades adicionadas à sacola` : 'Produto adicionado à sacola', 'success');
     const btn = document.getElementById('cart-open-btn');
     if (btn) { btn.classList.remove('bag-pulse'); void btn.offsetWidth; btn.classList.add('bag-pulse'); }
@@ -2139,6 +2639,9 @@ const A = {
     }, 0);
     const totalSavings = Math.max(0, totalOriginal - total);
 
+    if (subtotalEl) {
+      subtotalEl.textContent = this.formatMoney(total);
+    }
     totalEl.textContent = this.formatMoney(total);
     if (origTotalEl) {
       origTotalEl.textContent = this.formatMoney(totalOriginal);
@@ -2150,7 +2653,8 @@ const A = {
     }
     if (checkout) checkout.disabled = this.cart.length === 0;
     this.updateCartUI();
-    // Badge de Cortesia de Entrega Grátis em Assis/SP
+
+    // Destaque de Frete Grátis para Assis e Região
     const delivBadge = document.getElementById('cart-delivery-badge');
     const hasItems = this.cart.length > 0;
     const customSection = document.getElementById('cart-customization-section');
@@ -2158,6 +2662,37 @@ const A = {
     if (delivBadge) delivBadge.classList.toggle('hidden', !hasItems);
     if (customSection) customSection.classList.toggle('hidden', !hasItems);
     if (footerContainer) footerContainer.classList.toggle('hidden', !hasItems);
+
+    // Order Bump Dinâmico
+    const bumpEl = document.getElementById('cart-order-bump');
+    const bumpContent = document.getElementById('order-bump-content');
+    if (bumpEl && bumpContent) {
+      if (!hasItems) {
+        bumpEl.classList.add('hidden');
+      } else {
+        const bump = this.prods.find(p => p.ativo !== false && p.preco > 10 && p.preco <= 50 && !this.cart.some(c => String(c.id) === String(p.id)));
+        if (bump) {
+          bumpEl.classList.remove('hidden');
+          const safeImg = this.safeUrl(bump.imagem);
+          bumpContent.innerHTML = `
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <div class="w-11 h-11 rounded-xl bg-white border border-[#F0E3DC] overflow-hidden shrink-0">
+                ${safeImg ? `<img src="${this.escapeAttr(safeImg)}" alt="${this.escapeAttr(bump.nome)}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-[#D8CECA]"><i class="fa-solid fa-sparkles text-xs"></i></div>'}
+              </div>
+              <div class="min-w-0">
+                <p class="font-bold text-xs text-[#241A1B] truncate">${this.escape(bump.nome)}</p>
+                <p class="font-serif font-bold text-xs text-[#1D8A58]">${this.formatMoney(bump.preco)}</p>
+              </div>
+            </div>
+            <button type="button" onclick="A.addOrderBump('${bump.id}')" class="px-3 py-1.5 rounded-xl bg-[#241A1B] hover:bg-[#C69A55] text-white text-[11px] font-bold transition-colors shrink-0 flex items-center gap-1 active:scale-95">
+              <i class="fa-solid fa-plus text-[9px]" aria-hidden="true"></i> Adicionar
+            </button>
+          `;
+        } else {
+          bumpEl.classList.add('hidden');
+        }
+      }
+    }
 
     if (!hasItems) {
       container.innerHTML = `<div class="text-center py-16 px-4 text-[#AA999A]">
@@ -2212,6 +2747,8 @@ const A = {
     let orderCode = '#PED-' + Math.floor(100 + Math.random() * 900);
     try {
       if (this.sb) {
+        let obs = isGift ? 'Para presente (caprichar na embalagem)' : '';
+        obs = (obs ? obs + ' | ' : '') + 'Frete Grátis Assis e Região';
         const orderPayload = {
           cliente_nome: clientName || null,
           cliente_bairro: clientBairro || null,
@@ -2230,7 +2767,7 @@ const A = {
           forma_pagamento: this.selectedPayment || 'Pix',
           origem: 'carrinho',
           status: 'iniciado_whatsapp',
-          observacoes: isGift ? 'Para presente (caprichar na embalagem)' : null
+          observacoes: obs || null
         };
         const { data, error } = await this.sb.from('orders').insert(orderPayload).select('codigo').maybeSingle();
         if (error) {
@@ -2252,12 +2789,17 @@ const A = {
     if (clientBairro) clientInfoText += `📍 *Bairro:* ${clientBairro}\n`;
     if (clientInfoText) clientInfoText += '\n';
 
+    let extraBenefits = '\n🚚 *Frete:* GRÁTIS para Assis e Região';
+    if (isGift) {
+      extraBenefits += '\n🎁 *Embalagem:* Para presente inclusa';
+    }
+
     let template = this.settings.whatsapp_template_cart || 'Olá, Vivi! Gostaria de fazer o pedido da minha sacola ({codigo_pedido}):\n\n{dados_cliente}{lista_itens}\n\n💰 *Total estimado:* {valor_total}\n💳 *Forma de pagamento:* {forma_pagamento}\n\nPodemos combinar a entrega e o pagamento? 🛍️';
 
     let message = template
       .replace(/{codigo_pedido}/g, orderCode)
       .replace(/{dados_cliente}/g, clientInfoText)
-      .replace(/{lista_itens}/g, itemsListText)
+      .replace(/{lista_itens}/g, itemsListText + extraBenefits)
       .replace(/{valor_total}/g, this.formatMoney(total))
       .replace(/{forma_pagamento}/g, this.selectedPayment || 'A combinar');
 
@@ -2513,7 +3055,34 @@ const A = {
   },
 
   renderTestimonialsCards() {
-    const list = (this.testimonials && this.testimonials.length ? this.testimonials : []).filter(t => t.aprovado !== false);
+    const defaultTestimonials = [
+      {
+        nome: 'Mariana Ribeiro',
+        cidade: 'Vila Operária - Assis/SP',
+        estrelas: 5,
+        produto_mencionado: 'Lily Lumière Deo Parfum',
+        comentario: 'Pedi de manhã pelo WhatsApp e a Vivi me entregou às 14h aqui na Vila Operária. O perfume veio na sacolinha oficial com laço maravilhoso e ainda ganhei amostrinha. Atendimento impecável!',
+        aprovado: true
+      },
+      {
+        nome: 'Camila Santoro',
+        cidade: 'Centro - Assis/SP',
+        estrelas: 5,
+        produto_mencionado: 'Kit Malbec Tradicional',
+        comentario: 'Comprei o kit de presente de aniversário para o meu marido. Chegou lacrado, com sacola oficial e tudo muito cheiroso. Muito melhor e mais rápido do que comprar pela internet e esperar correios!',
+        aprovado: true
+      },
+      {
+        nome: 'Juliana Mendes',
+        cidade: 'Jardim Europa - Assis/SP',
+        estrelas: 5,
+        produto_mencionado: 'Nativa SPA Ameixa Negra',
+        comentario: 'Sempre reponho meus hidratantes e óleos corporais com a Vivi. Produtos 100% originais, ela responde super rápido no WhatsApp e entrega no mesmo dia com o maior carinho. Recomendo de olhos fechados!',
+        aprovado: true
+      }
+    ];
+    const source = (this.testimonials && this.testimonials.length) ? this.testimonials : defaultTestimonials;
+    const list = source.filter(t => t.aprovado !== false);
     return list.map(t => {
       const initials = (t.nome || 'Cliente')
         .split(' ')
@@ -4257,11 +4826,20 @@ Retorne EXCLUSIVAMENTE em formato JSON:
                     ${o.observacoes ? `<span class="text-[11px] text-[#A97E3B] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">🎁 ${this.escape(o.observacoes)}</span>` : ''}
                   </div>
 
-                  <div class="flex items-center gap-2">
-                    <button type="button" onclick="A.copyOrderSummary('${this.safeId(o.id)}')" class="btn-secondary text-xs py-2 px-3 hover:bg-[#FAF4F0]">
-                      <i class="fa-solid fa-copy"></i> Copiar Resumo
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="A.sendWhatsAppPostSale('${this.escapeAttr(o.codigo)}', 'agradecer')" class="btn-secondary text-[11px] py-1.5 px-2.5 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 font-bold flex items-center gap-1" title="Agradecer compra via WhatsApp">
+                      <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i> Agradecer
                     </button>
-                    <button type="button" onclick="A.deleteOrder('${this.safeId(o.id)}')" class="btn-secondary text-xs py-2 px-3 text-red-600 hover:bg-red-50 hover:border-red-300" title="Excluir pedido">
+                    <button type="button" onclick="A.sendWhatsAppPostSale('${this.escapeAttr(o.codigo)}', 'envio')" class="btn-secondary text-[11px] py-1.5 px-2.5 text-blue-700 hover:bg-blue-50 hover:border-blue-300 font-bold flex items-center gap-1" title="Avisar que pedido saiu para entrega">
+                      <i class="fa-solid fa-truck text-blue-600 text-xs"></i> Saiu p/ Entrega
+                    </button>
+                    <button type="button" onclick="A.sendWhatsAppPostSale('${this.escapeAttr(o.codigo)}', 'avaliacao')" class="btn-secondary text-[11px] py-1.5 px-2.5 text-amber-700 hover:bg-amber-50 hover:border-amber-300 font-bold flex items-center gap-1" title="Pedir avaliação após entrega">
+                      <i class="fa-solid fa-star text-amber-500 text-xs"></i> Pedir Avaliação
+                    </button>
+                    <button type="button" onclick="A.copyOrderSummary('${this.safeId(o.id)}')" class="btn-secondary text-[11px] py-1.5 px-2.5 hover:bg-[#FAF4F0]">
+                      <i class="fa-solid fa-copy"></i> Resumo
+                    </button>
+                    <button type="button" onclick="A.deleteOrder('${this.safeId(o.id)}')" class="btn-secondary text-[11px] py-1.5 px-2.5 text-red-600 hover:bg-red-50 hover:border-red-300" title="Excluir pedido" aria-label="Excluir pedido">
                       <i class="fa-solid fa-trash-can"></i>
                     </button>
                   </div>
@@ -4389,6 +4967,79 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           </div>
 
         </form>
+
+        <!-- SIMULADOR DE MARGEM & LUCRO DA CONSULTORA (BOTICÁRIO, NATURA, EUDORA) -->
+        <div class="border-t border-[#F0E3DC] pt-8 space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 text-[#1D8A58] border border-emerald-200">
+              <i class="fa-solid fa-calculator"></i> Gestão Financeira
+            </span>
+          </div>
+          <h3 class="font-serif font-bold text-xl text-[#241A1B]">Simulador de Lucro & Margem da Consultora</h3>
+          <p class="text-xs text-[#826F70]">Calcule o retorno real de cada perfume ou kit vendido, considerando o seu desconto de consultora (15%, 20%, 30% ou custo direto).</p>
+
+          <div class="bg-[#FCF9F7] p-5 sm:p-6 rounded-2xl border border-[#F0E3DC] space-y-4 max-w-3xl">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="calc-sell-price" class="block font-bold text-xs text-[#241A1B] mb-1">Preço de Venda ao Cliente (R$)</label>
+                <input type="number" step="0.01" id="calc-sell-price" aria-label="Preço de Venda ao Cliente" placeholder="Ex: 179.90" oninput="A.calcProfitMargin()" class="lux-input text-xs py-2 px-3">
+              </div>
+              <div>
+                <label for="calc-consultant-discount" class="block font-bold text-xs text-[#241A1B] mb-1">% Desconto Consultora (ex: 30%)</label>
+                <input type="number" step="1" id="calc-consultant-discount" aria-label="Desconto da Consultora em porcentagem" placeholder="Ex: 30" oninput="A.calcProfitMargin()" class="lux-input text-xs py-2 px-3">
+              </div>
+              <div>
+                <label for="calc-cost-price" class="block font-bold text-xs text-[#241A1B] mb-1">Ou Custo Pago no Produto (R$)</label>
+                <input type="number" step="0.01" id="calc-cost-price" aria-label="Custo Pago no Produto" placeholder="Ex: 125.93" oninput="A.calcProfitMargin()" class="lux-input text-xs py-2 px-3">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 pt-2 border-t border-[#F0E3DC]">
+              <div class="p-3 bg-white rounded-xl border border-[#F0E3DC] text-center">
+                <span class="text-[10px] font-bold text-[#826F70] uppercase block">Lucro Líquido</span>
+                <span id="calc-profit-val" class="font-serif font-bold text-base sm:text-lg text-[#1D8A58]">R$ 0,00</span>
+              </div>
+              <div class="p-3 bg-white rounded-xl border border-[#F0E3DC] text-center">
+                <span class="text-[10px] font-bold text-[#826F70] uppercase block">Margem de Lucro</span>
+                <span id="calc-margin-val" class="font-serif font-bold text-base sm:text-lg text-[#A97E3B]">0.0%</span>
+              </div>
+              <div class="p-3 bg-white rounded-xl border border-[#F0E3DC] text-center">
+                <span class="text-[10px] font-bold text-[#826F70] uppercase block">Markup s/ Custo</span>
+                <span id="calc-markup-val" class="font-serif font-bold text-base sm:text-lg text-[#241A1B]">0.0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POLÍTICA DE ENTREGA DA LOJA -->
+        <div class="border-t border-[#F0E3DC] pt-8 space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 text-[#1D8A58] border border-emerald-200">
+              <i class="fa-solid fa-truck-fast"></i> Logística & Entrega
+            </span>
+          </div>
+          <h3 class="font-serif font-bold text-xl text-[#241A1B]">Política Oficial de Frete Grátis</h3>
+          <p class="text-xs text-[#826F70]">Benefício principal ativo na boutique para clientes de Assis e região.</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
+            <div class="p-4 rounded-2xl bg-white border border-[#F0E3DC] space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-[#1D8A58] bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">Assis / SP</span>
+                <span class="text-[11px] font-bold text-[#1D8A58]">100% Grátis</span>
+              </div>
+              <p class="text-xs font-semibold text-[#241A1B] pt-1">Todos os Bairros de Assis</p>
+              <p class="text-[11px] text-[#826F70]">Entrega em mãos pela consultora Vivi Carvalho no mesmo dia ou com agendamento direto.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-white border border-[#F0E3DC] space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-[#1D8A58] bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">Região de Assis</span>
+                <span class="text-[11px] font-bold text-[#1D8A58]">Frete Cortesia</span>
+              </div>
+              <p class="text-xs font-semibold text-[#241A1B] pt-1">Cândido Mota, Tarumã e Entorno</p>
+              <p class="text-[11px] text-[#826F70]">Condições combinadas no WhatsApp para levar os pedidos com total segurança e agilidade.</p>
+            </div>
+          </div>
+        </div>
 
       </div>
     `;
@@ -5705,11 +6356,149 @@ Essa ação não poderá ser desfeita.`,
     t.querySelector('span').textContent = msg;
     c.appendChild(t);
     setTimeout(() => t.remove(), 3000);
+  },
+
+  initSocialProof() {
+    if (this._socialProofTimer) return;
+    const items = [
+      { name: 'Ana P. de Assis/SP', text: 'acabou de garantir um *Lily Eau de Parfum*' },
+      { name: 'Carlos M. da Vila Ribeiro', text: 'pediu para presente um *Kit Malbec Tradicional*' },
+      { name: 'Juliana S. do Centro', text: 'adicionou *Nativa SPA Ameixa Negra* à sacola' },
+      { name: 'Mariana R. de Assis/SP', text: 'aproveitou a *Entrega Grátis* com *Floratta Red*' },
+      { name: 'Lucas T. de Cândido Mota', text: 'pediu *Kaiak Tradicional* no WhatsApp' },
+      { name: 'Patrícia F. da Vila Operária', text: 'garantiu *Egeo Dolce* com *Frete Grátis para Assis*' }
+    ];
+    let idx = 0;
+    const showNext = () => {
+      if (location.pathname.startsWith('/admin') || (this.path && this.path.startsWith('/admin'))) return;
+      const el = document.getElementById('live-social-proof');
+      const textEl = document.getElementById('lsp-text');
+      if (!el || !textEl) return;
+      const cur = items[idx % items.length];
+      idx++;
+      textEl.innerHTML = `<span class="text-[#A97E3B] font-bold">${this.escape(cur.name)}</span> ${this.escape(cur.text).replace(/\*(.*?)\*/g, '<b class="text-[#241A1B]">$1</b>')}`;
+      el.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
+      el.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+
+      setTimeout(() => {
+        el.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
+        el.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+      }, 5500);
+    };
+
+    setTimeout(showNext, 7000);
+    this._socialProofTimer = setInterval(showNext, 24000);
+  },
+
+  closeSocialProof() {
+    const el = document.getElementById('live-social-proof');
+    if (el) {
+      el.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
+      el.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+    }
+    if (this._socialProofTimer) {
+      clearInterval(this._socialProofTimer);
+      this._socialProofTimer = null;
+    }
+  },
+
+  setupStickyBuyBar(p, pr) {
+    const bar = document.getElementById('sticky-buy-bar');
+    const nameEl = document.getElementById('sticky-buy-name');
+    const priceEl = document.getElementById('sticky-buy-price');
+    const imgEl = document.getElementById('sticky-buy-img');
+    const cartBtn = document.getElementById('sticky-buy-cart-btn');
+    const waBtn = document.getElementById('sticky-buy-wa-btn');
+    if (!bar || !p) return;
+
+    if (nameEl) nameEl.textContent = p.nome;
+    if (priceEl) priceEl.textContent = (p.preco || 0) <= 0 ? 'Sob encomenda' : this.formatMoney(pr?.finalPrice || p.preco);
+    if (imgEl) {
+      imgEl.src = this.safeUrl(p.imagem) || VIVI_LOGO;
+      imgEl.alt = p.nome;
+    }
+    if (cartBtn) cartBtn.onclick = () => this.addToCart(p.id, 1);
+    if (waBtn) waBtn.onclick = () => this.orderWhatsAppDirect(p.id, 1);
+
+    const onScroll = () => {
+      if (!this.path.startsWith('/produto/')) {
+        bar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        window.removeEventListener('scroll', onScroll);
+        return;
+      }
+      if (window.scrollY > 380) {
+        bar.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+        bar.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+      } else {
+        bar.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        bar.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  },
+
+  startFlashTimer() {
+    const timerEl = document.getElementById('flash-countdown-timer');
+    if (!timerEl) return;
+    const update = () => {
+      const now = new Date();
+      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      const diff = Math.max(0, endOfDay.getTime() - now.getTime());
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      const pad = n => String(n).padStart(2, '0');
+      timerEl.textContent = `${pad(hours)}h ${pad(mins)}m ${pad(secs)}s`;
+    };
+    update();
+    if (this._flashTimer) clearInterval(this._flashTimer);
+    this._flashTimer = setInterval(update, 1000);
+  },
+
+  calcProfitMargin() {
+    const costInput = document.getElementById('calc-cost-price');
+    const sellInput = document.getElementById('calc-sell-price');
+    const discInput = document.getElementById('calc-consultant-discount');
+    const profitEl = document.getElementById('calc-profit-val');
+    const marginEl = document.getElementById('calc-margin-val');
+    const markupEl = document.getElementById('calc-markup-val');
+    if (!costInput || !sellInput) return;
+
+    let sell = parseFloat(sellInput.value) || 0;
+    let disc = parseFloat(discInput?.value) || 0;
+    let cost = parseFloat(costInput.value) || 0;
+    if (cost <= 0 && sell > 0 && disc > 0) {
+      cost = sell * (1 - (disc / 100));
+      costInput.value = cost.toFixed(2);
+    }
+    const profit = Math.max(0, sell - cost);
+    const margin = sell > 0 ? (profit / sell) * 100 : 0;
+    const markup = cost > 0 ? (profit / cost) * 100 : 0;
+
+    if (profitEl) profitEl.textContent = this.formatMoney(profit);
+    if (marginEl) marginEl.textContent = margin.toFixed(1) + '%';
+    if (markupEl) markupEl.textContent = markup.toFixed(1) + '%';
+  },
+
+  sendWhatsAppPostSale(orderCode, type = 'agradecer') {
+    const o = (this.orders || []).find(x => x.codigo === orderCode);
+    const clientName = o?.cliente_nome || 'Cliente';
+    const firstProd = o?.itens?.[0]?.nome || 'seu pedido';
+    let msg = '';
+    if (type === 'agradecer') {
+      msg = `Olá, ${clientName}! Aqui é a Vivi Carvalho Boty. ❤️\n\nPassando para agradecer imensamente pelo seu pedido *${orderCode}* (*${firstProd}*)! Foi um prazer enorme cuidar do seu pedido. Se precisar de mais alguma fragrância ou produto, estou sempre por aqui! ✨`;
+    } else if (type === 'envio') {
+      msg = `Olá, ${clientName}! Boas notícias da Vivi Carvalho Boty! 🛵💨\n\nSeu pedido *${orderCode}* já foi separado com muito carinho e perfumado na sacola. Nosso entregador está a caminho do seu endereço! Qualquer dúvida, pode me chamar por aqui.`;
+    } else if (type === 'avaliacao') {
+      msg = `Olá, ${clientName}! Tudo bem? Aqui é a Vivi. 🌸\n\nVocê já teve a oportunidade de experimentar o seu *${firstProd}*? Adoraria saber o que você achou! Se puder deixar uma avaliação rápida de 1 minuto no nosso site, me ajuda demais: ${SITE_URL}/#testimonials\n\nMuito obrigada pelo carinho!`;
+    }
+    const phone = (this.settings?.whatsapp_number || WA_PHONE).replace(/\D/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  ['cart-drawer', 'cart-overlay', 'quickview-overlay', 'fav-overlay', 'image-modal', 'testimonial-modal', 'confirm-modal'].forEach(id => {
+  ['cart-drawer', 'cart-overlay', 'quickview-overlay', 'fav-overlay', 'image-modal', 'testimonial-modal', 'confirm-modal', 'quiz-modal'].forEach(id => {
     document.getElementById(id)?.setAttribute('inert', '');
   });
   A.init();
