@@ -5416,9 +5416,11 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             <a href="/produtos" target="_blank" class="btn-secondary text-xs py-2.5 px-4 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-white/40">
               <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Loja
             </a>
-            <button type="button" onclick="A.toggleAdminCharts()" class="btn-secondary text-xs py-2.5 px-4 bg-white/10 text-white border-white/20 hover:bg-white/20">
-              <i class="fa-solid fa-chart-pie text-[#C69A55]"></i> ${st.showCharts ? 'Ocultar Gráficos' : 'Ver Gráficos'}
-            </button>
+            ${st.section === 'products' ? `
+              <button type="button" onclick="A.toggleAdminCharts()" class="btn-secondary text-xs py-2.5 px-4 bg-white/10 text-white border-white/20 hover:bg-white/20">
+                <i class="fa-solid fa-chart-pie text-[#C69A55]"></i> ${st.showCharts ? 'Ocultar Gráficos' : 'Ver Gráficos'}
+              </button>
+            ` : ''}
             ${st.section === 'testimonials' ? `
               <button type="button" onclick="A.openTestimonialModal()" class="btn-gold text-xs py-2.5 px-5 shadow-lg">
                 <i class="fa-solid fa-plus"></i> Novo Depoimento
@@ -5462,8 +5464,10 @@ Retorne EXCLUSIVAMENTE em formato JSON:
           </button>
         </div>
 
-        <!-- Banner com Dica Autoexplicativa para a Consultora -->
-        ${inativos > 0 ? `
+        <!-- Conteúdo Analítico Exclusivo do Catálogo: Dica, KPIs e Gráficos -->
+        ${st.section === 'products' ? `
+          <!-- Banner com Dica Autoexplicativa para a Consultora -->
+          ${inativos > 0 ? `
           <div class="bg-gradient-to-r from-[#FBF4E8] via-[#FAF0EB] to-[#FFF] border border-[#EACCA4] rounded-2xl p-4 sm:p-5 flex items-start sm:items-center justify-between gap-4 shadow-sm">
             <div class="flex items-start sm:items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-[#C69A55] text-white flex items-center justify-center shrink-0 shadow-md">
@@ -5646,6 +5650,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             </div>
 
           </div>
+        ` : ''}
         ` : ''}
 
         ${st.section === 'orders' ? this.renderAdminOrdersSection(st) : 
