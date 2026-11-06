@@ -4674,12 +4674,12 @@ Retorne EXCLUSIVAMENTE em formato JSON:
     // Busca por texto
     if (st.search) {
       const q = this.normalizeSearch(st.search);
-      filtered = filtered.filter(p => this.normalizeSearch(`${p.nome} ${p.marca} ${p.categoria}`).includes(q));
+      filtered = filtered.filter(p => this.normalizeSearch(`${p.nome || ''} ${p.marca || ''} ${p.descricao || ''} ${p.categoria || ''}`).includes(q));
     }
 
     // Ordenação
-    if (st.sort === 'name_asc') filtered.sort((a, b) => a.nome.localeCompare(b.nome));
-    else if (st.sort === 'name_desc') filtered.sort((a, b) => b.nome.localeCompare(a.nome));
+    if (st.sort === 'name_asc') filtered.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR'));
+    else if (st.sort === 'name_desc') filtered.sort((a, b) => (b.nome || '').localeCompare(a.nome || '', 'pt-BR'));
     else if (st.sort === 'price_asc') filtered.sort((a, b) => (a.preco || 0) - (b.preco || 0));
     else if (st.sort === 'price_desc') filtered.sort((a, b) => (b.preco || 0) - (a.preco || 0));
     else if (st.sort === 'stock_asc') filtered.sort((a, b) => (a.estoque || 0) - (b.estoque || 0));
