@@ -1170,6 +1170,12 @@ const A = {
       this._virtualSearch = '';
       this.handleRoute();
     });
+    window.addEventListener('hashchange', () => {
+      const h = (location.hash || '').toLowerCase();
+      if (h === '#testimonials' || h === '#depoimento' || h === '#avaliar' || h === '#avaliacao') {
+        this.openTestimonialModal();
+      }
+    });
 
     // Controle do Botão Flutuante Voltar ao Topo
     const btt = document.getElementById('back-to-top');
@@ -1241,6 +1247,11 @@ const A = {
       }
       if (sp.has('quiz')) {
         setTimeout(() => this.openQuizModal(), 250);
+      }
+      const hash = (location.hash || '').toLowerCase();
+      const hasReviewTrigger = hash === '#testimonials' || hash === '#depoimento' || hash === '#avaliar' || hash === '#avaliacao' || sp.has('avaliar') || sp.has('depoimento') || sp.has('avaliacao') || sp.has('review');
+      if (hasReviewTrigger) {
+        setTimeout(() => this.openTestimonialModal(), 300);
       }
       if (sp.has('bag')) {
         const bagData = sp.get('bag');
@@ -1747,7 +1758,7 @@ const A = {
           </section>` : ''}
 
         <!-- PROVA SOCIAL: DEPOIMENTOS DE CLIENTES REAIS -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+        <section id="testimonials" class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
           <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
               <span class="text-xs uppercase font-bold tracking-widest text-[#A97E3B]">Quem compra, recomenda</span>
@@ -2587,7 +2598,11 @@ const A = {
   toggleCart(open) {
     this.setDialogOpen(['cart-drawer', 'cart-overlay'], open);
     document.body.style.overflow = open || this.anyDialogOpen() ? 'hidden' : '';
-    if (open) this.renderCartDrawer();
+    if (open) {
+      this.renderCartDrawer();
+      const scrollArea = document.getElementById('cart-scroll-area');
+      if (scrollArea) scrollArea.scrollTop = 0;
+    }
   },
 
   addToCart(id, qty = 1) {
@@ -2655,6 +2670,7 @@ const A = {
   renderCartDrawer() {
     const container = document.getElementById('cart-items-container');
     const totalEl = document.getElementById('cart-total-price');
+    const subtotalEl = document.getElementById('cart-subtotal-price');
     const origTotalEl = document.getElementById('cart-original-total');
     const savingsBox = document.getElementById('cart-savings-box');
     const savingsVal = document.getElementById('cart-savings-value');
@@ -6523,9 +6539,11 @@ Essa ação não poderá ser desfeita.`,
     } else if (type === 'envio') {
       msg = `Olá, ${clientName}! Boas notícias da Vivi Carvalho Boty! 🛵💨\n\nSeu pedido *${orderCode}* já foi separado com muito carinho e perfumado na sacola. Nosso entregador está a caminho do seu endereço! Qualquer dúvida, pode me chamar por aqui.`;
     } else if (type === 'avaliacao') {
-      msg = `Olá, ${clientName}! Tudo bem? Aqui é a Vivi. 🌸\n\nVocê já teve a oportunidade de experimentar o seu *${firstProd}*? Adoraria saber o que você achou! Se puder deixar uma avaliação rápida de 1 minuto no nosso site, me ajuda demais: ${SITE_URL}/#testimonials\n\nMuito obrigada pelo carinho!`;
+      msg = `Olá, ${clientName}! Tudo bem? Aqui é a Vivi. 🌸\n\nVocê já teve a oportunidade de experimentar o seu *${firstProd}*? Adoraria saber o que você achou! Se puder deixar uma avaliação rápida de 1 minuto no nosso site, me ajuda demais: ${SITE_URL}/?avaliar=1#testimonials\n\nMuito obrigada pelo carinho!`;
     }
-    const phone = (this.settings?.whatsapp_number || WA_PHONE).replace(/\D/g, '');
+    const storePhone = (this.settings?.whatsapp_number || WA_PHONE).replace(/\D/g, '');
+    const clientPhone = o?.cliente_telefone ? String(o.cliente_telefone).replace(/\D/g, '') : '';
+    const phone = clientPhone ? (clientPhone.length <= 11 && !clientPhone.startsWith('55') ? '55' + clientPhone : clientPhone) : storePhone;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
   }
 };

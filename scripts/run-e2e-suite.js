@@ -385,6 +385,19 @@ assertTest('Cliente SPA processa parâmetro ?admin da rota redirecionada sem tel
 assertTest('Cliente SPA processa deep link de produto ?p= ou ?produto= via quickview',
   html.includes("sp.get('p') || sp.get('produto')") && html.includes("openQuickView(pid)"));
 
+assertTest('Sacola renderiza gaveta com subtotalEl declarado sem ReferenceError',
+  html.includes("const subtotalEl = document.getElementById('cart-subtotal-price');") &&
+  html.includes("if (subtotalEl)") &&
+  html.includes("subtotalEl.textContent = this.formatMoney(total)"));
+
+assertTest('Cliente SPA processa deep link de avaliação (#testimonials e ?avaliar=1) abrindo modal de depoimento',
+  html.includes("hash === '#testimonials'") &&
+  html.includes("sp.has('avaliar')") &&
+  html.includes("openTestimonialModal()"));
+
+assertTest('Link pós-venda WhatsApp de avaliação direciona direto para abertura do formulário',
+  html.includes("${SITE_URL}/?avaliar=1#testimonials"));
+
 // ----------------------------------------------------------------------------
 // 7. RESUMO
 // ----------------------------------------------------------------------------
