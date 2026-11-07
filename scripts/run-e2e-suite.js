@@ -409,6 +409,16 @@ assertTest('Navegação entre abas do painel atualiza URL do navegador e redefin
   html.includes("window.scrollTo({ top: 0, behavior: 'instant' })") &&
   html.includes("history.pushState(null, '', target)"));
 
+assertTest('Finalização de pedido com status concluido/entregue realiza baixa automática de estoque',
+  html.includes("oldStatus !== 'concluido' && newStatus === 'concluido'") &&
+  html.includes("newStock = Math.max(0, currentEstoque - deductQty)") &&
+  html.includes("await this.sb.from('products').update({ estoque: newStock") &&
+  html.includes("Concluído / Entregue (Baixa Estoque)"));
+
+assertTest('Reversão de pedido desmarcado de concluido restaura estoque com segurança',
+  html.includes("oldStatus === 'concluido' && newStatus !== 'concluido'") &&
+  html.includes("newStock = currentEstoque + restoreQty"));
+
 // ----------------------------------------------------------------------------
 // 7. RESUMO
 // ----------------------------------------------------------------------------

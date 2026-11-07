@@ -3519,13 +3519,87 @@ const A = {
 
   async updateOrderStatus(id, newStatus) {
     try {
+      const ord = (this.orders || []).find(o => String(o.id) === String(id));
+      const oldStatus = ord?.status;
+
       if (this.sb) {
         const { error } = await this.sb.from('orders').update({ status: newStatus }).eq('id', id);
         if (error) throw error;
       }
-      const ord = (this.orders || []).find(o => o.id === id);
       if (ord) ord.status = newStatus;
-      this.showToast('Status do pedido atualizado!', 'success');
+
+      // Baixa automática de estoque quando o pedido for finalizado / entregue ('concluido')
+      let stockChanges = [];
+      let parsedItems = ord?.itens;
+      if (typeof parsedItems === 'string') {
+        try { parsedItems = JSON.parse(parsedItems); } catch { parsedItems = []; }
+      }
+      if (!Array.isArray(parsedItems)) parsedItems = [];
+
+      if (oldStatus !== 'concluido' && newStatus === 'concluido') {
+        for (const it of parsedItems) {
+          const pid = this.safeId(it.id);
+          if (!pid) continue;
+          let p = this.pmap[pid] || (this.prods || []).find(x => String(x.id) === pid);
+          let currentEstoque = p ? (parseInt(p.estoque, 10) || 0) : null;
+
+          if (currentEstoque === null && this.sb) {
+            const { data } = await this.sb.from('products').select('id, nome, estoque').eq('id', pid).maybeSingle();
+            if (data) {
+              p = data;
+              currentEstoque = parseInt(data.estoque, 10) || 0;
+            }
+          }
+
+          if (p && currentEstoque !== null) {
+            const deductQty = Math.max(1, parseInt(it.q, 10) || 1);
+            const newStock = Math.max(0, currentEstoque - deductQty);
+            if (this.sb) {
+              await this.sb.from('products').update({ estoque: newStock, data_atualizacao: new Date().toISOString() }).eq('id', pid);
+            }
+            p.estoque = newStock;
+            if (this.pmap[pid]) this.pmap[pid].estoque = newStock;
+            stockChanges.push(`${p.nome || it.nome || 'Produto'}: ${currentEstoque} ➔ ${newStock}`);
+          }
+        }
+      } else if (oldStatus === 'concluido' && newStatus !== 'concluido') {
+        // Reversão caso a consultora desmarque 'concluido': restaura o estoque
+        for (const it of parsedItems) {
+          const pid = this.safeId(it.id);
+          if (!pid) continue;
+          let p = this.pmap[pid] || (this.prods || []).find(x => String(x.id) === pid);
+          let currentEstoque = p ? (parseInt(p.estoque, 10) || 0) : null;
+
+          if (currentEstoque === null && this.sb) {
+            const { data } = await this.sb.from('products').select('id, nome, estoque').eq('id', pid).maybeSingle();
+            if (data) {
+              p = data;
+              currentEstoque = parseInt(data.estoque, 10) || 0;
+            }
+          }
+
+          if (p && currentEstoque !== null) {
+            const restoreQty = Math.max(1, parseInt(it.q, 10) || 1);
+            const newStock = currentEstoque + restoreQty;
+            if (this.sb) {
+              await this.sb.from('products').update({ estoque: newStock, data_atualizacao: new Date().toISOString() }).eq('id', pid);
+            }
+            p.estoque = newStock;
+            if (this.pmap[pid]) this.pmap[pid].estoque = newStock;
+            stockChanges.push(`${p.nome || it.nome || 'Produto'}: ${currentEstoque} ➔ ${newStock}`);
+          }
+        }
+      }
+
+      if (stockChanges.length > 0) {
+        if (newStatus === 'concluido') {
+          this.showToast(`✅ Pedido concluído! Baixa no estoque: ${stockChanges.join(', ')}`, 'success');
+        } else {
+          this.showToast(`Status atualizado. Estoque restaurado: ${stockChanges.join(', ')}`, 'info');
+        }
+      } else {
+        this.showToast('Status do pedido atualizado!', 'success');
+      }
       this.viewAdminProducts();
     } catch (e) {
       console.error('Erro ao atualizar status do pedido:', e);
@@ -4804,7 +4878,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
             const statusConfig = {
               iniciado_whatsapp: { label: 'Iniciado no WhatsApp', bg: 'bg-amber-50 text-amber-800 border-amber-300', dot: 'bg-amber-500' },
               em_atendimento: { label: 'Em Atendimento', bg: 'bg-blue-50 text-blue-700 border-blue-300', dot: 'bg-blue-500' },
-              concluido: { label: 'Venda Concluída', bg: 'bg-emerald-50 text-[#1D8A58] border-emerald-300', dot: 'bg-[#1D8A58]' },
+              concluido: { label: 'Concluído / Entregue', bg: 'bg-emerald-50 text-[#1D8A58] border-emerald-300', dot: 'bg-[#1D8A58]' },
               cancelado: { label: 'Cancelado', bg: 'bg-red-50 text-red-600 border-red-200', dot: 'bg-red-500' }
             }[o.status] || { label: o.status, bg: 'bg-gray-100 text-gray-700', dot: 'bg-gray-400' };
 
@@ -4829,7 +4903,7 @@ Retorne EXCLUSIVAMENTE em formato JSON:
                     <select onchange="A.updateOrderStatus('${this.safeId(o.id)}', this.value)" class="text-xs font-bold py-1.5 px-3 rounded-xl border cursor-pointer ${statusConfig.bg}">
                       <option value="iniciado_whatsapp" ${o.status === 'iniciado_whatsapp' ? 'selected' : ''}>⏳ Aguardando Contato</option>
                       <option value="em_atendimento" ${o.status === 'em_atendimento' ? 'selected' : ''}>💬 Em Atendimento</option>
-                      <option value="concluido" ${o.status === 'concluido' ? 'selected' : ''}>✅ Venda Concluída</option>
+                      <option value="concluido" ${o.status === 'concluido' ? 'selected' : ''}>✅ Concluído / Entregue (Baixa Estoque)</option>
                       <option value="cancelado" ${o.status === 'cancelado' ? 'selected' : ''}>❌ Cancelado</option>
                     </select>
                   </div>
