@@ -398,6 +398,17 @@ assertTest('Cliente SPA processa deep link de avaliação (#testimonials e ?aval
 assertTest('Link pós-venda WhatsApp de avaliação direciona direto para abertura do formulário',
   html.includes("${SITE_URL}/?avaliar=1#testimonials"));
 
+assertTest('Painel administrativo exibe KPIs e gráficos exclusivamente na aba de catálogo',
+  html.includes("${st.section === 'products' ? `") &&
+  html.includes("Atividade Real dos Clientes na Loja") &&
+  html.includes("st.section === 'orders' ? this.renderAdminOrdersSection(st) :") &&
+  html.includes("st.section === 'testimonials' ? this.renderAdminTestimonialsSection(st) :"));
+
+assertTest('Navegação entre abas do painel atualiza URL do navegador e redefine scroll ao topo',
+  html.includes("setAdminSection(sec)") &&
+  html.includes("window.scrollTo({ top: 0, behavior: 'instant' })") &&
+  html.includes("history.pushState(null, '', target)"));
+
 // ----------------------------------------------------------------------------
 // 7. RESUMO
 // ----------------------------------------------------------------------------

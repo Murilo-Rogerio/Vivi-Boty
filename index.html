@@ -3608,6 +3608,19 @@ Esta ação apagará o registro do banco de dados.`,
 
   setAdminSection(sec) {
     this.adminState.section = sec;
+    const pathMap = {
+      products: '/admin/produtos',
+      orders: '/admin/pedidos',
+      testimonials: '/admin/depoimentos',
+      settings: '/admin/configuracoes'
+    };
+    const target = pathMap[sec] || '/admin/produtos';
+    try {
+      if (location.pathname !== target) {
+        history.pushState(null, '', target);
+      }
+    } catch {}
+    window.scrollTo({ top: 0, behavior: 'instant' });
     this.viewAdminProducts();
   },
 
@@ -5306,7 +5319,14 @@ Retorne EXCLUSIVAMENTE em formato JSON:
 
   async viewAdminProducts() {
     if (!(await this.guardAdmin())) return;
-    this.setMeta({ title: 'Painel da Administradora | Vivi Carvalho Boty', desc: 'Gestão completa do catálogo.', url: SITE_URL + '/admin/produtos' });
+    const pathMap = {
+      products: '/admin/produtos',
+      orders: '/admin/pedidos',
+      testimonials: '/admin/depoimentos',
+      settings: '/admin/configuracoes'
+    };
+    const targetUrl = SITE_URL + (pathMap[this.adminState.section] || '/admin/produtos');
+    this.setMeta({ title: 'Painel da Administradora | Vivi Carvalho Boty', desc: 'Gestão completa do catálogo.', url: targetUrl });
     await Promise.all([this.ensureProds(), this.ensureTestimonials(true), this.ensureOrders(true), this.ensureSettings()]);
         this.fixLegacyHairCategories();
 
