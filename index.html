@@ -1599,7 +1599,7 @@ const A = {
                 </div>
                 <div>
                   <p class="font-serif font-bold text-lg text-[#1D8A58]">Frete Grátis</p>
-                  <p class="text-[11px] text-[#826F70] font-medium leading-tight">Assis/SP & Região</p>
+                  <p class="text-[11px] text-[#826F70] font-medium leading-tight">Cidade de Assis/SP</p>
                 </div>
                 <div>
                   <p class="font-serif font-bold text-lg text-[#241A1B]">Pix & Cartão</p>
@@ -1634,7 +1634,7 @@ const A = {
         <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-8 relative z-10">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             ${[
-              ['fa-solid fa-truck-fast','#DCFCE7','#1D8A58','Frete Grátis Assis e Região','Entrega expressa sem custo adicional'],
+              ['fa-solid fa-truck-fast','#DCFCE7','#1D8A58','Frete Grátis em Assis/SP','Entrega expressa sem custo na cidade de Assis'],
               ['fa-solid fa-gift','#FCE7F3','#9D174D','Embalagem de presente','Sacola oficial, laço e papel de seda'],
               ['fa-brands fa-whatsapp','#DCFCE7','#1D8A58','Atendimento direto','Sem senhas: fale direto com a Vivi'],
               ['fa-solid fa-certificate','#FEF3C7','#D97706','100% Originais','Lotes novos e lacrados de fábrica']
@@ -2526,7 +2526,7 @@ const A = {
     const origin = this.getSafeOrigin();
     const url = `${origin}/#/?bag=${encodeURIComponent(bagData)}`;
     const total = this.cart.reduce((sum, item) => sum + (item.preco * item.q), 0);
-    const shareText = `Olha a sacola que montei na Vivi Carvalho Boty (${this.formatMoney(total)} - Frete Grátis Assis e Região!): ${url}\nVocê pode conferir ou me dar de presente! 🎁✨`;
+    const shareText = `Olha a sacola que montei na Vivi Carvalho Boty (${this.formatMoney(total)} - Frete Grátis na cidade de Assis/SP!): ${url}\nVocê pode conferir ou me dar de presente! 🎁✨`;
     try {
       if (navigator.share) {
         await navigator.share({
@@ -2688,7 +2688,7 @@ const A = {
     if (checkout) checkout.disabled = this.cart.length === 0;
     this.updateCartUI();
 
-    // Destaque de Frete Grátis para Assis e Região
+    // Destaque de Frete Grátis para a cidade de Assis/SP
     const delivBadge = document.getElementById('cart-delivery-badge');
     const hasItems = this.cart.length > 0;
     const customSection = document.getElementById('cart-customization-section');
