@@ -2782,7 +2782,7 @@ const A = {
     try {
       if (this.sb) {
         let obs = isGift ? 'Para presente (caprichar na embalagem)' : '';
-        obs = (obs ? obs + ' | ' : '') + 'Frete Grátis Assis e Região';
+        obs = (obs ? obs + ' | ' : '') + 'Frete Grátis Assis/SP';
         const orderPayload = {
           cliente_nome: clientName || null,
           cliente_bairro: clientBairro || null,
@@ -2823,7 +2823,7 @@ const A = {
     if (clientBairro) clientInfoText += `📍 *Bairro:* ${clientBairro}\n`;
     if (clientInfoText) clientInfoText += '\n';
 
-    let extraBenefits = '\n🚚 *Frete:* GRÁTIS para Assis e Região';
+    let extraBenefits = '\n🚚 *Frete:* GRÁTIS para a cidade de Assis/SP (outras cidades a combinar)';
     if (isGift) {
       extraBenefits += '\n🎁 *Embalagem:* Para presente inclusa';
     }
